@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Portfolio</title>
+    <link rel="stylesheet" href="css/projects/project2.css">
+    <link rel="stylesheet" href="css/global.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="hamburger">
+        <!-- Mobile Logo -->
+        <div class="mobile-logo">
+            <!-- <img src="assets/images/profile_pic.png" alt="Rawi Logo"> -->
+            <a href="index.html">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo">
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+            <label for="sidebar-active" class="close-sidebar-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                    fill="#1f1f1f">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+            </label>
+            <a class="home-link" href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </div>
+    </nav>
+    <!-- HEADER -->
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo" id="profile-pic">
+                <div class="logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </nav>
+    </header>
+
+    <section class="projects-detail">
+        <div class="project-header">
+            <h2 class="project-title">NextStep</h2>
+            <p class="project-sub-header"> IAT334 - Interface Design</p>
+        </div>
+        <div class="project-content">
+            <div class="project-duration">
+                <h4>Project Duration</h4>
+                <p>October 2024 - December 2024 (6 weeks)</p>
+            </div>
+
+            <p class="game-link-text">
+                Prototype:
+                <a href="https://cloud.protopie.io/p/90d77d3f2f4c177e9902abce" target="_blank">
+                    https://cloud.protopie.io/p/90d77d3f2f4c177e9902abce
+                </a>
+            </p>
+
+            <!-- Introduction -->
+            <h3>Introduction</h3>
+            <p>NextStep is an app designed to empower international students seeking part-time employment. The app
+                combines job searching, AI-driven interview preparation, and work-hour tracking into one platform, this
+                app simplifies the challenges students face when balancing work and academics.
+            </p>
+
+            <!-- Mockup Cover Image -->
+            <img src="assets/images/contents/IAT334_Mockup1.png" alt="NextStep Mockup Cover">
+
+            <!-- Sketches -->
+            <h3>Sketches</h3>
+            <img src="assets/images/contents/IAT334_Sketch1.png" alt="Sketch 1">
+            <img src="assets/images/contents/IAT334_Sketch2.png" alt="Sketch 2">
+            <img src="assets/images/contents/IAT334_Sketch3.png" alt="Sketch 3">
+
+            <!-- Design Process -->
+            <h3>Design Process</h3>
+            <p>The project began by identifying key pain points for international students, including limited work-hour
+                regulations and interview preparation barriers. My role focused on designing and prototyping the user
+                interface and interaction flows. I created interactive elements such as the work-hour tracker, job
+                application buttons, and navigation for key pages like Home, Saved Jobs, and Account. Using Figma and
+                ProtoPie, I developed features such as a dynamic timer for tracking hours, login/sign-up conditions, and
+                a search function. To ensure the app met user expectations, we conducted usability tests and refined the
+                design based on feedback.</p>
+
+            <img src="assets/images/contents/IAT334_FigmaDesignProcess1.png" alt="Figma Process 1">
+
+
+
+            <!-- Prototype Preview -->
+            <h3>Prototype Preview</h3>
+
+            <div class="video-row">
+                <video controls autoplay muted loop>
+                    <source src="assets/images/contents/IAT334_First.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
+                <video controls autoplay muted loop>
+                    <source src="assets/images/contents/IAT334_Second.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
+                <video controls autoplay muted loop>
+                    <source src="assets/images/contents/IAT334_Third.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+
+            <!-- Challenges -->
+            <h3>Challenges</h3>
+            <!-- <p>One major challenge was ensuring the app effectively balanced functionality and ease of use. Designing a
+                seamless experience for features like job filtering and interview practice required iterative testing
+                and adjustments. For instance, improvements to the AI interview preparation flow were implemented after
+                observing user interactions during testing.
+            </p> -->
+            <p>One of the biggest challenges was prototyping the AI interview practice feature in ProtoPie. I had to
+                to make the counting timer that started when users pressed “Record,” which required adding simple code
+                to simulate the countdown. Another challenge was creating how the AI
+                responses to specific keywords. I set up keyword-triggered replies to make it feel interactive
+                without real AI. Since this was just a prototype, the AI couldn't truly listen, so I had
+                to carefully plan how the interactions would feel real. </p>
+            <img src="assets/images/contents/IAT334_Mockup2.png" alt="UI Layout Challenge Mockup">
+
+            <!-- Outcome -->
+            <h3>Outcome</h3>
+            <p>The prototype was tested with users, and we refined it based on their feedback. The updated version
+                improved clarity and better supported users through the interview prep process. This project helped me
+                improve my design thinking and understand how small changes in layout, clarity, and guidance can make a
+                big impact on usability</p>
+            <img src="assets/images/contents/IAT334_Mockup3.png" alt="Final Mockup Result">
+        </div>
+    </section>
+
+    <!--------------------------- CONNECT SECTION --------------------------------------->
+    <section class="connect-section">
+        <div class="connect-border-wrap">
+            <h2>Let's Build Together!</h2>
+            <p>
+                Let's collaborate on creating unique designs and functional websites. Reach out
+                to discuss how I can contribute to your team and help bring your ideas to life.
+            </p>
+            <a href="contact.html" class="connect-button">Let's Connect</a>
+        </div>
+    </section>
+
+    <!----------------------------------------------------------------------------------->
+</body>
+
+</html>

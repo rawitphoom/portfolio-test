@@ -1,0 +1,912 @@
+/***************************** HERO SECTION *****************************/
+
+
+/* HEADER STYLES */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    position: fixed;
+    width: 95%;
+    top: 1rem;
+    left: 50%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    transform: translateX(-50%);
+    /* border: 3px solid red; */
+    z-index: 1000;
+}
+
+/* LOGO STYLES */
+.logo {
+    display: flex;
+}
+
+.logo img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+}
+
+#profile-pic {
+    /* border: 3px solid red; */
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+#profile-pic:active {
+    transform: scale(0.9);
+}
+
+
+.logo-text h1 {
+    font-size: 0.9rem;
+    /* font-weight: 600; */
+}
+
+.logo-text p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    /* font-weight: 300; */
+}
+
+
+/* NAVIGATION MENU */
+nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    transition: 0.3s ease-in-out;
+}
+
+nav a:hover {
+    color: rgb(0, 132, 255);
+}
+
+/* SAY HELLO BUTTON */
+.say-hello {
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    position: relative;
+    background-color: black;
+}
+
+/* SAY HELLO BUTTON ANIMATION */
+@property --angle {
+    /* control the value can accepet */
+    syntax: "<angle>";
+    initial-value: 0deg;
+    /*default value*/
+    inherits: false;
+}
+
+.say-hello::after,
+.say-hello::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 4px;
+    border-radius: 0.5rem;
+    animation: 3s spin linear infinite;
+}
+
+.say-hello::before {
+    filter: blur(1.5rem);
+    opacity: 0.5;
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg
+    }
+}
+
+.say-hello:hover {
+    background-color: white;
+    color: black;
+}
+
+/* HERO SECTION */
+.hero {
+    text-align: center;
+    padding: 10rem 1.5rem 6rem;
+    /* border: 3px solid red; */
+
+}
+
+.hero-big-text {
+    padding-bottom: 2rem;
+}
+
+.hero h2 {
+    font-size: 3.7rem;
+    margin: 0.6rem 0;
+}
+
+.hero p {
+    /* max-width: 45rem; */
+    max-width: 39rem;
+    text-align: center;
+    margin: 0 auto;
+    line-height: 1.5;
+    font-size: 1rem;
+    opacity: 0.7;
+    /* border: 3px solid red; */
+}
+
+
+/* Availability Indicator */
+.availability {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-bottom: 0.6rem;
+    border: 1px solid rgba(255, 255, 255, 0.196);
+}
+
+.dot {
+    width: 0.625rem;
+    height: 0.625rem;
+    background: rgb(0, 132, 255);
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+/* ===================HERO SECTION RESPONSIVE========================= */
+
+/* Phone */
+@media (max-width: 768px) {
+
+    /* header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.6rem 1.2rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);        
+    } */
+
+    /* HEADER STYLES */
+    header {
+        width: 100%;
+        padding: 0.6rem 1.2rem;
+        top: 0;
+        left: 0;
+        transform: none;
+        border: none;
+        border-radius: 0;
+        border-bottom: 0.125rem solid rgba(255, 255, 255, 0.2);
+        /* Add bottom line */
+    }
+
+    .hero h2 {
+        font-size: 2.7rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    /* LOGO STYLES */
+    .logo {
+        display: flex;
+    }
+
+    .logo img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.5rem;
+        margin-right: 1rem;
+    }
+
+    .logo-text h1 {
+        white-space: nowrap;
+        font-size: 0.8rem;
+    }
+
+    .logo-text p {
+        font-size: 0.75rem;
+    }
+}
+
+/* Ipad */
+@media (max-width: 1024px) {
+    .testimonials-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/********************************************************************************/
+
+/***************************** SKILL SLIDER SECTION *****************************/
+
+/* The animate slider */
+.slider {
+    /* border: 1px solid red; */
+    width: 75%;
+    max-width: 1536px;
+    margin-inline: auto;
+    position: relative;
+    height: 2.5rem;
+    overflow: hidden;
+
+    /*Fading effect on left and right sides for safari and chrome browsers*/
+    -webkit-mask-image: linear-gradient(to right,
+            rgba(0, 0, 0, 0) 0%,
+            /* Fully transparent */
+            rgba(0, 0, 0, 1) 20%,
+            /* Fully visible */
+            rgba(0, 0, 0, 1) 80%,
+            /* Fully visible */
+            rgba(0, 0, 0, 0) 100%
+            /* Fully transparent */
+        );
+
+    mask-image: linear-gradient(to right,
+            /* define gradient left side */
+            rgba(0, 0, 0, 0),
+            rgba(0, 0, 0, 1) 20%,
+            /* define gradient right side */
+            rgba(0, 0, 0, 1) 80%,
+            rgba(0, 0, 0, 0) 100%,
+        );
+}
+
+@keyframes scrollleft {
+    to {
+        left: -2.5rem;
+    }
+}
+
+.slider img {
+    width: 2.5rem;
+    height: 2.5rem;
+    position: absolute;
+    /* left: 100%; */
+    /* Instead of mediaQuery | use max function instead, add "," and add 100%
+    max function -> applies the biggest argument at any given time, we have two
+    arguments here and which one happen to be the biggest is the on thats going
+    to be applied */
+    left: max(calc(2.5rem * 30), 100%);
+    animation-name: scrollleft;
+    animation-duration: 30s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+/*---- Duration * Delay * -1 ----*/
+/*---- 30s / 10 * (10 - x) * -1 ----*/
+/* ---- durations/#TOTALitems * (#TOTALitems - #items) * -1 (convert result to negative number) ----*/
+/* ---- Delay -> negative number can control wherethe animation starts 
+[to make the items come back to the right] */
+/* Duration (of animation-duration) -> How long each item movement should take during the animation  */
+/* There are 10 item, so should take 1/10 of the total animation */
+/* Right to left with consistent speed within the total animation duration*/
+.item1 {
+    animation-delay: calc(30s / 10 * (10 - 1) * -1);
+}
+
+.item2 {
+    animation-delay: calc(30s / 10 * (10 - 2) * -1);
+}
+
+.item3 {
+    animation-delay: calc(30s / 10 * (10 - 3) * -1);
+}
+
+.item4 {
+    animation-delay: calc(30s / 10 * (10 - 4) * -1);
+}
+
+.item5 {
+    animation-delay: calc(30s / 10 * (10 - 5) * -1);
+}
+
+.item6 {
+    animation-delay: calc(30s / 10 * (10 - 6) * -1);
+}
+
+.item7 {
+    animation-delay: calc(30s / 10 * (10 - 7) * -1);
+}
+
+.item8 {
+    animation-delay: calc(30s / 10 * (10 - 8) * -1);
+}
+
+.item9 {
+    animation-delay: calc(30s / 10 * (10 - 9) * -1);
+}
+
+.item10 {
+    animation-delay: calc(30s / 10 * (10 - 10) * -1);
+}
+
+/***************************************************************************/
+
+/***************************** PROJECT SECTION *****************************/
+
+.projects {
+    text-align: center;
+    padding: 6rem 0;
+
+    /* Responsive */
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+}
+
+@keyframes appear {
+    from {
+        opacity: 0;
+        scale: 0.5;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
+}
+
+.project-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+
+    /* border: 3px solid red; */
+
+}
+
+.project-card {
+    position: relative;
+    /* width: 41rem;
+    height: 25rem;
+    border-radius: 1rem; */
+
+    width: 100%;
+    /* Responsive width */
+    max-width: 41rem;
+    /* Prevent it from getting too large */
+    /* Fixed height */
+    height: 25rem;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    align-items: flex-end;
+
+    /* border: 3px solid red; */
+}
+
+
+.project-card:hover {
+    transform: scale(1.05);
+}
+
+.project-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+
+/* Project text */
+.project-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem;
+    padding-top: 10rem;
+    padding-bottom: 1.5rem;
+    text-align: left;
+
+    /* Extend the fade effect higher */
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.9) 0%,
+            /* Darker at the bottom */
+            rgba(0, 0, 0, 0.6) 40%,
+            /* Midway fade */
+            rgba(0, 0, 0, 0.3) 70%,
+            /* Lighter near top */
+            rgba(0, 0, 0, 0) 100%
+            /* Fully transparent at top */
+        );
+}
+
+/* Title & Subtitle */
+.project-info h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.project-info p {
+    font-size: 1rem;
+    opacity: 0.6;
+    margin: 0;
+    margin-top: 0.2rem;
+}
+
+.see-all {
+    margin-top: 2rem;
+}
+
+.see-all-btn {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: white;
+    color: #0084ff;
+    border-radius: 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease-in-out;
+}
+
+.see-all-btn:hover {
+    background: lightgray;
+}
+
+/* ===================PROJECT SECTION RESPONSIVE========================= */
+
+/*Large Desktop (Ultra-Wide Screens) / TV */
+@media (min-width: 1440px) {
+    .projects {
+        min-width: 1440px;
+    }
+}
+
+/*Desktop & Laptop*/
+@media (max-width: 1440px) {
+    .projects {
+        max-width: 1440px;
+    }
+
+    .project-card {
+        height: auto;
+    }
+}
+
+/*Small Laptops / Large Tablets in Landscape */
+@media (max-width: 1200px) {
+    .projects {
+        max-width: 1200px;
+    }
+
+    .project-info {
+        top: 0;
+        padding-top: 1rem;
+
+        /* Extend the fade effect higher */
+        background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.6) 0%,
+                /* Darker at the bottom */
+                rgba(0, 0, 0, 0.4) 40%,
+                /* Midway fade */
+                rgba(0, 0, 0, 0.2) 70%,
+                /* Lighter near top */
+                rgba(0, 0, 0, 0) 100%
+                /* Fully transparent at top */
+            );
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .projects {
+        max-width: 1024px;
+    }
+
+    .project-grid {
+        flex-direction: column;
+        align-items: center;
+        /* border: 3px solid red; */
+    }
+
+    .project-card {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .project-info {
+        position: relative;
+        /* Remove absolute positioning */
+        background: none;
+        /* Remove the overlay fading*/
+        padding: 1rem 0rem;
+        /* Add padding for spacing */
+        text-align: left;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .projects {
+        max-width: 768px;
+        animation: none;
+    }
+
+    .project-grid {
+        flex-direction: column;
+        align-items: center;
+        /* border: 3px solid red; */
+    }
+
+    .project-card {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .project-info {
+        position: relative;
+        /* Remove absolute positioning */
+        background: none;
+        /* Remove the overlay fading*/
+        padding: 1rem 0rem;
+        /* Add padding for spacing */
+        text-align: left;
+    }
+
+    .see-all-btn {
+        width: 100%;
+    }
+}
+
+/*************************************************************************/
+
+/***************************** SKILL SECTION *****************************/
+.skills-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 0 1.5rem;
+    max-width: 1400px;
+    text-align: left;
+    margin: 0 auto;
+    /* border: 3px solid red; */
+
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+}
+
+.skills-content {
+    position: sticky;
+    top: 8rem;
+    align-self: start;
+    /*MUST HAVE to make sticky, whole content scroll down*/
+    align-items: start;
+    /*MUST HAVE to make button width fit itself*/
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    /* border: 3px solid red; */
+}
+
+
+.skills-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: inline-block;
+    cursor: default;
+    margin-bottom: 1.5rem;
+}
+
+.skills-title {
+
+    font-size: 2.8rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+}
+
+.more-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 1rem;
+    padding: 0.6rem 1.5rem;
+    border-radius: 2rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.3s ease-in-out;
+    margin-bottom: 1.5rem;
+}
+
+
+.more-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+
+.skill-card-container {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.skill-card {
+    position: sticky;
+    top: 10rem;
+    width: 100%;
+    /* max-width: 40rem; */
+    margin: 0 auto;
+    margin-bottom: 1.8rem;
+    padding: 2.5rem;
+    background: linear-gradient(to bottom, rgba(8, 8, 8, 0.9), rgb(0, 132, 255));
+    border-radius: 1rem;
+    color: white;
+    font-size: 1rem;
+    font-weight: 400;
+    text-align: left;
+    transition: all 0.3s ease-in-out;
+    /* box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); */
+    /* box-shadow: 0 -5px 10px black, 0 5px 10px black; */
+    /* border: 3px solid red; */
+}
+
+
+/* .skill-card:nth-child(2) {
+    top: 7rem;
+}
+
+.skill-card:nth-child(3) {
+    top: 8rem;
+}
+
+.skill-card:nth-child(4) {
+    top: 9rem;
+}
+
+.skill-card:nth-child(5) {
+    top: 10rem;
+} */
+
+.skill-card p {
+    font-size: 1rem;
+    opacity: 0.6;
+    padding: 2rem 0 0 0;
+}
+
+.mobile-btn {
+    display: none;
+}
+
+/* ===================SKILL SECTION RESPONSIVE========================= */
+
+/*Large Desktop (Ultra-Wide Screens) / TV */
+@media (min-width: 1440px) {}
+
+/*Desktop & Laptop*/
+@media (max-width: 1440px) {}
+
+/*Small Laptops / Large Tablets in Landscape */
+@media (max-width: 1200px) {}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .skill-card {
+        width: 100%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .skill-card {
+        width: 100%;
+    }
+
+    .skills-section {
+        grid-template-columns: 1fr;
+        animation: none;
+
+    }
+
+    .skills-content {
+        position: relative;
+        top: 0rem;
+    }
+
+    .skills-title {
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .skills-badge {
+        margin: 0 auto;
+    }
+
+    .more-btn {
+        display: none;
+    }
+
+    .mobile-btn {
+        width: 100%;
+        display: block;
+        margin: 0 auto;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1rem;
+        padding: 0.6rem 0rem;
+        border-radius: 2rem;
+        text-decoration: none;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        transition: 0.3s ease-in-out;
+    }
+
+    .mobile-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+}
+
+
+/*************************************************************************/
+
+/***************************** FAQs SECTION *****************************/
+.faq-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    /* border: 3px solid red; */
+
+    animation: appear linear;
+    animation-timeline: view();
+    animation-range: entry 0% cover 40%;
+}
+
+.faq-title {
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.faq-item {
+    max-width: 1200px;
+    overflow: hidden;
+    font-weight: 500;
+}
+
+.faq-item input {
+    display: none;
+}
+
+.faq-item label {
+    position: relative;
+    font-weight: 600;
+    background: #121212;
+    /* Default collapsed background */
+    display: block;
+    margin-bottom: 10px;
+    cursor: pointer;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    text-align: left;
+    transition: 0.3s ease;
+    /* border: 3px solid red; */
+    padding-right: 3rem;
+}
+
+.faq-item input:checked+label {
+    background: linear-gradient(to left, rgba(40, 126, 255, 0.473), rgb(0, 132, 255));
+    /* background: linear-gradient(to left, rgba(8, 8, 8, 0.473), rgba(0, 132, 255, 0.452)); */
+    /* background: #0084ff96; */
+}
+
+
+/* + icon */
+.faq-item label::after {
+    content: "+";
+    position: absolute;
+    right: 1.5rem;
+    top: 0rem;
+    font-size: 2.5rem;
+    font-weight: 300;
+    transition: all 0.3s ease;
+}
+
+/* Rotate when opened */
+.faq-item input:checked+label::after {
+    transform: rotate(45deg);
+}
+
+
+.faq-answer {
+    max-height: 1px;
+    overflow: hidden;
+    border-radius: 1rem;
+    line-height: 1.4;
+    position: relative;
+    top: -100%;
+    opacity: 0.5;
+    transition: all 0.3s ease;
+}
+
+/* Show when checked */
+.faq-item input:checked~.faq-answer {
+    max-height: 300px;
+    opacity: 1;
+    padding: 0.5rem 0 2rem 0;
+    /* background: #121212; */
+    color: white;
+    border-radius: 1rem;
+    margin-top: 0.5rem;
+}
+
+.faq-answer p {
+    padding-left: 1.5rem;
+    padding-right: 1rem;
+    text-align: left;
+
+}
+
+/* ===================PROJECT SECTION RESPONSIVE========================= */
+
+/*Large Desktop (Ultra-Wide Screens) / TV */
+@media (min-width: 1440px) {}
+
+/*Desktop & Laptop*/
+@media (max-width: 1440px) {}
+
+/*Small Laptops / Large Tablets in Landscape */
+@media (max-width: 1200px) {}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .faq-section {
+        max-width: 1024px;
+    }
+
+    .faq-title {
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .faq-section {
+        animation: none;
+    }
+}
+
+/*************************************************************************/

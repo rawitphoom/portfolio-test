@@ -1,0 +1,493 @@
+* {
+    font-family: 'Inter', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+img{
+    width: 100%;
+    height: auto;
+}
+
+/* Global Styles */
+body {
+    background-color: #000;
+    color: white;
+    /* height: 1000vh; */
+}
+
+/***************************** NAVIGATION BAR *****************************/
+
+/* HEADER STYLES */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    position: fixed;
+    width: 95%;
+    top: 1rem;
+    left: 50%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 1rem;
+    transform: translateX(-50%);
+    /* border: 3px solid red; */
+    z-index: 1000;
+}
+
+/* LOGO STYLES */
+.logo {
+    display: flex;
+}
+
+.logo img {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    margin-right: 1rem;
+}
+
+#profile-pic {
+    /* border: 3px solid red; */
+    transition: transform 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+#profile-pic:active {
+    transform: scale(0.9);
+}
+
+
+.logo-text h1 {
+    font-size: 0.9rem;
+    /* font-weight: 600; */
+}
+
+.logo-text p {
+    font-size: 0.9rem;
+    opacity: 0.8;
+    /* font-weight: 300; */
+}
+
+.logo-link {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    text-decoration: none;
+    color: white;
+  }
+  
+
+  .logo a {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    text-decoration: none;
+    color: white;
+}
+  
+
+/* NAVIGATION MENU */
+nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    transition: 0.3s ease-in-out;
+}
+
+nav a:hover {
+    color: rgb(0, 132, 255);
+}
+
+/* SAY HELLO BUTTON */
+.say-hello {
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    position: relative;
+    background-color: black;
+}
+
+/* SAY HELLO BUTTON ANIMATION */
+@property --angle {
+    /* control the value can accepet */
+    syntax: "<angle>";
+    initial-value: 0deg;
+    /*default value*/
+    inherits: false;
+}
+
+.say-hello::after,
+.say-hello::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 4px;
+    border-radius: 0.5rem;
+    animation: 3s spin linear infinite;
+}
+
+.say-hello::before {
+    filter: blur(1.5rem);
+    opacity: 0.5;
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg
+    }
+}
+
+.say-hello:hover {
+    background-color: white;
+    color: black;
+}
+
+
+/* ===================NAVIGATION SECTION RESPONSIVE========================= */
+
+/* Phone */
+@media (max-width: 768px) {
+
+    /* LOGO STYLES */
+    .logo {
+        display: flex;
+    }
+
+    .logo img {
+        width: 2.5rem;
+        height: 2.5rem;
+        border-radius: 0.5rem;
+        margin-right: 1rem;
+    }
+
+    .logo-text h1 {
+        white-space: nowrap;
+        font-size: 0.8rem;
+    }
+
+    .logo-text p {
+        font-size: 0.75rem;
+    }
+}
+
+/********************************************************************************/
+
+/***************************** PROJECT GLOBAL SECTION *****************************/
+
+/* Make the whole card clickable + remove color + underline */
+/* display block - Makes the <a> behave 
+like a block-level element, so it can:
+-Stretch across the full width of its container.
+-Contain block elements like <div>, <h3>, etc.
+-Be styled like a card or box.
+-Be clicked anywhere inside it, not just on the text.
+ */
+.project-card a.project-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    /* border: 3px solid red; */
+}
+
+
+
+
+
+:root {
+    --color-1: black;
+    --text-color: white;
+    --accent-color: rgb(0, 132, 255);
+}
+
+
+.hamburger a {
+    display: none;
+}
+
+.mobile-logo{
+    display: none;
+}
+
+.hamburger svg {
+    fill: var(--text-color);
+}
+
+#sidebar-active {
+    display: none;
+}
+
+.open-sidebar-button,
+.close-sidebar-button {
+    display: none;
+}
+
+#overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    z-index: 9;
+    transition: none;
+}
+
+
+@media(max-width: 768px) {
+
+    /* Hide the desktop version nav bar */
+    .desktop-header {
+        display: none;
+    }
+
+    .hamburger {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        height: 60px;
+        background-color: var(--color-1);
+        position: fixed;
+        width: 100%;
+        z-index: 1000;
+    }
+
+
+
+    .links-container {
+        flex-direction: column;
+        align-items: flex-start;
+
+        position: fixed;
+        top: 0;
+        right: -100%;
+        z-index: 10;
+        width: 300px;
+        height: 100%;
+        background-color: var(--color-1);
+        box-shadow: -5px 0 5px rgba(0, 0, 0, 0.25);
+        transition: 0.75s ease-out;
+
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        border-radius: 0.5rem 0 0 0.5rem;
+    }
+
+    .hamburger a {
+        display: block;
+        box-sizing: border-box;
+        height: auto;
+        width: 100%;
+        padding: 20px 30px;
+        justify-content: flex-start;
+
+    }
+
+    .hamburger a:hover {
+        background-color: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .open-sidebar-button,
+    .close-sidebar-button {
+        padding: 20px;
+        display: block;
+    }
+
+    #sidebar-active:checked~.links-container {
+        right: 0;
+    }
+
+    #sidebar-active:checked~#overlay {
+        width: 100%;
+        height: 100%;
+    }
+
+
+    .mobile-logo {
+        display: flex;
+        align-items: center;
+        /* margin-left: 1rem; */
+        margin-right: 0;
+        color: var(--text-color);
+    }
+
+    .mobile-logo img {
+        width: 2rem;
+        height: 2rem;
+        border-radius: 0.5rem;
+        margin-right: 1rem;
+        /* margin-left: 0; */
+    }
+
+    .mobile-logo-text h1 {
+        font-size: 0.75rem;
+        margin: 0;
+    }
+
+    .mobile-logo-text p {
+        font-size: 0.75rem;
+        font-weight: 400;
+        opacity: 0.8;
+        margin: 0;
+        margin-top: 0.05rem;
+    }
+
+    .mobile-logo a {
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        margin: 0;
+    }
+
+    .mobile-logo a:hover {
+        background-color: black;
+    }
+}
+
+/***************************** CONNECT SECTION *****************************/
+.connect-section {
+    padding: 0rem 1.5rem;
+    margin-bottom: 5rem;
+}
+
+.connect-border-wrap {
+    text-align: center;
+    padding: 5rem 0rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    /* border: 3px solid red; */
+}
+
+.connect-section h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.connect-section p {
+    font-size: 1.1rem;
+    opacity: 0.7;
+    max-width: 700px;
+    margin: 0 auto 3rem auto;
+    line-height: 1.6;
+}
+
+.connect-button {
+    font-size: 3.5rem;
+    font-weight: 600;
+    padding: 1rem 2.5rem;
+    color: white;
+    background: black;
+    border-radius: 5rem;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    display: inline-block;
+
+    transition: background-color 0.75s ease-out;
+}
+
+.connect-button::after,
+.connect-button::before {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
+    top: 50%;
+    left: 50%;
+    translate: -50% -50%;
+    z-index: -1;
+    padding: 5px;
+    border-radius: 5rem;
+    animation: 4s spin linear infinite;
+}
+
+.connect-button::before {
+    filter: blur(1.5rem);
+    opacity: 0.5;
+}
+
+.connect-button:hover {
+    background-color: #0084ff;
+    transition: 0.75s ease-out;
+}
+
+@keyframes spin {
+    from {
+        --angle: 0deg;
+    }
+
+    to {
+        --angle: 360deg;
+    }
+}
+
+
+/* ======================CONNECT SECTION RESPONSIVE======================= */
+
+/*Large Desktop (Ultra-Wide Screens) / TV */
+@media (min-width: 1440px) {}
+
+/*Desktop & Laptop*/
+@media (max-width: 1440px) {}
+
+/*Small Laptops / Large Tablets in Landscape */
+@media (max-width: 1200px) {}
+
+/* Tablet */
+@media (max-width: 1024px) {}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .connect-section h2 {
+        font-size: 1.8rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .connect-section p {
+        font-size: 0.9rem;
+        margin: 0 1rem 3rem 1rem;
+    }
+
+    
+    .connect-section a {
+        font-size: 2rem;
+    }
+
+    .connect-button {
+        font-size: 2.7rem;
+    }
+}
+/* ===================================================================== */
+
+
+
+/*************************************************************************/

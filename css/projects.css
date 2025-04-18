@@ -1,0 +1,342 @@
+/***************************** PROJECT SECTION *****************************/
+
+.projects {
+    text-align: center;
+    padding: 6rem 0;
+
+    /* Responsive */
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+/* Make the whole card clickable + remove color + underline */
+/* display block - Makes the <a> behave 
+like a block-level element, so it can:
+-Stretch across the full width of its container.
+-Contain block elements like <div>, <h3>, etc.
+-Be styled like a card or box.
+-Be clicked anywhere inside it, not just on the text.
+ */
+.project-card a.project-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+    height: 100%;
+    width: 100%;
+    /* border: 3px solid red; */
+}
+
+
+.project-title {
+    font-size: 4.5rem;
+    font-weight: 600;
+    margin-top: 5rem;
+    margin-bottom: 3rem;
+    text-align: center;
+    color: white;
+}
+
+
+.project-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+
+    /* border: 3px solid red; */
+
+}
+
+.project-card {
+    position: relative;
+    /* width: 41rem;
+    height: 25rem;
+    border-radius: 1rem; */
+
+    width: 100%;
+    /* Responsive width */
+    max-width: 41rem;
+    /* Prevent it from getting too large */
+    /* Fixed height */
+    height: 25rem;
+    overflow: hidden;
+    transition: transform 0.3s ease-in-out;
+    display: flex;
+    align-items: flex-end;
+
+    /* border: 3px solid red; */
+}
+
+
+.project-card:hover {
+    transform: scale(1.05);
+}
+
+.project-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 1rem;
+}
+
+/* Project text */
+.project-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 1.5rem;
+    padding-top: 10rem;
+    padding-bottom: 1.5rem;
+    text-align: left;
+
+    /* Extend the fade effect higher */
+    background: linear-gradient(to top,
+            rgba(0, 0, 0, 0.9) 0%,
+            /* Darker at the bottom */
+            rgba(0, 0, 0, 0.6) 40%,
+            /* Midway fade */
+            rgba(0, 0, 0, 0.3) 70%,
+            /* Lighter near top */
+            rgba(0, 0, 0, 0) 100%
+            /* Fully transparent at top */
+        );
+}
+
+/* Title & Subtitle */
+.project-info h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.project-info p {
+    font-size: 1rem;
+    opacity: 0.6;
+    margin: 0;
+    margin-top: 0.2rem;
+}
+
+
+/* FOR GIF WHEN HOVER */
+.project-image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.preview-image,
+.hover-gif {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.3s ease;
+    border-radius: 1rem;
+}
+
+.hover-gif {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.project-card:hover .preview-image {
+    opacity: 0;
+}
+
+.project-card:hover .hover-gif {
+    opacity: 1;
+}
+
+
+
+
+/* FOR VIDEO (IAT334) WHEN HOVER */
+.hover-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    border-radius: 1rem;
+}
+
+.project-card:hover .preview-image {
+    opacity: 0;
+}
+
+
+.project-card:hover .hover-video {
+    opacity: 1;
+}
+
+
+/* ===================PROJECT SECTION RESPONSIVE========================= */
+
+/*Large Desktop (Ultra-Wide Screens) / TV */
+@media (min-width: 1440px) {
+    .projects {
+        min-width: 1440px;
+    }
+}
+
+/*Desktop & Laptop*/
+@media (max-width: 1440px) {
+
+    /* Show static preview image by default */
+    .preview-image {
+        display: block;
+        opacity: 1;
+        position: relative;
+    }
+
+    /* Hide GIF or video by default */
+    .hover-gif,
+    .hover-video {
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity 0.3s ease;
+        border-radius: 1rem;
+    }
+
+    /* Reveal GIF or video on hover */
+    .project-card:hover .preview-image {
+        opacity: 0;
+    }
+
+    .project-card:hover .hover-gif,
+    .project-card:hover .hover-video {
+        opacity: 1;
+    }
+
+
+}
+
+
+/*Small Laptops / Large Tablets in Landscape */
+@media (max-width: 1200px) {
+    .projects {
+        max-width: 1200px;
+    }
+
+
+    .project-info {
+        top: 0;
+        padding-top: 1rem;
+
+        /* Extend the fade effect higher */
+        background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.6) 0%,
+                /* Darker at the bottom */
+                rgba(0, 0, 0, 0.4) 40%,
+                /* Midway fade */
+                rgba(0, 0, 0, 0.2) 70%,
+                /* Lighter near top */
+                rgba(0, 0, 0, 0) 100%
+                /* Fully transparent at top */
+            );
+    }
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .projects {
+        max-width: 1024px;
+    }
+
+    .project-grid {
+        flex-direction: column;
+        align-items: center;
+        /* border: 3px solid red; */
+    }
+
+    .project-card {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .project-info {
+        position: relative;
+        /* Remove absolute positioning */
+        background: none;
+        /* Remove the overlay fading*/
+        padding: 1rem 0rem;
+        /* Add padding for spacing */
+        text-align: left;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .projects {
+        max-width: 768px;
+    }
+
+    .project-grid {
+        flex-direction: column;
+        align-items: center;
+        /* border: 3px solid red; */
+    }
+
+    .project-card {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+    }
+
+    .project-info {
+        position: relative;
+        /* Remove absolute positioning */
+        background: none;
+        /* Remove the overlay fading*/
+        padding: 1rem 0rem;
+        /* Add padding for spacing */
+        text-align: left;
+    }
+
+    .project-title {
+        font-size: 2.5rem;
+        margin-top: 0rem;
+    }
+
+    .see-all-btn {
+        width: 100%;
+    }
+
+    /* Hide animated previews */
+    .hover-gif,
+    .hover-video {
+        display: none !important;
+    }
+
+    /* Always show static image */
+    .preview-image {
+        opacity: 1 !important;
+        display: block !important;
+        position: relative !important;
+        z-index: 1;
+    }
+
+    /* Prevent hover effect from hiding preview image */
+    .project-card:hover .preview-image {
+        opacity: 1 !important;
+    }
+}
+
+/*************************************************************************/

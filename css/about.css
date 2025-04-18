@@ -1,0 +1,95 @@
+.about {
+    padding: 5rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    color: white;
+    text-align: center;
+    margin-top: 5rem;
+  }
+  
+  .about-title {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 3rem;
+  }
+  
+  .about-content {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+    justify-content: center;
+    align-items: flex-start;
+    text-align: left;
+  }
+  
+  .about-img {
+    width: 20%;
+    height: auto;
+    border-radius: 1rem;
+  }
+  
+  .about-text {
+    flex: 1;
+    min-width: 300px;
+  }
+  
+  .about-text p {
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+    color: #ccc;
+  }
+  
+  .about-highlights {
+    margin-top: 4rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
+  .highlight-box {
+    background: #121212;
+    padding: 2rem;
+    border-radius: 1rem;
+    min-width: 200px;
+    flex: 1;
+    text-align: center;
+  }
+  
+  .highlight-box h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #6ec1ff;
+  }
+  
+  .highlight-box p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #aaa;
+  }
+
+  @media (max-width: 768px) {
+    .about{
+        margin-top: 0rem;
+    }
+    .about-title{
+        font-size: 2rem;
+    }
+    .about-content {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .about-img {
+        width: 40%;
+        height: auto;
+        border-radius: 1rem;
+      }
+
+    .about-text {
+      text-align: center;
+    }
+  }
+  
+  

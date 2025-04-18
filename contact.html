@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Portfolio</title>
+    <link rel="stylesheet" href="css/contact.css">
+    <link rel="stylesheet" href="css/global.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="hamburger">
+        <!-- Mobile Logo -->
+        <div class="mobile-logo">
+            <!-- <img src="assets/images/profile_pic.png" alt="Rawi Logo"> -->
+            <a href="index.html">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo">
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+            <label for="sidebar-active" class="close-sidebar-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                    fill="#1f1f1f">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+            </label>
+            <a class="home-link" href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </div>
+    </nav>
+    <!-- HEADER -->
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo" id="profile-pic">
+                <div class="logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </nav>
+    </header>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+        <h2 class="contact-title">Let's work together</h2>
+        <p class="contact-subtext">
+            I'd love to learn more about your project and how I can assist you. Feel free to share your
+            project details using the form below. If you prefer to email instead, you can reach out to me at
+            <strong><a href="mailto:rka70@sfu.ca">rka70@sfu.ca</a></strong>
+        </p>
+
+        <form class="contact-form" action="#" method="POST">
+            <div class="input-group">
+              <label for="name" class="sr-only">Name</label>
+              <input type="text" id="name" name="name" placeholder="Name" required>
+          
+              <label for="email" class="sr-only">Email</label>
+              <input type="email" id="email" name="email" placeholder="Email" required>
+            </div>
+          
+            <label for="message" class="sr-only">Message</label>
+            <textarea id="message" name="message" placeholder="Tell me more about your project" rows="6" required></textarea>
+          
+            <button type="submit" class="send-btn">Send</button>
+          </form>
+          
+    </section>
+    
+</body>
+
+</html>

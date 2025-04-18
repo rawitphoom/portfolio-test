@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Portfolio</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/global.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+
+    <nav class="hamburger">
+        <!-- Mobile Logo -->
+        <div class="mobile-logo">
+            <!-- <img src="assets/images/profile_pic.png" alt="Rawi Logo"> -->
+            <a href="#">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo">
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+            <label for="sidebar-active" class="close-sidebar-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                    fill="#1f1f1f">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+            </label>
+            <a class="home-link" href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </div>
+    </nav>
+
+    <!-- HEADER -->
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo" id="profile-pic">
+                <div class="logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </nav>
+    </header>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <!-- <div class="availability">
+            <span class="dot"></span> Available for freelance
+        </div> -->
+        <div class="hero-big-text">
+            <h2>Hey, I'm Rawi.</h2>
+            <h2>I'm a Web Developer & Designer.</h2>
+        </div>
+        <!-- <p>Rawitphoom Kiaththitinan is an Interactive Arts and Technology student passionate about creating
+            user-friendly websites and responsive designs.
+        </p> -->
+        <p>An Interactive Arts and Technology student passionate about creating user-friendly websites and responsive designs.
+        </p>
+    </section>
+
+    <!------------------------------- SKILL SLIDER SECTION ----------------------------->
+
+    <section class="skills-slider">
+        <div class="slider">
+            <img class="item1" src="assets/images/icons/after-effects.png" alt="After Effects">
+            <img class="item2" src="assets/images/icons/chat-gpt.png" alt="ChatGPT">
+            <img class="item3" src="assets/images/icons/figma.png" alt="Figma">
+            <img class="item4" src="assets/images/icons/framer.png" alt="Framer">
+            <img class="item5" src="assets/images/icons/java.png" alt="Java">
+            <img class="item6" src="assets/images/icons/js.png" alt="JavaScript">
+            <img class="item7" src="assets/images/icons/photoshop.png" alt="Photoshop">
+            <img class="item8" src="assets/images/icons/premiere-pro.png" alt="Premiere Pro">
+            <img class="item9" src="assets/images/icons/protopie.png" alt="ProtoPie">
+            <img class="item10" src="assets/images/icons/slack.png" alt="Slack">
+        </div>
+    </section>
+
+    <!----------------------------------------------------------------------------------->
+
+
+    <!------------------------------------- PROJECTS ------------------------------------>
+
+    <section class="projects">
+        <div class="project-grid">
+            <!-- Project 1 -->
+            <div class="project-card">
+                <a href="project1.html" class="project-link">
+                    <div class="project-info">
+                        <h3>Mage in the Maze</h3>
+                        <p>IAT167 - Digital Games</p>
+                    </div>
+                    <img src="assets/images/contents/project1/IAT167_Cover.png" alt="IAT167_Mage in the maze">
+                </a>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+                <a href="project2.html" class="project-link">
+                    <div class="project-info">
+                        <h3>NextStep</h3>
+                        <p>IAT334 - Interface Design</p>
+                    </div>
+                    <img src="assets/images/contents/IAT334_Cover.png" alt="NextStep">
+                </a>
+            </div>
+        </div>
+
+        <!-- See all projects button -->
+        <div class="see-all">
+            <a href="projects.html" class="see-all-btn">See all projects</a>
+        </div>
+    </section>
+
+    <!----------------------------------------------------------------------------------->
+
+    <!------------------------------------- SKILLS -------------------------------------->
+    <section class="skills-section">
+        <div class="skills-content">
+            <div class="skills-badge">Skills & Expertise</div>
+            <h2 class="skills-title">My Skills that Shine, Expertise You Can Trust</h2>
+            <a href="about.html" class="more-btn">More about me</a>
+        </div>
+        <div class="skill-card-container">
+            <div class="skill-card">
+                <h3>01 Core Skills</h3>
+                <p>I excel in UI/UX design, prototyping, and coding, combining creativity with functionality to deliver
+                    impactful user experiences.</p>
+            </div>
+
+            <div class="skill-card">
+                <h3>02 Tools and Platforms</h3>
+                <p>I am proficient in Figma, Framer, ProtoPie, Adobe Photoshop, Premiere Pro, and coding languages like
+                    HTML, CSS, JavaScript, and Java.</p>
+            </div>
+
+            <div class="skill-card">
+                <h3>03 Experience</h3>
+                <p>I’ve developed a tile-based game with dynamic interactions, a job search app tailored for
+                    international students, and a responsive festival website.</p>
+            </div>
+
+            <div class="skill-card">
+                <h3>04 Achievements</h3>
+                <p>My projects showcase my ability to merge design with functionality, including implementing AI-driven
+                    interview practice features.</p>
+            </div>
+
+            <div class="skill-card">
+                <h3>05 Personal Approach</h3>
+                <p>I prioritize understanding instructions, collaborating effectively with teammates, and delivering
+                    thoughtful, high-quality solutions.</p>
+            </div>
+        </div>
+
+        <!-- Mobile button -->
+        <a href="about.html" class="more-btn mobile-btn">More about me</a>
+    </section>
+
+    <!----------------------------------------------------------------------------------->
+
+    <!------------------------------------- FAQ ----------------------------------------->
+    <section class="faq-section">
+        <h2 class="faq-title">FAQs</h2>
+
+        <div class="faq-item">
+            <input type="checkbox" id="faq-1">
+            <label for="faq-1">What is your design and development process like?</label>
+            <div class="faq-answer">
+                <p>I start by understanding the project goals, researching, and creating designs or concepts. Feedback
+                    is incorporated throughout the process for the best results.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="faq-2">
+            <label for="faq-2">How long does a project usually take?</label>
+            <div class="faq-answer">
+                <p>Timelines depend on the project’s scope and complexity. I provide a clear estimate after discussing
+                    the project details.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="faq-3">
+            <label for="faq-3">Do you help with ongoing updates and maintenance?</label>
+            <div class="faq-answer">
+                <p>Yes, I can assist with updates, bug fixes, and improvements after the project is complete.</p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <input type="checkbox" id="faq-4">
+            <label for="faq-4">Do you work solo or with a team?</label>
+            <div class="faq-answer">
+                <p>I can work individually or collaborate with a team, depending on the project requirements.</p>
+            </div>
+        </div>
+    </section>
+    <!----------------------------------------------------------------------------------->
+
+    <!--------------------------- CONNECT SECTION --------------------------------------->
+    <section class="connect-section">
+        <div class="connect-border-wrap">
+            <h2>Let's Build Together!</h2>
+            <p>
+                Let's collaborate on creating unique designs and functional websites. Reach out
+                to discuss how I can contribute to your team and help bring your ideas to life.
+            </p>
+            <a href="contact.html" class="connect-button">Let's Connect</a>
+        </div>
+    </section>
+
+    <!----------------------------------------------------------------------------------->
+
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>

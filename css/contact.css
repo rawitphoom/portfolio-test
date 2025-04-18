@@ -1,0 +1,89 @@
+.contact-section {
+    padding: 5rem 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 6rem;
+}
+
+.contact-title {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.contact-subtext {
+    font-size: 1rem;
+    color: #aaa;
+    line-height: 1.6;
+    margin-bottom: 3rem;
+}
+
+.contact-subtext a {
+    color: white;
+    text-decoration: none;
+}
+
+.contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.input-group {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.input-group input {
+    flex: 1;
+    /*To make boxes fill the width*/
+    padding: 1rem;
+    border: none;
+    border-radius: 0.8rem;
+    background: #111;
+    color: white;
+    font-size: 1rem;
+}
+
+textarea {
+    padding: 1rem;
+    border: none;
+    border-radius: 0.8rem;
+    background: #111;
+    color: white;
+    font-size: 1rem;
+    resize: vertical;
+}
+
+.send-btn {
+    padding: 1rem;
+    border: none;
+    border-radius: 0.8rem;
+    background-color: #0084ff;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.send-btn:hover {
+    background-color: #006fd6;
+}
+
+.sr-only {
+    position: absolute;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    /*to hide text but its still there for voice over*/
+    border: 0;
+}
+
+@media (max-width: 768px) {
+    .contact-section {
+        margin-top: 0rem;
+    }
+}

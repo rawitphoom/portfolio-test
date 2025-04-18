@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Portfolio</title>
+    <link rel="stylesheet" href="css/projects.css">
+    <link rel="stylesheet" href="css/global.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="hamburger">
+        <!-- Mobile Logo -->
+        <div class="mobile-logo">
+            <!-- <img src="assets/images/profile_pic.png" alt="Rawi Logo"> -->
+            <a href="index.html">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo">
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+            <label for="sidebar-active" class="close-sidebar-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                    fill="#1f1f1f">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+            </label>
+            <a class="home-link" href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </div>
+    </nav>
+    <!-- HEADER -->
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo" id="profile-pic">
+                <div class="logo-text">
+                    <h1>Rawitphoome Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </nav>
+    </header>
+
+    <section class="projects">
+        <h2 class="project-title">Portfolio showcase</h2>
+
+        <div class="project-grid">
+            <!-- Project 1 -->
+            <div class="project-card">
+                <a href="project1.html" class="project-link">
+                    <div class="project-image-wrapper">
+                        <img class="preview-image" src="assets/images/contents/project1/IAT167_Cover.png"
+                            alt="Mage in the Maze Preview">
+                        <img class="hover-gif" src="assets/images/contents/project1/IAT167_Preview.gif"
+                            alt="Mage in the Maze Animation">
+                    </div>
+                    <div class="project-info">
+                        <h3>Mage in the Maze</h3>
+                        <p>IAT167 - Digital Games</p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card">
+                <a href="project2.html" class="project-link">
+                    <div class="project-image-wrapper">
+                        <!-- Cover image -->
+                        <img class="preview-image" src="assets/images/contents/IAT334_Cover.png" alt="NextStep Cover">
+
+                        <!-- Hover video -->
+                        <video class="hover-video" muted loop playsinline preload="metadata">
+                            <source src="assets/images/contents/IAT334_First.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="project-info">
+                        <h3>NextStep</h3>
+                        <p>IAT334 - Interface Design</p>
+                    </div>
+                    <!-- <img src="assets/images/contents/IAT334_Cover.png" alt="NextStep"> -->
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!--------------------------- CONNECT SECTION --------------------------------------->
+    <section class="connect-section">
+        <div class="connect-border-wrap">
+            <h2>Let's Build Together!</h2>
+            <p>
+                Let's collaborate on creating unique designs and functional websites. Reach out
+                to discuss how I can contribute to your team and help bring your ideas to life.
+            </p>
+            <a href="contact.html" class="connect-button">Let's Connect</a>
+        </div>
+    </section>
+
+    <!----------------------------------------------------------------------------------->
+
+    <script src="scripts/main.js"></script>
+
+</body>
+
+</html>
