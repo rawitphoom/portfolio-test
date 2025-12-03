@@ -82,33 +82,24 @@
             <p class="game-link-text">
                 Figma Prototype:
                 <a href="https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359?page-id=0%3A1&node-id=37-27&p=f&viewport=318%2C1038%2C0.05&t=Sa8cPKwGRSoHiAhw-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=37%3A27" target="_blank">
-                    View on Figma
+                    https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359
                 </a>
                 <br>
-                GitHub Repo:
-                <a href="https://github.com/Vixlump/Consistency-App-Project" target="_blank">
-                    View on GitHub
+                Video Link:
+                <a href="https://www.youtube.com/watch?v=jkE5LUxzD9c" target="_blank">
+                    https://www.youtube.com/watch?v=jkE5LUxzD9c
                 </a>
             </p>
 
             <h3>Introduction</h3>
-            <p>Consistency is a mobile app designed to help people build and maintain healthy habits through structured tracking and motivation tools. By combining traditional habit logging with geolocation features, the app allows users to log activities based on their physical location, creating a visual journey of their progress. The goal was to encourage self-discipline and long-term commitment by merging visual progress, rewards, and spatial interaction into a cohesive experience.
+            <p>Consistency is a mobile app designed to help people build and maintain healthy habits through structured
+                tracking and motivation tools. By combining traditional habit logging with geolocation features, the app
+                allows users to log activities based on their physical location, creating a visual journey of their
+                progress. The goal was to encourage self-discipline and long-term commitment by merging visual progress,
+                rewards, and spatial interaction into a cohesive experience.
             </p>
 
             <img src="assets/images/contents/project3/IAT359_Mockup1.png" alt="Consistency Mockup Cover">
-
-            <h3>Sketches</h3>
-            <p>Initial concepts focused on how to integrate map-based logging with standard habit tracking cards.</p>
-            <div class="sketches-container">
-                <img src="assets/images/contents/project3/IAT359 - Sketches_1.jpg" alt="Sketch 1">
-                <img src="assets/images/contents/project3/IAT359 - Sketches_2.jpg" alt="Sketch 2">
-                <img src="assets/images/contents/project3/IAT359 - Sketches_3.jpg" alt="Sketch 3">
-            </div>
-
-            <h3>Design & Development Process</h3>
-            <p>Built using <strong>React Native</strong> and <strong>Expo</strong>, the project required a robust technical architecture including Firebase for authentication and Async Storage for local data persistence. A key focus was the "Map Log" feature, which uses <code>react-native-maps</code> to let users attach photos and locations to their habits. We also implemented a gamification system where users unlock achievement cards based on their streaks, adding a layer of visual motivation.</p>
-
-            <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.png" alt="Figma Design Process">
 
             <h3>Prototype Preview</h3>
 
@@ -129,16 +120,40 @@
                 </video>
             </div>
 
+            <h3>Sketches</h3>
+            <p>Initial concepts focused on how to integrate map-based logging with standard habit tracking cards.</p>
+            <div class="sketches-container">
+                <img src="assets/images/contents/project3/IAT359 - SketchesAll.png" alt="SketchsAll">
+            </div>
+
+            <h3>Design & Development Process</h3>
+            <p>Built using <strong>React Native</strong> and <strong>Expo</strong>, the project required a robust
+                technical architecture including Firebase for authentication and Async Storage for local data
+                persistence. A key focus was the "Map Log" feature, which uses <code>react-native-maps</code> to let
+                users attach photos and locations to their habits. We also implemented a gamification system where users
+                unlock achievement cards based on their streaks, adding a layer of visual motivation.</p>
+
+            <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.png" alt="Figma Design Process">
+
             <h3>Challenges</h3>
-            <p>One of the main technical challenges was managing the <strong>Complex Navigation Structure</strong>. We needed a mix of tab-based navigation for main screens and stack-based navigation for flows like "Create Habit." This required restructuring the navigation tree to allow specific screens to overlay the bottom tab bar.
+            <p>One of the main technical challenges was managing the <strong>Complex Navigation Structure</strong>. We
+                needed a mix of tab-based navigation for main screens and stack-based navigation for flows like "Create
+                Habit." This required restructuring the navigation tree to allow specific screens to overlay the bottom
+                tab bar.
             </p>
             <p>
-            Another hurdle was <strong>Conditional Rendering</strong> on the Stats screen, which needed to display data in three drastically different formats (Weekly list, Monthly grid, Yearly heatmap). We solved this by creating modular sub-components and using state variables to conditionally render the correct layout without code duplication.
+                Another hurdle was <strong>Conditional Rendering</strong> on the Stats screen, which needed to display
+                data in three drastically different formats (Weekly list, Monthly grid, Yearly heatmap). We solved this
+                by creating modular sub-components and using state variables to conditionally render the correct layout
+                without code duplication.
             </p>
             <img src="assets/images/contents/project3/IAT359_Mockup2.png" alt="UI Layout Challenge Mockup">
 
             <h3>Outcome</h3>
-            <p>We successfully implemented all core features, resulting in a functional and cohesive user experience. The final app includes secure authentication, a dynamic home dashboard, interactive habit tracking, and the unique map logging feature. Through this project, I significantly strengthened my skills in React Native component lifecycles, state management, and creating polished "Glassmorphism" UI styles.</p>
+            <p>We successfully implemented all core features, resulting in a functional and cohesive user experience.
+                The final app includes secure authentication, a dynamic home dashboard, interactive habit tracking, and
+                the unique map logging feature. Through this project, I significantly strengthened my skills in React
+                Native component lifecycles, state management, and creating polished "Glassmorphism" UI styles.</p>
             <img src="assets/images/contents/project3/IAT359_Mockup3.png" alt="Final Mockup Result">
         </div>
     </section>

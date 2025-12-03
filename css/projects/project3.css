@@ -88,7 +88,7 @@
 
 .sketches-container img {
     width: 100%;
-    max-width: 300px; /* Keeps them a reasonable size */
+    max-width: 1000px; /* Keeps them a reasonable size */
     margin: 0;        /* Overrides the default .project-content img margin */
     object-fit: cover;
 }
