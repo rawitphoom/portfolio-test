@@ -1,0 +1,148 @@
+/***************************** PROJECT SECTION *****************************/
+.projects-detail {
+    text-align: left;
+    padding: 6rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+    /* For Responsive */
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.project-title {
+    font-size: 4.5rem;
+    font-weight: 600;
+    margin-top: 5rem;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    color: white;
+}
+
+.project-sub-header {
+    text-align: center;
+    color: #b3b3b3;
+}
+
+.project-content {
+    max-width: 1000px;
+    margin: 0 auto;
+    text-align: left;    
+}
+
+/* Generic Image Styling */
+.project-content img {
+    width: 100%;
+    height: 100%;
+    margin: 2rem 0 0 0;
+    border-radius: 0.5rem; /* Added slight rounding to match videos */
+}
+
+.project-content a {
+    color: #b3b3b3;
+    text-decoration: none;
+    word-break: break-all;
+}
+
+.project-content .project-duration {
+    margin-top: 3rem;
+    line-height: 1.5rem;
+}
+
+.project-content .game-link-text {
+    margin-top: 1.8rem;
+    font-weight: 500;
+}
+
+.project-content h4 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.project-content h3 {
+    font-size: 3rem;
+    margin: 2rem 0 0.5rem 0;
+}
+
+.project-content p {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #b3b3b3;
+    font-weight: 500;
+    line-height: 2rem;
+}
+
+/* --------------------------------------------------------- */
+/* NEW: Sketches Grid                      */
+/* --------------------------------------------------------- */
+/* This matches the layout of your video row so the 3 sketches
+   sit side-by-side instead of stacking vertically */
+.sketches-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap; 
+    margin: 2rem 0 0 0;
+}
+
+.sketches-container img {
+    width: 100%;
+    max-width: 300px; /* Keeps them a reasonable size */
+    margin: 0;        /* Overrides the default .project-content img margin */
+    object-fit: cover;
+}
+
+/* --------------------------------------------------------- */
+/* Video Row Styling                       */
+/* --------------------------------------------------------- */
+.video-row {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows wrapping on smaller screens */
+    margin: 3rem 0 0 0;
+}
+
+.video-row video {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 0.5rem;
+}
+
+
+/* --------------------------------------------------------- */
+/* Mobile Responsive                       */
+/* --------------------------------------------------------- */
+@media (max-width: 768px) {
+    .projects-detail {
+        max-width: 768px;
+    }
+
+    .project-content img {
+        height: auto;
+    }
+
+    .project-title {
+        margin-top: 0;
+        font-size: 2.5rem;
+    }
+
+    .project-content .game-link-text a {
+        display: block;
+    }
+    
+    .project-content h4 {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .project-content h3 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .project-content p {
+        font-size: 0.9rem;
+    }
+}

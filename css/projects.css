@@ -46,7 +46,7 @@ like a block-level element, so it can:
     gap: 2rem;
 
     /* border: 3px solid red; */
-
+    flex-wrap: wrap;
 }
 
 .project-card {

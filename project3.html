@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Portfolio</title>
+    <link rel="stylesheet" href="css/projects/project3.css">
+    <link rel="stylesheet" href="css/global.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="hamburger">
+        <div class="mobile-logo">
+            <a href="index.html">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo">
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+            <label for="sidebar-active" class="close-sidebar-button">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px"
+                    fill="#1f1f1f">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+            </label>
+            <a class="home-link" href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </div>
+    </nav>
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <img src="assets/images/profile_pic.png" alt="Rawi Logo" id="profile-pic">
+                <div class="logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                    <p>Web Developer & Designer</p>
+                </div>
+            </a>
+        </div>
+
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="projects.html">Portfolio</a>
+            <a href="about.html">About</a>
+            <a href="contact.html" class="say-hello">Say Hello</a>
+        </nav>
+    </header>
+
+    <section class="projects-detail">
+        <div class="project-header">
+            <h2 class="project-title">Consistency</h2>
+            <p class="project-sub-header">IAT359 - Mobile Computing</p>
+        </div>
+        <div class="project-content">
+            <div class="project-duration">
+                <h4>Project Duration</h4>
+                <p>September 2025 - December 2025</p>
+            </div>
+
+            <p class="game-link-text">
+                Figma Prototype:
+                <a href="https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359?page-id=0%3A1&node-id=37-27&p=f&viewport=318%2C1038%2C0.05&t=Sa8cPKwGRSoHiAhw-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=37%3A27" target="_blank">
+                    View on Figma
+                </a>
+                <br>
+                GitHub Repo:
+                <a href="https://github.com/Vixlump/Consistency-App-Project" target="_blank">
+                    View on GitHub
+                </a>
+            </p>
+
+            <h3>Introduction</h3>
+            <p>Consistency is a mobile app designed to help people build and maintain healthy habits through structured tracking and motivation tools. By combining traditional habit logging with geolocation features, the app allows users to log activities based on their physical location, creating a visual journey of their progress. The goal was to encourage self-discipline and long-term commitment by merging visual progress, rewards, and spatial interaction into a cohesive experience.
+            </p>
+
+            <img src="assets/images/contents/project3/IAT359_Mockup1.png" alt="Consistency Mockup Cover">
+
+            <h3>Sketches</h3>
+            <p>Initial concepts focused on how to integrate map-based logging with standard habit tracking cards.</p>
+            <div class="sketches-container">
+                <img src="assets/images/contents/project3/IAT359 - Sketches_1.jpg" alt="Sketch 1">
+                <img src="assets/images/contents/project3/IAT359 - Sketches_2.jpg" alt="Sketch 2">
+                <img src="assets/images/contents/project3/IAT359 - Sketches_3.jpg" alt="Sketch 3">
+            </div>
+
+            <h3>Design & Development Process</h3>
+            <p>Built using <strong>React Native</strong> and <strong>Expo</strong>, the project required a robust technical architecture including Firebase for authentication and Async Storage for local data persistence. A key focus was the "Map Log" feature, which uses <code>react-native-maps</code> to let users attach photos and locations to their habits. We also implemented a gamification system where users unlock achievement cards based on their streaks, adding a layer of visual motivation.</p>
+
+            <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.png" alt="Figma Design Process">
+
+            <h3>Prototype Preview</h3>
+
+            <div class="video-row">
+                <video controls autoplay muted loop>
+                    <source src="assets/images/contents/project3/IAT359_First.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
+                <video controls autoplay muted loop>
+                    <source src="assets/images/contents/project3/IAT359_Second.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+
+                <video controls autoplay muted loop>
+                    <source src="assets/images/contents/project3/IAT359_Third.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+
+            <h3>Challenges</h3>
+            <p>One of the main technical challenges was managing the <strong>Complex Navigation Structure</strong>. We needed a mix of tab-based navigation for main screens and stack-based navigation for flows like "Create Habit." This required restructuring the navigation tree to allow specific screens to overlay the bottom tab bar.
+            </p>
+            <p>
+            Another hurdle was <strong>Conditional Rendering</strong> on the Stats screen, which needed to display data in three drastically different formats (Weekly list, Monthly grid, Yearly heatmap). We solved this by creating modular sub-components and using state variables to conditionally render the correct layout without code duplication.
+            </p>
+            <img src="assets/images/contents/project3/IAT359_Mockup2.png" alt="UI Layout Challenge Mockup">
+
+            <h3>Outcome</h3>
+            <p>We successfully implemented all core features, resulting in a functional and cohesive user experience. The final app includes secure authentication, a dynamic home dashboard, interactive habit tracking, and the unique map logging feature. Through this project, I significantly strengthened my skills in React Native component lifecycles, state management, and creating polished "Glassmorphism" UI styles.</p>
+            <img src="assets/images/contents/project3/IAT359_Mockup3.png" alt="Final Mockup Result">
+        </div>
+    </section>
+
+    <section class="connect-section">
+        <div class="connect-border-wrap">
+            <h2>Let's Build Together!</h2>
+            <p>
+                Let's collaborate on creating unique designs and functional websites. Reach out
+                to discuss how I can contribute to your team and help bring your ideas to life.
+            </p>
+            <a href="contact.html" class="connect-button">Let's Connect</a>
+        </div>
+    </section>
+
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>
