@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Original large video sources — use compressed -web.mp4 versions instead
+assets/images/contents/project6/IAT459 - Cover Video.mp4
+assets/images/contents/project6/IAT459 - Final Video Showcase.mov
