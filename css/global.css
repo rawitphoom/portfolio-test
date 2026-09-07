@@ -45,9 +45,7 @@ header {
 /* LOGO STYLES */
 .logo {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.4rem;
+    align-items: center;
 }
 
 .logo img {
@@ -96,8 +94,7 @@ header {
     display: flex;
     align-items: center;
     gap: 0.4rem;
-    /* avatar width (2.5rem) + its right margin (1rem), so they start under the name */
-    margin-left: 3.5rem;
+    margin-left: 1rem;
 }
 
 /* override the generic ".logo a" / ".hamburger a" rules */
@@ -394,7 +391,6 @@ like a block-level element, so it can:
 
     /* the top bar is tight on phones - shrink the badges and drop the link padding */
     .mobile-logo .social-badges {
-        /* the phone bar is only 60px tall, so keep these beside the name, not under it */
         margin-left: 0.5rem;
         gap: 0.3rem;
     }

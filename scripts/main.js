@@ -146,3 +146,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
   tick();
 });
+
+// Project cards: loop their video automatically, but only while the card is on screen,
+// so a visitor never downloads six videos at once.
+document.addEventListener('DOMContentLoaded', () => {
+  const videos = document.querySelectorAll('video.auto-video');
+  if (!videos.length) return;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      const video = entry.target;
+      if (entry.isIntersecting) {
+        video.play().catch(() => {}); // ignore autoplay rejections
+      } else {
+        video.pause();
+      }
+    });
+  }, { threshold: 0.25 });
+
+  videos.forEach(video => observer.observe(video));
+});
