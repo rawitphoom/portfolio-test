@@ -1,0 +1,292 @@
+/***************************** RESUME PAGE *****************************/
+
+.resume {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 10rem 1.5rem 4rem;
+    text-align: left;
+}
+
+/* ---------- Header ---------- */
+
+.resume-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 4rem;
+}
+
+.resume-title {
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.resume-subtitle {
+    margin-top: 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.resume-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 2rem;
+    background: white;
+    color: black;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.25s ease;
+}
+
+.resume-download:hover {
+    background: var(--accent-color);
+    color: white;
+}
+
+/* ---------- Sections ---------- */
+
+.resume-section {
+    scroll-margin-top: 8rem;
+    margin-bottom: 3.5rem;
+}
+
+/* the rule that trails off to the right, like a ruled heading */
+.resume-section-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.resume-section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- Entries ---------- */
+
+.resume-entry {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.resume-entry summary,
+.resume-education {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.1rem 0;
+    cursor: pointer;
+    list-style: none;
+}
+
+.resume-education {
+    cursor: default;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* hide the default disclosure triangle */
+.resume-entry summary::-webkit-details-marker {
+    display: none;
+}
+
+.resume-entry-head {
+    flex: 1;
+    min-width: 0;
+}
+
+.resume-entry-head h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.resume-entry-meta {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 0.15rem;
+}
+
+.resume-entry-dates {
+    flex-shrink: 0;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.45);
+    white-space: nowrap;
+}
+
+.resume-chevron {
+    flex-shrink: 0;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-right: 1.5px solid rgba(255, 255, 255, 0.45);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.45);
+    rotate: 45deg;
+    translate: 0 -0.15rem;
+    transition: rotate 0.25s ease, translate 0.25s ease;
+}
+
+.resume-entry[open] .resume-chevron {
+    rotate: -135deg;
+    translate: 0 0.1rem;
+}
+
+.resume-entry summary:hover h3 {
+    color: var(--accent-color);
+}
+
+.resume-bullets {
+    padding: 0 0 1.4rem 1.1rem;
+    margin: 0;
+    /* the open/close animation drives height, so the content has to clip */
+    overflow: hidden;
+}
+
+.resume-bullets li {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.5rem;
+}
+
+.resume-bullets li::marker {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.resume-bullets a {
+    color: var(--accent-color);
+    text-decoration: none;
+}
+
+.resume-bullets a:hover {
+    text-decoration: underline;
+}
+
+/* ---------- Skill chips ---------- */
+
+.resume-chip-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin: 1.5rem 0 0.75rem;
+}
+
+.resume-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.resume-chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.55rem 1.05rem;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 2rem;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.resume-chips li:hover {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: white;
+}
+
+.chip-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    /* full-colour logos carry their own fills; the interest glyphs and the few
+       single-colour marks fall back to currentColor or an inline fill */
+    fill: currentColor;
+    object-fit: contain;
+}
+
+/* supplied PNG/JPG app badges - round the corners so they sit with the flat marks */
+img.chip-icon {
+    border-radius: 0.35rem;
+}
+
+/* company logo beside an experience entry */
+.entry-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border-radius: 0.6rem;
+    object-fit: cover;
+}
+
+/* stand-in for tools with no logo in the icon set */
+.chip-mono {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.5rem;
+    height: 1.5rem;
+    flex-shrink: 0;
+    border: 1px solid currentColor;
+    border-radius: 0.3rem;
+    font-size: 0.65rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+/* school badge next to the education entry */
+.school-badge {
+    flex-shrink: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: contain;
+}
+
+/* ===================RESUME RESPONSIVE========================= */
+
+@media (max-width: 768px) {
+    .resume {
+        padding-top: 6rem;
+    }
+
+    .resume-title {
+        font-size: 2rem;
+    }
+
+    .resume-download {
+        padding: 0.75rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    /* dates drop under the job title rather than squeezing the row */
+    .resume-entry summary,
+    .resume-education {
+        flex-wrap: wrap;
+        gap: 0.35rem 1rem;
+        align-items: flex-start;
+    }
+
+    .resume-entry-head {
+        flex: 1 1 100%;
+        order: 1;
+    }
+
+    .resume-entry-dates {
+        order: 2;
+        white-space: normal;
+    }
+
+    .resume-chevron {
+        order: 3;
+        margin-left: auto;
+    }
+}

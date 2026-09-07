@@ -391,3 +391,58 @@ document.addEventListener('DOMContentLoaded', () => {
   sync();
   window.addEventListener('scroll', sync, { passive: true });
 });
+
+// Ease the resume entries open and shut. <details> toggles instantly on its own,
+// so take over the click and animate the panel's height either way.
+document.addEventListener('DOMContentLoaded', () => {
+  const entries = document.querySelectorAll('.resume-entry');
+  if (!entries.length) return;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const OPEN_MS = 320;
+  const CLOSE_MS = 240;
+  const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';   // quick start, soft landing
+  const EASE_IN = 'cubic-bezier(0.4, 0, 0.9, 0.6)';
+
+  entries.forEach(entry => {
+    const summary = entry.querySelector('summary');
+    const panel = entry.querySelector('.resume-bullets');
+    if (!summary || !panel) return;
+
+    let animation = null;
+
+    summary.addEventListener('click', event => {
+      event.preventDefault();
+
+      if (reduced.matches) {          // no motion: just flip it
+        entry.open = !entry.open;
+        return;
+      }
+
+      if (animation) animation.cancel();
+
+      if (!entry.open) {
+        entry.open = true;            // must be open before the panel can be measured
+        const height = panel.offsetHeight;
+
+        animation = panel.animate(
+          { height: ['0px', height + 'px'], opacity: [0, 1] },
+          { duration: OPEN_MS, easing: EASE_OUT }
+        );
+      } else {
+        const height = panel.offsetHeight;
+
+        animation = panel.animate(
+          { height: [height + 'px', '0px'], opacity: [1, 0] },
+          { duration: CLOSE_MS, easing: EASE_IN }
+        );
+        animation.onfinish = () => { entry.open = false; };
+      }
+
+      animation.finished
+        .catch(() => {})              // cancelled by a fast second click
+        .finally(() => { animation = null; });
+    });
+  });
+});
