@@ -290,4 +290,104 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', () => {
     if (!animating) target = window.scrollY;
   }, { passive: true });
+
+  // Stop easing the instant a press starts. A click only fires when mousedown and
+  // mouseup land on the same element, so a page still gliding under the pointer
+  // can swallow the click on whatever the user was aiming at.
+  window.addEventListener('pointerdown', () => {
+    if (!animating) return;
+    animating = false;
+    target = window.scrollY;
+  }, { passive: true });
+});
+
+// Case-study contents tracker: highlights whichever section is currently in view
+document.addEventListener('DOMContentLoaded', () => {
+  const links = document.querySelectorAll('.case-contents-nav a');
+  if (!links.length) return;
+
+  const sections = [...links]
+    .map(link => document.querySelector(link.getAttribute('href')))
+    .filter(Boolean);
+  if (!sections.length) return;
+
+  const marker = document.querySelector('.case-contents-marker');
+  const nav = document.querySelector('.case-contents-nav');
+
+  // slide the marker onto whichever link is active - vertical on desktop, and an
+  // underline once the rail turns horizontal on narrow screens
+  const moveMarker = link => {
+    if (!marker || !nav) return;
+
+    if (getComputedStyle(nav).flexDirection === 'row') {
+      marker.style.height = '';
+      marker.style.width = link.offsetWidth + 'px';
+      marker.style.translate = link.offsetLeft + 'px 0';
+    } else {
+      marker.style.width = '';
+      marker.style.height = link.offsetHeight + 'px';
+      marker.style.translate = '0 ' + link.offsetTop + 'px';
+    }
+  };
+
+  const setActive = id => {
+    links.forEach(link => {
+      const active = link.getAttribute('href') === '#' + id;
+      link.classList.toggle('is-active', active);
+      if (active) moveMarker(link);
+    });
+  };
+
+  // handle the jump here rather than leaving it to the browser, so the eased
+  // wheel scrolling doesn't fight the anchor
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      const section = document.querySelector(link.getAttribute('href'));
+      if (!section) return;
+
+      e.preventDefault();
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      section.scrollIntoView({ behavior: reduce ? 'instant' : 'smooth', block: 'start' });
+      history.replaceState(null, '', link.getAttribute('href'));
+    });
+  });
+
+  // Pick whichever section's heading last crossed the top quarter of the screen.
+  // Simple scroll math beats an observer here - sections are taller than the
+  // viewport, so more than one is visible at a time.
+  const line = () => window.innerHeight * 0.28;
+
+  const sync = () => {
+    let current = sections[0];
+
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top <= line()) current = section;
+    }
+
+    // at the very bottom the last section may never reach the line
+    const atBottom =
+      window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 4;
+    if (atBottom) current = sections[sections.length - 1];
+
+    setActive(current.id);
+  };
+
+  sync();
+  window.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', sync, { passive: true });
+});
+
+// Floating case-study CTA: slides up from the bottom once the hero is behind you
+document.addEventListener('DOMContentLoaded', () => {
+  const cta = document.querySelector('.case-float-cta');
+  if (!cta) return;
+
+  const SHOW_AFTER = 260; // px of scroll before it appears
+
+  const sync = () => {
+    cta.classList.toggle('is-visible', window.scrollY > SHOW_AFTER);
+  };
+
+  sync();
+  window.addEventListener('scroll', sync, { passive: true });
 });

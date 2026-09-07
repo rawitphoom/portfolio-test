@@ -1,0 +1,308 @@
+/***************************** CASE STUDY LAYOUT *****************************/
+
+.case-study {
+    display: grid;
+    grid-template-columns: 14rem minmax(0, 1fr);
+    gap: 4rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 10rem 1.5rem 4rem;
+    text-align: left;
+}
+
+/* ---------- Scroll tracker ---------- */
+
+.case-contents {
+    /* sticks alongside the article as it scrolls */
+    position: sticky;
+    top: 8rem;
+    align-self: start;
+}
+
+.case-contents-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 1rem;
+}
+
+.case-contents-nav {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border-left: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* one bar that slides between topics instead of five that fade */
+.case-contents-marker {
+    position: absolute;
+    left: -1px;
+    top: 0;
+    width: 2px;
+    height: 0;
+    background: var(--accent-color);
+    border-radius: 1px;
+    transition: translate 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.case-contents-nav a {
+    position: relative;
+    padding: 0.6rem 0 0.6rem 1.1rem;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.case-contents-nav a:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.case-contents-nav a.is-active {
+    color: white;
+}
+
+/* ---------- Hero ---------- */
+
+.case-eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 1.5rem;
+}
+
+/* ---------- Meta cards ---------- */
+
+.case-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 2.5rem;
+}
+
+.case-meta-card {
+    /* hugs its own text instead of stretching to fill a column */
+    flex: 0 0 auto;
+    padding: 0.85rem 1.1rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 0.75rem;
+}
+
+.case-meta-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: 0.35rem;
+}
+
+.case-meta-value {
+    font-size: 0.95rem;
+    color: white;
+    /* one line each, so every card ends up the same height */
+    white-space: nowrap;
+}
+
+/* ---------- Cover + body ---------- */
+
+.case-cover {
+    position: relative;
+    margin: 0 0 2.5rem;
+}
+
+.case-cover img {
+    width: 100%;
+    height: auto;
+    border-radius: 1rem;
+    display: block;
+}
+
+/* sticks to the bottom of the viewport but stays centred on the article column,
+   because it lives inside it rather than being fixed to the page */
+.case-float-wrap {
+    position: sticky;
+    bottom: 1.75rem;
+    z-index: 950;
+    display: flex;
+    justify-content: center;
+    padding-top: 3rem;
+    pointer-events: none;
+}
+
+.case-float-cta {
+    /* hidden until .is-visible is set on scroll */
+    opacity: 0;
+    pointer-events: none;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: 2rem;
+    white-space: nowrap;
+
+    color: white;
+    font-weight: 500;
+    text-decoration: none;
+
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.35);
+
+    transition: background-color 0.25s ease, border-color 0.25s ease,
+        opacity 0.35s ease, translate 0.35s ease;
+}
+
+.case-float-cta.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .case-contents-marker {
+        transition: none;
+    }
+}
+
+.case-float-cta span {
+    transition: translate 0.25s ease-in-out;
+}
+
+.case-float-cta:hover {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+.case-float-cta:hover span {
+    translate: 0.25rem 0;
+}
+
+.case-section {
+    /* clears the fixed header when a contents link jumps here */
+    scroll-margin-top: 8rem;
+    padding-top: 1rem;
+}
+
+.case-section h2 {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+}
+
+.case-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    /* full column width, so body copy lines up with the images and meta cards */
+}
+
+.case-section figure {
+    margin: 2rem 0 0;
+}
+
+.case-section figure img {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+}
+
+.case-video video {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    display: block;
+}
+
+/* ===================CASE STUDY RESPONSIVE========================= */
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .case-study {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding-top: 8rem;
+    }
+
+    /* the tracker becomes a horizontal strip under the header */
+    .case-contents {
+        position: sticky;
+        top: 5rem;
+        z-index: 900;
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(10px);
+        padding: 0.75rem 0;
+        margin: 0 -1.5rem;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+    }
+
+    .case-contents-label {
+        display: none;
+    }
+
+    .case-contents-nav {
+        flex-direction: row;
+        gap: 0.25rem;
+        border-left: 0;
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .case-contents-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .case-contents-nav a {
+        padding: 0.4rem 0.75rem;
+        white-space: nowrap;
+        border-radius: 2rem;
+    }
+
+    .case-contents-marker {
+        left: 0;
+        top: auto;
+        bottom: 0;
+        width: 0;
+        height: 2px;
+    }
+
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .case-study {
+        padding-top: 6rem;
+    }
+
+    .case-meta-card {
+        flex: 1 1 100%;
+    }
+
+    .case-meta-value {
+        white-space: normal;
+    }
+
+    .case-float-wrap {
+        bottom: 1.25rem;
+    }
+
+    .case-float-cta {
+        padding: 0.7rem 1.2rem;
+        font-size: 0.9rem;
+    }
+
+    .case-section {
+        padding-top: 3rem;
+    }
+
+    .case-section h2 {
+        font-size: 1.4rem;
+    }
+}

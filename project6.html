@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawi | Mixtape</title>
-    <link rel="stylesheet" href="css/projects/project5.css">
+    <link rel="stylesheet" href="css/projects/project6.css">
     <link rel="stylesheet" href="css/global.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -86,81 +86,135 @@
             <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
         </nav>
     </header>
-    <section class="projects-detail">
-        <h2 class="project-title">Mixtape</h2>
-        <h4 class="project-sub-header">IAT459 - Internet Computing</h4>
+    <section class="case-study">
 
-        <div class="project-content">
-            <div class="project-duration">
-                <h4>Duration</h4>
-                <p>March 2026 - April 2026 (2 Weeks)</p>
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#context">Context</a>
+                <a href="#process">Process</a>
+                <a href="#challenges">Challenges</a>
+                <a href="#final-product">Final Product</a>
+                <a href="#reflection">Reflection</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <!-- HERO -->
+            <div class="case-hero">
+                <p class="case-eyebrow">Academic Project &middot; Mixtape</p>
+
+                <figure class="case-cover">
+                    <img src="assets/images/contents/project6/IAT459_Cover.png" alt="Mixtape cover artwork">
+                </figure>
+
+                <div class="case-meta">
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Role</p>
+                        <p class="case-meta-value">UX/UI Designer, Frontend/Backend Developer</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Context</p>
+                        <p class="case-meta-value">Individual Project, Academic Project</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Timeline</p>
+                        <p class="case-meta-value">2 weeks</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Tools</p>
+                        <p class="case-meta-value">React, Figma, Github, Claude Code</p>
+                    </div>
+                </div>
             </div>
 
-            <div class="game-link-text">
-                <h4>Project Links</h4>
-                <p>Github Website: <a href="https://iat459-project.vercel.app/"
-                        target="_blank">https://iat459-project.vercel.app/</a></p>
+            <!-- CONTEXT -->
+            <section class="case-section" id="context">
+                <h2>Context</h2>
+                <p>
+                    Mixtape is a full-stack music catalog and playlist web app designed to bring back the personal
+                    feeling of handmade cassette tapes. The site focuses on giving listeners a space to curate their
+                    own collections, rate albums, and share what they're into, all wrapped in a dark, music-first
+                    interface accented with a copper-orange palette. The goal was to design a music platform that
+                    feels personal and expressive rather than algorithm-driven, while staying easy to navigate across
+                    both desktop and mobile.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project6/IAT459_Intro.png"
+                        alt="Mixtape intro screen showcasing the dark, music-first interface">
+                </figure>
+            </section>
+
+            <!-- PROCESS -->
+            <section class="case-section" id="process">
+                <h2>Process</h2>
+                <p>
+                    The interface was designed in Figma and built using React, with a Node.js and Express backend
+                    connected to MongoDB. Live track and album data is sourced from the Deezer API. The visual
+                    direction centered on a dark theme, Oswald display typography, and soft motion accents &mdash;
+                    including a spinning vinyl, 3D album carousel, and a real-time Web Audio API equalizer. Reusable
+                    components like album cards, review cards, and the mixtape editor were built to keep the design
+                    consistent while supporting features such as authentication, reviews, public discovery, and an
+                    admin panel.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project6/IAT459_Home_Landing.png"
+                        alt="Mixtape home landing page with 3D album carousel">
+                </figure>
+            </section>
+
+            <!-- CHALLENGES -->
+            <section class="case-section" id="challenges">
+                <h2>Challenges</h2>
+                <p>
+                    One challenge was balancing visual richness with performance, especially on mobile. Scroll-driven
+                    animations and sticky scenes behaved well on desktop but required careful tuning for iOS Safari,
+                    including viewport-math caching, GPU compositing hints, and input adjustments to prevent
+                    auto-zoom. Another challenge was structuring the backend cleanly &mdash; designing endpoints and
+                    data models that could support mixtapes, reviews, favorites, and user profiles without becoming
+                    tangled as the feature set grew.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project6/IAT459_Discover_AlbumDetail.png"
+                        alt="Mixtape album detail page with reviews and ratings">
+                </figure>
+            </section>
+
+            <!-- FINAL PRODUCT -->
+            <section class="case-section" id="final-product">
+                <h2>Final Product</h2>
+                <div class="case-video">
+                    <video controls autoplay muted loop playsinline
+                        poster="assets/images/contents/project6/IAT459_Cover.png">
+                        <source src="assets/images/contents/project6/IAT459-Showcase-web.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <figure>
+                    <img src="assets/images/contents/project6/IAT459_Dashboard_Landing.png"
+                        alt="Mixtape dashboard showing the user's curated collection">
+                </figure>
+            </section>
+
+            <!-- REFLECTION -->
+            <section class="case-section" id="reflection">
+                <h2>Reflection</h2>
+                <p>
+                    The final Mixtape app delivers a cohesive, expressive music experience that feels personal and
+                    intentional. The project strengthened my skills in full-stack development, responsive UI design,
+                    and debugging real-world cross-browser issues. The result is a platform that clearly communicates
+                    its brand personality while remaining functional, fast, and enjoyable to use on any device.
+                </p>
+            </section>
+
+
+            <div class="case-float-wrap">
+                <a class="case-float-cta" href="https://iat459-project.vercel.app/" target="_blank"
+                    rel="noopener noreferrer">View the project <span aria-hidden="true">&rarr;</span></a>
             </div>
-
-            <h3>Video</h3>
-            <div class="animation-preview-wrapper">
-                <video class="animation-preview" controls autoplay muted loop playsinline>
-                    <source src="assets/images/contents/project6/IAT459-Showcase-web.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-
-            <h3>Concept & Overview</h3>
-            <p>
-                Mixtape is a full-stack music catalog and playlist web app designed to bring back the personal feeling
-                of handmade cassette tapes. The site focuses on giving listeners a space to curate their own
-                collections, rate albums, and share what they're into, all wrapped in a dark, music-first interface
-                accented with a copper-orange palette. The goal was to design a music platform that feels personal and
-                expressive rather than algorithm-driven, while staying easy to navigate across both desktop and mobile.
-            </p>
-
-            <img src="assets/images/contents/project6/IAT459_Intro.png"
-                alt="Mixtape intro screen showcasing the dark, music-first interface">
-            </a>
-
-            <h3>Process & Technical Skills</h3>
-            <p>
-                The interface was designed in Figma and built using React, with a Node.js and Express backend connected
-                to MongoDB. Live track and album data is sourced from the Deezer API. The visual direction centered on
-                a dark theme, Oswald display typography, and soft motion accents — including a spinning vinyl, 3D album
-                carousel, and a real-time Web Audio API equalizer. Reusable components like album cards, review cards,
-                and the mixtape editor were built to keep the design consistent while supporting features such as
-                authentication, reviews, public discovery, and an admin panel.
-            </p>
-
-            <img src="assets/images/contents/project6/IAT459_Home_Landing.png"
-                alt="Mixtape home landing page with 3D album carousel">
-            </a>
-
-            <h3>Challenges</h3>
-            <p>
-                One challenge was balancing visual richness with performance, especially on mobile. Scroll-driven
-                animations and sticky scenes behaved well on desktop but required careful tuning for iOS Safari,
-                including viewport-math caching, GPU compositing hints, and input adjustments to prevent auto-zoom.
-                Another challenge was structuring the backend cleanly — designing endpoints and data models that could
-                support mixtapes, reviews, favorites, and user profiles without becoming tangled as the feature set
-                grew.
-            </p>
-
-            <img src="assets/images/contents/project6/IAT459_Discover_AlbumDetail.png"
-                alt="Mixtape album detail page with reviews and ratings">
-            </a>
-
-            <h3>Outcome & Learning</h3>
-            <p>
-                The final Mixtape app delivers a cohesive, expressive music experience that feels personal and
-                intentional. The project strengthened my skills in full-stack development, responsive UI design, and
-                debugging real-world cross-browser issues. The result is a platform that clearly communicates its brand
-                personality while remaining functional, fast, and enjoyable to use on any device.
-            </p>
-            <img src="assets/images/contents/project6/IAT459_Dashboard_Landing.png"
-                alt="Mixtape dashboard showing the user's curated collection">
-            </a>
         </div>
     </section>
 
