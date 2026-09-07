@@ -3,17 +3,29 @@
 .case-study {
     display: grid;
     grid-template-columns: 14rem minmax(0, 1fr);
-    gap: 4rem;
+    gap: 0 4rem;
     max-width: 1200px;
     margin: 0 auto;
     padding: 10rem 1.5rem 4rem;
     text-align: left;
 }
 
+/* hero spans the article column; the rail sits beside the sections below it */
+.case-hero {
+    grid-column: 2;
+}
+
+.case-main {
+    grid-column: 2;
+    grid-row: 2;
+}
+
 /* ---------- Scroll tracker ---------- */
 
 .case-contents {
     /* sticks alongside the article as it scrolls */
+    grid-column: 1;
+    grid-row: 2;
     position: sticky;
     top: 8rem;
     align-self: start;
@@ -226,8 +238,20 @@
 @media (max-width: 1024px) {
     .case-study {
         grid-template-columns: 1fr;
-        gap: 2rem;
+        gap: 0;
         padding-top: 8rem;
+    }
+
+    /* everything stacks in source order: hero, contents, article */
+    .case-hero,
+    .case-contents,
+    .case-main {
+        grid-column: auto;
+        grid-row: auto;
+    }
+
+    .case-contents {
+        margin-bottom: 2rem;
     }
 
     /* the tracker becomes a horizontal strip under the header */
@@ -281,12 +305,56 @@
         padding-top: 6rem;
     }
 
+    /* Meta drops the boxes and becomes a two-column label/value block,
+       fenced top and bottom by hairlines. */
+    .case-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.25rem 1rem;
+        padding: 1.5rem 0;
+        margin-bottom: 0;
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
     .case-meta-card {
-        flex: 1 1 100%;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    /* Tools runs long, so give it the full width */
+    .case-meta-card:last-child {
+        grid-column: 1 / -1;
     }
 
     .case-meta-value {
         white-space: normal;
+    }
+
+    /* Contents becomes a plain row of links sitting under the meta block */
+    .case-contents {
+        position: static;
+        z-index: auto;
+        background: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        margin: 1.5rem 0 0;
+        padding: 0;
+    }
+
+    .case-contents-nav {
+        gap: 1.25rem;
+    }
+
+    .case-contents-nav a {
+        padding: 0.25rem 0;
+        border-radius: 0;
+    }
+
+    /* no room for the sliding bar - the active link just brightens */
+    .case-contents-marker {
+        display: none;
     }
 
     .case-float-wrap {
