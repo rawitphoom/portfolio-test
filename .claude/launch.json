@@ -1,0 +1,19 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "portfolio",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "5000",
+        "--bind",
+        "127.0.0.1"
+      ],
+      "port": 5000,
+      "url": "http://127.0.0.1:5000",
+      "autoPort": false
+    }
+  ]
+}
