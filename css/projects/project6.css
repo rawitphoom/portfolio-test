@@ -226,6 +226,11 @@
     margin: 2rem 0 0;
 }
 
+/* a section can now run text > image > text, so space the copy off the image */
+.case-section figure + p {
+    margin-top: 2rem;
+}
+
 .case-section figure img {
     width: 100%;
     height: auto;
