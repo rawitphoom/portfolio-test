@@ -392,6 +392,9 @@ like a block-level element, so it can:
         align-items: center;
         padding: 1rem;
         margin: 0;
+        /* the mobile bar is a <nav>, so the dimmed "nav a" colour was reaching
+           the name - keep it full white */
+        color: var(--text-color);
     }
 
     .mobile-logo a:hover {
