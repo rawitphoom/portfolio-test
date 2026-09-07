@@ -13,7 +13,7 @@ header {
     left: 50%;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
+    /* border: 2px solid rgba(255, 255, 255, 0.2); */
     border-radius: 1rem;
     transform: translateX(-50%);
     /* border: 3px solid red; */
@@ -44,27 +44,22 @@ header {
 
 
 .logo-text h1 {
-    font-size: 0.9rem;
-    /* font-weight: 600; */
-}
-
-.logo-text p {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    /* font-weight: 300; */
+    font-size: 1rem;
+    /* same size as the nav links */
+    font-weight: 600;
 }
 
 
 /* NAVIGATION MENU */
 nav {
     display: flex;
-    gap: 1.5rem;
+    gap: 0.25rem;
 }
 
 nav a {
     text-decoration: none;
-    color: white;
-    font-weight: bold;
+    color: rgba(255, 255, 255, 0.65);
+    font-weight: 400;
     padding: 0.5rem 1rem;
     transition: 0.3s ease-in-out;
 }
@@ -130,7 +125,7 @@ nav a:hover {
 /* HERO SECTION */
 .hero {
     text-align: center;
-    padding: 10rem 1.5rem 6rem;
+    padding: 8rem 1.5rem 4rem;
     /* border: 3px solid red; */
 
 }
@@ -458,9 +453,22 @@ nav a:hover {
        the section scales up instead of being pulled toward its own centre */
     transform-origin: top center;
 
-    animation: appear linear;
+    animation: appear-projects linear;
     animation-timeline: view();
     animation-range: entry 0% cover 40%;
+}
+
+/* projects start at 70% and grow to full size as they scroll in */
+@keyframes appear-projects {
+    from {
+        opacity: 0;
+        scale: 0.7;
+    }
+
+    to {
+        opacity: 1;
+        scale: 1;
+    }
 }
 
 @keyframes appear {

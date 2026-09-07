@@ -166,3 +166,128 @@ document.addEventListener('DOMContentLoaded', () => {
 
   videos.forEach(video => observer.observe(video));
 });
+
+// Fade the header's border in once the page scrolls away from the top
+document.addEventListener('DOMContentLoaded', () => {
+  const header = document.querySelector('header.desktop-header');
+  if (!header) return;
+
+  const THRESHOLD = 24; // px of scroll before the border shows
+
+  const sync = () => {
+    header.classList.toggle('scrolled', window.scrollY > THRESHOLD);
+  };
+
+  sync(); // in case the page loads part-way down
+  window.addEventListener('scroll', sync, { passive: true });
+});
+
+// Ring-and-dot cursor: the dot tracks the pointer exactly, the ring trails behind it
+document.addEventListener('DOMContentLoaded', () => {
+  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  if (!finePointer) return;
+
+  const dot = document.createElement('div');
+  dot.className = 'cursor-dot';
+  const ring = document.createElement('div');
+  ring.className = 'cursor-ring';
+  document.body.append(dot, ring);
+
+  const CHASE = 0.18; // how quickly the ring catches up (1 = instant)
+  let pointerX = 0, pointerY = 0;
+  let ringX = 0, ringY = 0;
+  let seen = false;
+
+  document.addEventListener('mousemove', e => {
+    pointerX = e.clientX;
+    pointerY = e.clientY;
+
+    if (!seen) { // first move: drop both in place before showing them
+      seen = true;
+      ringX = pointerX;
+      ringY = pointerY;
+      dot.classList.add('is-visible');
+      ring.classList.add('is-visible');
+    }
+
+    dot.style.transform = `translate(${pointerX}px, ${pointerY}px)`;
+  });
+
+  // hide when the pointer leaves the window, e.g. onto the browser chrome
+  document.addEventListener('mouseleave', () => {
+    dot.classList.remove('is-visible');
+    ring.classList.remove('is-visible');
+  });
+  document.addEventListener('mouseenter', () => {
+    if (seen) {
+      dot.classList.add('is-visible');
+      ring.classList.add('is-visible');
+    }
+  });
+
+  const follow = () => {
+    ringX += (pointerX - ringX) * CHASE;
+    ringY += (pointerY - ringY) * CHASE;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+    requestAnimationFrame(follow);
+  };
+  requestAnimationFrame(follow);
+
+  // grow the ring over anything clickable
+  const CLICKABLE = 'a, button, label, input, textarea, .project-card, .faq-item label';
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest(CLICKABLE)) ring.classList.add('is-hovering');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest(CLICKABLE)) ring.classList.remove('is-hovering');
+  });
+});
+
+// Eased wheel scrolling - snappy, not a slow glide
+document.addEventListener('DOMContentLoaded', () => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+  const EASE = 0.18;  // fraction of the remaining distance covered each frame
+  const STEP = 1;     // wheel delta multiplier
+
+  let target = window.scrollY;
+  let animating = false;
+
+  const maxScroll = () =>
+    Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+
+  const run = () => {
+    const distance = target - window.scrollY;
+
+    // 'instant' matters: html { scroll-behavior: smooth } would otherwise turn each
+    // of these into its own native animation and the page would barely move
+    if (Math.abs(distance) < 0.5) { // close enough - hand control back
+      window.scrollTo({ top: target, behavior: 'instant' });
+      animating = false;
+      return;
+    }
+
+    window.scrollTo({ top: window.scrollY + distance * EASE, behavior: 'instant' });
+    requestAnimationFrame(run);
+  };
+
+  window.addEventListener('wheel', e => {
+    if (e.ctrlKey) return; // pinch-zoom
+    // the mobile sidebar scrolls itself
+    if (e.target instanceof Element && e.target.closest('.links-container')) return;
+
+    e.preventDefault();
+    target = Math.min(Math.max(target + e.deltaY * STEP, 0), maxScroll());
+
+    if (!animating) {
+      animating = true;
+      requestAnimationFrame(run);
+    }
+  }, { passive: false });
+
+  // keep in step with scrolling we don't drive (keyboard, scrollbar, anchor links)
+  window.addEventListener('scroll', () => {
+    if (!animating) target = window.scrollY;
+  }, { passive: true });
+});
