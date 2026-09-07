@@ -45,6 +45,9 @@ header {
 /* LOGO STYLES */
 .logo {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
 }
 
 .logo img {
@@ -66,14 +69,8 @@ header {
 
 
 .logo-text h1 {
-    font-size: 0.9rem;
-    /* font-weight: 600; */
-}
-
-.logo-text p {
-    font-size: 0.9rem;
-    opacity: 0.8;
-    /* font-weight: 300; */
+    font-size: 1rem;
+    /* same size as the nav links */
 }
 
 .logo-link {
@@ -93,6 +90,45 @@ header {
     color: white;
 }
   
+
+/* SOCIAL BADGES */
+.social-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    /* avatar width (2.5rem) + its right margin (1rem), so they start under the name */
+    margin-left: 3.5rem;
+}
+
+/* override the generic ".logo a" / ".hamburger a" rules */
+.social-badges a.social-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0;
+    flex-shrink: 0;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    color: white;
+    transition: 0.2s ease-in-out;
+}
+
+.social-badge svg {
+    width: 0.9rem;
+    height: 0.9rem;
+    fill: currentColor;
+}
+
+.social-badge:hover {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.social-badge:active {
+    transform: scale(0.92);
+}
 
 /* NAVIGATION MENU */
 nav {
@@ -187,10 +223,6 @@ nav a:hover {
     .logo-text h1 {
         white-space: nowrap;
         font-size: 0.8rem;
-    }
-
-    .logo-text p {
-        font-size: 0.75rem;
     }
 }
 
@@ -349,14 +381,6 @@ like a block-level element, so it can:
         margin: 0;
     }
 
-    .mobile-logo-text p {
-        font-size: 0.75rem;
-        font-weight: 400;
-        opacity: 0.8;
-        margin: 0;
-        margin-top: 0.05rem;
-    }
-
     .mobile-logo a {
         display: flex;
         align-items: center;
@@ -366,6 +390,28 @@ like a block-level element, so it can:
 
     .mobile-logo a:hover {
         background-color: black;
+    }
+
+    /* the top bar is tight on phones - shrink the badges and drop the link padding */
+    .mobile-logo .social-badges {
+        /* the phone bar is only 60px tall, so keep these beside the name, not under it */
+        margin-left: 0.5rem;
+        gap: 0.3rem;
+    }
+
+    .mobile-logo .social-badges a.social-badge {
+        width: 1.6rem;
+        height: 1.6rem;
+        padding: 0;
+    }
+
+    .mobile-logo .social-badges a.social-badge:hover {
+        background-color: transparent;
+    }
+
+    .social-badge svg {
+        width: 0.8rem;
+        height: 0.8rem;
     }
 }
 

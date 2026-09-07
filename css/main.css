@@ -144,6 +144,48 @@ nav a:hover {
     margin: 0.6rem 0;
 }
 
+/* TYPING EFFECT */
+.typing-line {
+    /* hold the line's height so the page doesn't jump between phrases */
+    min-height: 1.2em;
+}
+
+.typing-cursor {
+    display: inline-block;
+    width: 0.06em;
+    /* Inter's cap height - sits on the baseline and tops out level with the capitals */
+    height: 0.72em;
+    margin-left: 0.06em;
+    vertical-align: baseline;
+    background: currentColor;
+    animation: typing-blink 1s steps(2, start) infinite;
+}
+
+@keyframes typing-blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* shown as plain text until JS takes over, then left for screen readers only */
+.typing-line.is-typing .typing-fallback {
+    position: absolute;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    border: 0;
+}
+
+.typing-line:not(.is-typing) .typing-cursor {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .typing-cursor {
+        animation: none;
+    }
+}
+
 .hero p {
     /* max-width: 45rem; */
     max-width: 39rem;

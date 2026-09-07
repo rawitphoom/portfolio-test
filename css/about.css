@@ -60,6 +60,7 @@
     font-size: 2rem;
     font-weight: 700;
     color: #6ec1ff;
+    font-variant-numeric: tabular-nums;
   }
   
   .highlight-box p {
