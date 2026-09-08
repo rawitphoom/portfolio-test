@@ -130,15 +130,21 @@
 
 .case-cover {
     position: relative;
+    /* smaller than the article column, and the same box on every case study */
+    max-width: 42rem;
     margin: 0 0 2.5rem;
 }
 
 .case-cover img {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border-radius: 1rem;
     display: block;
+    width: 100%;
+    /* The six covers range from 1.34 to 1.89 in aspect. A fixed 16:9 box plus
+       "contain" gives every page an identical cover without cropping anyone's
+       artwork - the spare space just reads as background. */
+    aspect-ratio: 16 / 9;
+    object-fit: contain;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 1rem;
 }
 
 /* sticks to the bottom of the viewport but stays centred on the article column,
@@ -315,6 +321,10 @@
 @media (max-width: 768px) {
     .case-study {
         padding-top: 6rem;
+    }
+
+    .case-cover {
+        max-width: none;
     }
 
     /* Meta drops the boxes and becomes a two-column label/value block,
