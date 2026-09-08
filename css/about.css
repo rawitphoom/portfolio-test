@@ -171,17 +171,6 @@
     margin-top: 0.2rem;
 }
 
-/* where you are now */
-.path-item.is-current .path-year,
-.path-item.is-current .path-text p {
-    color: var(--accent-color);
-}
-
-.path-item.is-current .path-node {
-    border-color: var(--accent-color);
-    box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.18);
-}
-
 /* ===================PATH RESPONSIVE========================= */
 
 @media (max-width: 768px) {
@@ -366,22 +355,6 @@ body {
 /* ===================PHOTOS RESPONSIVE========================= */
 
 @media (max-width: 768px) {
-    .about-photos {
-        margin-top: 4rem;
-    }
-
-    .photos-title {
-        font-size: 1.35rem;
-    }
-
-    .photo-pile.is-scattered {
-        height: 30rem;
-    }
-
-    .photo-card {
-        width: 7.5rem;
-        padding: 0.4rem 0.4rem 1rem;
-    }
 }
 
 /* ---------- add / reset button ---------- */
@@ -494,5 +467,49 @@ body {
     .photo-pile.is-scattered .photo-card.is-arriving,
     .photo-pile.is-scattered .photo-card.is-leaving {
         transition: none;
+    }
+}
+
+/* ---------- photo pile sizing tiers ---------- */
+
+/* Laptops and tablets: the pile narrows, so the cards come down with it -
+   otherwise they'd crowd, and at the small end they'd look lost. */
+@media (max-width: 1024px) {
+    .photo-pile.is-scattered {
+        height: 34rem;
+    }
+
+    .photo-card {
+        width: 9.25rem;
+        padding: 0.5rem 0.5rem 1.3rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .about-photos {
+        margin-top: 4rem;
+    }
+
+    .photos-title {
+        font-size: 1.35rem;
+    }
+
+    .photo-pile.is-scattered {
+        height: 30rem;
+    }
+
+    .photo-card {
+        width: 7.5rem;
+        padding: 0.4rem 0.4rem 1rem;
+    }
+
+    .photo-more {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .photo-more svg {
+        width: 1.4rem;
+        height: 1.4rem;
     }
 }
