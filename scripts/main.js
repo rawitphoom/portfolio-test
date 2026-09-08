@@ -622,6 +622,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const wire = card => {
     card.addEventListener('pointerdown', event => {
       if (event.button !== 0 && event.pointerType === 'mouse') return;
+      // dragging a photo would fight scrolling on a phone - leave touches alone
+      if (event.pointerType === 'touch') return;
 
       cancelAnimationFrame(card._physics);
       card._physics = null;

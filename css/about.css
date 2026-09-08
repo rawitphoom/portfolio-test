@@ -513,3 +513,16 @@ body {
         height: 1.4rem;
     }
 }
+
+/* Touch devices: the photos are decoration only. Dragging them competes with
+   scrolling the page, so let touches pass straight through to the document. */
+@media (hover: none) and (pointer: coarse) {
+    .photo-pile.is-scattered {
+        touch-action: auto;
+    }
+
+    .photo-pile.is-scattered .photo-card {
+        pointer-events: none;
+        cursor: default;
+    }
+}
