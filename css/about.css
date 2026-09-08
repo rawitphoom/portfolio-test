@@ -94,3 +94,405 @@
   }
   
   
+/***************************** THE PATH *****************************/
+
+.about-path {
+    margin-top: 5rem;
+}
+
+.about-path-title {
+    font-size: 1.35rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: left;
+}
+
+.path {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.path-item {
+    display: grid;
+    grid-template-columns: 4rem 4rem minmax(0, 1fr);
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 2.5rem;
+}
+
+.path-item:last-child {
+    padding-bottom: 0;
+}
+
+.path-year {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.45);
+    text-align: right;
+}
+
+/* the badge, plus the thread running down to the next one */
+.path-node {
+    position: relative;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 1.1rem;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.path-node img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.path-item:not(:last-child) .path-node::after {
+    content: '';
+    position: absolute;
+    top: calc(100% + 1px);
+    left: 50%;
+    translate: -50% 0;
+    width: 1px;
+    height: 2.5rem;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.path-text h4 {
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+.path-text p {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 0.2rem;
+}
+
+/* where you are now */
+.path-item.is-current .path-year,
+.path-item.is-current .path-text p {
+    color: var(--accent-color);
+}
+
+.path-item.is-current .path-node {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 4px rgba(0, 132, 255, 0.18);
+}
+
+/* ===================PATH RESPONSIVE========================= */
+
+@media (max-width: 768px) {
+    .about-path {
+        margin-top: 3.5rem;
+    }
+
+    .about-path-title {
+        text-align: center;
+    }
+
+    .path-item {
+        grid-template-columns: 2.75rem 3.25rem minmax(0, 1fr);
+        gap: 1rem;
+        padding-bottom: 2rem;
+        text-align: left;
+    }
+
+    .path-node {
+        width: 3.25rem;
+        height: 3.25rem;
+        border-radius: 0.9rem;
+    }
+
+    .path-item:not(:last-child) .path-node::after {
+        height: 2rem;
+    }
+
+    .path-year {
+        font-size: 0.85rem;
+    }
+
+    .path-text h4 {
+        font-size: 0.95rem;
+    }
+
+    .path-text p {
+        font-size: 0.85rem;
+    }
+}
+
+/***************************** OFF THE CLOCK PHOTOS *****************************/
+
+/* Clip at the viewport rather than at the photo section, so a tilted card near
+   the edge isn't sliced by its own container. Only the horizontal axis is
+   clipped, which stops a sideways scrollbar without cutting the vertical spill. */
+body {
+    overflow-x: clip;
+}
+
+.about-photos {
+    position: relative;
+    /* above the rest of the page so photos can lie over the heading and the
+       sections either side - but below the fixed header, which is z-index 1000 */
+    z-index: 5;
+    margin-top: 6rem;
+    text-align: center;
+}
+
+.photos-eyebrow {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 0.75rem;
+}
+
+.photos-title {
+    font-size: 1.9rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+}
+
+/* Without JS the photos simply wrap as a tidy grid. JS adds .is-scattered and
+   takes over placement, so nothing is hidden if the script never runs. */
+.photo-pile {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 1rem 0;
+}
+
+.photo-pile.is-scattered {
+    display: block;
+    position: relative;
+    /* tall enough for three loosely-spaced rows */
+    height: 38rem;
+    /* let cards escape the box */
+    overflow: visible;
+    touch-action: pan-y;
+}
+
+.photo-card {
+    width: 11rem;
+    padding: 0.55rem 0.55rem 1.5rem;
+    background: #f4f4f2;
+    border-radius: 0.35rem;
+    box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.5);
+}
+
+.photo-pile.is-scattered .photo-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 0;
+    cursor: grab;
+    user-select: none;
+    /* JS writes these three; the transition is what makes the shuffle glide */
+    translate: var(--x, 0) var(--y, 0);
+    rotate: var(--r, 0deg);
+    transition: scale 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* each card breathes on its own clock - JS randomises duration and delay.
+   This animates `transform`, which composes with the `translate`/`rotate`
+   properties JS uses for placement instead of fighting them. */
+@keyframes photo-float {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-0.7rem);
+    }
+}
+
+.photo-pile.is-scattered .photo-card {
+    animation: photo-float var(--float-dur, 6s) ease-in-out var(--float-delay, 0s) infinite;
+}
+
+.photo-pile.is-scattered .photo-card:hover,
+.photo-card.is-dragging,
+.photo-card.is-flying {
+    animation-play-state: paused;
+}
+
+/* mid-throw: no hover scaling fighting the physics */
+.photo-card.is-flying {
+    pointer-events: none;
+    box-shadow: 0 1.6rem 3.5rem rgba(0, 0, 0, 0.7);
+}
+
+.photo-card img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 0.15rem;
+    pointer-events: none;
+}
+
+/* lift whatever you point at */
+.photo-pile.is-scattered .photo-card:hover {
+    scale: 1.06;
+    box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.65);
+}
+
+/* while a card is being dragged, drop the glide so it tracks the pointer */
+.photo-card.is-dragging {
+    cursor: grabbing;
+    transition: scale 0.3s ease, box-shadow 0.3s ease;
+    scale: 1.06;
+    box-shadow: 0 1.6rem 3.5rem rgba(0, 0, 0, 0.7);
+}
+
+.photo-hint {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.35);
+    margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .photo-pile.is-scattered .photo-card {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* ===================PHOTOS RESPONSIVE========================= */
+
+@media (max-width: 768px) {
+    .about-photos {
+        margin-top: 4rem;
+    }
+
+    .photos-title {
+        font-size: 1.35rem;
+    }
+
+    .photo-pile.is-scattered {
+        height: 30rem;
+    }
+
+    .photo-card {
+        width: 7.5rem;
+        padding: 0.4rem 0.4rem 1rem;
+    }
+}
+
+/* ---------- add / reset button ---------- */
+
+.photo-more {
+    position: relative;
+    /* .about-photos is a stacking context, so this always sits above the cards
+       no matter how high their z-index climbs as they get raised */
+    z-index: 9999;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    margin-top: 1.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: #f4f4f2;
+    cursor: pointer;
+    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.5);
+    transition: scale 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+}
+
+.photo-more:hover {
+    scale: 1.08;
+    box-shadow: 0 0.9rem 2.2rem rgba(0, 0, 0, 0.65);
+}
+
+.photo-more:active {
+    scale: 0.94;
+}
+
+.photo-more svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    overflow: visible;
+}
+
+.photo-more path {
+    fill: none;
+    stroke: #1a1a1a;
+    stroke-width: 2.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* the two icons live on top of each other and trade places */
+.icon-plus,
+.icon-reset {
+    transform-box: fill-box;
+    transform-origin: center;
+    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+.icon-reset {
+    opacity: 0;
+    transform: rotate(-140deg) scale(0.4);
+}
+
+.photo-more:hover .icon-plus {
+    transform: rotate(90deg);
+}
+
+/* out of photos: the plus spins away and the reset arrow spins in */
+.photo-more.is-reset {
+    background: var(--accent-color);
+}
+
+.photo-more.is-reset path {
+    stroke: white;
+}
+
+.photo-more.is-reset .icon-plus {
+    opacity: 0;
+    transform: rotate(140deg) scale(0.4);
+}
+
+.photo-more.is-reset .icon-reset {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+}
+
+.photo-more.is-reset:hover .icon-reset {
+    transform: rotate(-180deg);
+}
+
+/* a freshly summoned card gliding in from off screen.
+   Needs to out-specify ".photo-pile.is-scattered .photo-card", which otherwise
+   strips translate/rotate out of the transition list. */
+.photo-pile.is-scattered .photo-card.is-arriving {
+    transition: translate 1s cubic-bezier(0.22, 1, 0.36, 1),
+        rotate 1s cubic-bezier(0.22, 1, 0.36, 1),
+        scale 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* and on the way back out - it slides clean off the edge, no fade */
+.photo-pile.is-scattered .photo-card.is-leaving {
+    transition: translate 0.7s cubic-bezier(0.55, 0, 0.85, 0.35),
+        rotate 0.7s cubic-bezier(0.55, 0, 0.85, 0.35);
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .icon-plus,
+    .icon-reset {
+        transition: none;
+    }
+
+    .photo-pile.is-scattered .photo-card.is-arriving,
+    .photo-pile.is-scattered .photo-card.is-leaving {
+        transition: none;
+    }
+}

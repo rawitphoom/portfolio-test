@@ -446,3 +446,364 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// "Off the clock" photo pile: scatter the photos at random, keep reshuffling one
+// card at a time so it plays by itself, and let anyone drag them around.
+document.addEventListener('DOMContentLoaded', () => {
+  const pile = document.querySelector('.photo-pile');
+  if (!pile) return;
+
+  const cards = [...pile.querySelectorAll('.photo-card')];   // grows as more are summoned
+  if (!cards.length) return;
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const rand = (min, max) => min + Math.random() * (max - min);
+
+  pile.classList.add('is-scattered');
+
+  let top = cards.length;   // running z-index, always climbing
+
+  // A random resting spot. Horizontally the card stays inside the box; vertically
+  // it may hang past either edge, so photos lie over the heading and the sections
+  // above and below.
+  // Rather than placing each card independently - which clumps badly - the pile is
+  // split into a loose grid, one card per cell, jittered inside its cell. The
+  // result still looks scattered but nothing ends up buried.
+  const JITTER = 0.42;   // fraction of the spare room in a cell to wander by
+  const BLEED_X = 60;    // px a card may hang past the left/right of the column
+  const BLEED_Y = 90;    // px it may hang past the top/bottom
+
+  let layout = { cols: 1, rows: 1, cellW: 0, cellH: 0 };
+
+  const measure = () => {
+    const box = pile.getBoundingClientRect();
+    const w = cards[0].offsetWidth;
+    const h = cards[0].offsetHeight;
+
+    // roughly square cells for the pile's proportions, but never narrower
+    // than a card's width or the grid stops helping
+    let cols = Math.round(Math.sqrt(cards.length * (box.width / box.height))) || 1;
+    cols = Math.max(1, Math.min(cards.length, cols));
+    while (cols > 1 && box.width / cols < w * 0.72) cols--;
+
+    const rows = Math.ceil(cards.length / cols);
+    layout = {
+      cols, rows, w, h,
+      cellW: box.width / cols,
+      cellH: box.height / rows,
+    };
+  };
+
+  const place = (card, index) => {
+    const { cols, cellW, cellH, w, h } = layout;
+    const col = index % cols;
+    const row = Math.floor(index / cols);
+
+    // centre of the cell, then wander
+    const slackX = Math.max(cellW - w, 0) + w * 0.35;
+    const slackY = Math.max(cellH - h, 0) + h * 0.3;
+
+    const x = col * cellW + (cellW - w) / 2 + rand(-slackX, slackX) * JITTER;
+    const y = row * cellH + (cellH - h) / 2 + rand(-slackY, slackY) * JITTER;
+
+    card.style.setProperty('--x', x + 'px');
+    card.style.setProperty('--y', y + 'px');
+    card.style.setProperty('--r', rand(-11, 11).toFixed(1) + 'deg');
+
+    // its own drift rhythm, so the pile never pulses in unison
+    card.style.setProperty('--float-dur', rand(5, 9).toFixed(2) + 's');
+    card.style.setProperty('--float-delay', (-rand(0, 6)).toFixed(2) + 's');
+
+    card.dataset.x = x;
+    card.dataset.y = y;
+  };
+
+  const raise = card => { card.style.zIndex = ++top; };
+
+  const scatter = () => {
+    measure();
+    const slots = cards.map((_, i) => i);
+    for (let i = slots.length - 1; i > 0; i--) {      // shuffle the cell order
+      const j = Math.floor(Math.random() * (i + 1));
+      [slots[i], slots[j]] = [slots[j], slots[i]];
+    }
+    cards.forEach((card, i) => { place(card, slots[i]); raise(card); });
+  };
+
+  // Scatter straight away - the card height comes from a CSS aspect-ratio, so it
+  // measures correctly before the photos load. The extra frame is only a safety
+  // net for fonts/layout settling; on its own it would leave the pile stacked in
+  // a background tab, where requestAnimationFrame never fires.
+  scatter();
+  requestAnimationFrame(scatter);
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(scatter, 250);
+  });
+
+  // ---- drag, then throw ----
+  //
+  // While dragging we remember the last couple of pointer samples. On release
+  // that becomes a velocity, and the card flies off under gravity, bouncing off
+  // the edges of the pile until friction settles it.
+
+  // No gravity - the photos drift like something in orbit, coasting until the
+  // edges of the pile turn them back and drag eventually stills them.
+  const BOUNCE = 0.82;       // energy kept when it glances off an edge
+  const DRAG = 0.992;        // speed kept per frame
+  const SPIN_DRAG = 0.99;
+  const REST_SPEED = 14;     // px/s below which we call it settled
+  const MAX_THROW = 1400;    // px/s cap so a flick can't launch it into orbit
+
+  const bounds = () => {
+    const box = pile.getBoundingClientRect();
+    return {
+      minX: -BLEED_X,
+      maxX: Math.max(0, box.width - layout.w) + BLEED_X,
+      minY: -BLEED_Y,
+      maxY: Math.max(0, box.height - layout.h) + BLEED_Y,
+    };
+  };
+
+  const clampSpeed = v => Math.max(-MAX_THROW, Math.min(MAX_THROW, v));
+
+  const driftCard = (card, vx, vy, spin) => {
+    if (reduced.matches) return;
+
+    cancelAnimationFrame(card._physics);
+
+    let x = parseFloat(card.dataset.x) || 0;
+    let y = parseFloat(card.dataset.y) || 0;
+    let r = parseFloat(card.style.getPropertyValue('--r')) || 0;
+    let last = performance.now();
+
+    card.classList.add('is-flying');
+
+    const step = now => {
+      const dt = Math.min((now - last) / 1000, 0.032);  // clamp after a stall
+      last = now;
+
+      vx *= DRAG;
+      vy *= DRAG;
+      spin *= SPIN_DRAG;
+
+      x += vx * dt;
+      y += vy * dt;
+      r += spin * dt;
+
+      const b = bounds();
+
+      // glance off each wall, keeping most of the momentum
+      if (x < b.minX) { x = b.minX; vx = Math.abs(vx) * BOUNCE; spin = -spin * BOUNCE; }
+      if (x > b.maxX) { x = b.maxX; vx = -Math.abs(vx) * BOUNCE; spin = -spin * BOUNCE; }
+      if (y < b.minY) { y = b.minY; vy = Math.abs(vy) * BOUNCE; spin = -spin * BOUNCE; }
+      if (y > b.maxY) { y = b.maxY; vy = -Math.abs(vy) * BOUNCE; spin = -spin * BOUNCE; }
+
+      card.style.setProperty('--x', x + 'px');
+      card.style.setProperty('--y', y + 'px');
+      card.style.setProperty('--r', r.toFixed(1) + 'deg');
+      card.dataset.x = x;
+      card.dataset.y = y;
+
+      if (Math.hypot(vx, vy) < REST_SPEED) {
+        card.classList.remove('is-flying');
+        card._physics = null;
+        return;
+      }
+
+      card._physics = requestAnimationFrame(step);
+    };
+
+    card._physics = requestAnimationFrame(step);
+  };
+
+  const wire = card => {
+    card.addEventListener('pointerdown', event => {
+      if (event.button !== 0 && event.pointerType === 'mouse') return;
+
+      cancelAnimationFrame(card._physics);
+      card._physics = null;
+      card.classList.remove('is-flying');
+
+      const startX = event.clientX;
+      const startY = event.clientY;
+      const originX = parseFloat(card.dataset.x) || 0;
+      const originY = parseFloat(card.dataset.y) || 0;
+
+      // rolling sample of recent pointer positions, for the release velocity
+      let samples = [{ x: event.clientX, y: event.clientY, t: performance.now() }];
+
+      raise(card);
+      card.classList.add('is-dragging');
+      card.setPointerCapture(event.pointerId);
+
+      const move = e => {
+        const x = originX + (e.clientX - startX);
+        const y = originY + (e.clientY - startY);
+        card.style.setProperty('--x', x + 'px');
+        card.style.setProperty('--y', y + 'px');
+        card.dataset.x = x;
+        card.dataset.y = y;
+
+        samples.push({ x: e.clientX, y: e.clientY, t: performance.now() });
+        if (samples.length > 5) samples.shift();
+      };
+
+      const up = () => {
+        card.classList.remove('is-dragging');
+        card.removeEventListener('pointermove', move);
+        card.removeEventListener('pointerup', up);
+        card.removeEventListener('pointercancel', up);
+
+        const first = samples[0];
+        const last = samples[samples.length - 1];
+        const dt = (last.t - first.t) / 1000;
+
+        // a slow drag shouldn't fling; only a real flick sets it drifting.
+        // Anything gentler simply stays where it was let go.
+        if (dt > 0.005 && samples.length > 1) {
+          const vx = clampSpeed((last.x - first.x) / dt);
+          const vy = clampSpeed((last.y - first.y) / dt);
+          if (Math.hypot(vx, vy) > 60) {
+            driftCard(card, vx, vy, vx * 0.06);
+          }
+        }
+      };
+
+      card.addEventListener('pointermove', move);
+      card.addEventListener('pointerup', up);
+      card.addEventListener('pointercancel', up);
+    });
+  };
+
+  cards.forEach(wire);
+
+  // ---- the + button: fling one more photo in from off screen ----
+  //
+  // Once the pool is empty it turns into a reset: everything that was added
+  // slides back off the edges and the original dozen re-scatter.
+
+  const button = document.querySelector('.photo-more');
+  const original = [...cards];
+  const startingPool = (() => {
+    try { return JSON.parse(pile.dataset.pool || '[]'); } catch (e) { return []; }
+  })();
+  let pool = [...startingPool];
+
+  // a point beyond one of the four edges, in pile coordinates
+  const offscreenPoint = (toX, toY) => {
+    const box = pile.getBoundingClientRect();
+    const edge = Math.floor(Math.random() * 4);
+    const far = 1.4;
+    if (edge === 0) return [-box.left - layout.w * far, toY];
+    if (edge === 1) return [window.innerWidth - box.left + layout.w * far, toY];
+    if (edge === 2) return [toX, -box.top - layout.h * far];
+    return [toX, window.innerHeight - box.top + layout.h * far];
+  };
+
+  const setMode = () => {
+    const done = pool.length === 0;
+    button.classList.toggle('is-reset', done);
+    button.setAttribute('aria-label', done ? 'Reset the photos' : 'Add another photo');
+  };
+
+  const addPhoto = () => {
+    const file = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
+    if (!file) return;
+
+    const card = document.createElement('figure');
+    card.className = 'photo-card';
+    const img = document.createElement('img');
+    img.src = 'assets/images/about-photos/web/' + file;
+    img.alt = '';
+    img.draggable = false;
+    card.append(img);
+    card.dataset.file = file;
+    pile.append(card);
+
+    cards.push(card);
+    wire(card);
+    raise(card);
+
+    measure();
+    // a random cell, not the last one - the last cell is always the bottom-right
+    // of the grid, which is why new photos were all landing along the bottom
+    place(card, Math.floor(Math.random() * layout.cols * layout.rows));
+    const toX = parseFloat(card.dataset.x);
+    const toY = parseFloat(card.dataset.y);
+
+    const [fromX, fromY] = offscreenPoint(toX, toY);
+    card.style.setProperty('--x', fromX + 'px');
+    card.style.setProperty('--y', fromY + 'px');
+    card.style.setProperty('--r', rand(-160, 160).toFixed(1) + 'deg');
+
+    // commit that starting point before switching the transition on,
+    // otherwise the browser collapses both writes into one and nothing moves
+    void card.offsetWidth;
+
+    card.classList.add('is-arriving');
+    card.style.setProperty('--x', toX + 'px');
+    card.style.setProperty('--y', toY + 'px');
+    card.style.setProperty('--r', rand(-11, 11).toFixed(1) + 'deg');
+    card.dataset.x = toX;
+    card.dataset.y = toY;
+
+    const landed = event => {
+      // scale/box-shadow also transition; only the arrival counts
+      if (event && event.propertyName !== 'translate') return;
+      card.classList.remove('is-arriving');
+      card.removeEventListener('transitionend', landed);
+    };
+    card.addEventListener('transitionend', landed);
+    setTimeout(landed, 1400);   // in case the transition never reports back
+  };
+
+  const reset = () => {
+    const extras = cards.filter(card => !original.includes(card));
+
+    extras.forEach(card => {
+      cancelAnimationFrame(card._physics);
+      card._physics = null;
+      card.classList.remove('is-flying', 'is-arriving');
+
+      const [x, y] = offscreenPoint(parseFloat(card.dataset.x), parseFloat(card.dataset.y));
+      void card.offsetWidth;
+      card.classList.add('is-leaving');
+      card.style.setProperty('--x', x + 'px');
+      card.style.setProperty('--y', y + 'px');
+      card.style.setProperty('--r', rand(-200, 200).toFixed(1) + 'deg');
+
+      setTimeout(() => card.remove(), 800);
+    });
+
+    cards.length = 0;
+    cards.push(...original);
+
+    // settle the keepers back into a fresh scatter
+    original.forEach(card => {
+      cancelAnimationFrame(card._physics);
+      card._physics = null;
+      card.classList.remove('is-flying');
+      card.classList.add('is-arriving');
+      setTimeout(() => card.classList.remove('is-arriving'), 1100);
+    });
+    scatter();
+
+    pool = [...startingPool];
+    setMode();
+  };
+
+  if (button) {
+    setMode();
+    button.addEventListener('click', () => {
+      if (pool.length) {
+        addPhoto();
+        setMode();
+      } else {
+        reset();
+      }
+    });
+  }
+});
