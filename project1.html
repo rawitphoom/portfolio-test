@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawi | Mage in the Maze</title>
-    <link rel="stylesheet" href="css/projects/project1.css">
+    <link rel="stylesheet" href="css/projects/case-study.css">
     <link rel="stylesheet" href="css/global.css">
 
 
@@ -22,7 +22,11 @@
         <div class="mobile-logo">
             <!-- <img src="assets/images/profile_pic.png" alt="Rawi Logo"> -->
             <a href="index.html">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="mobile-logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -81,7 +85,11 @@
     <header class="desktop-header">
         <div class="logo">
             <a href="index.html" id="logo-link">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo" id="profile-pic">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -108,73 +116,97 @@
         </nav>
     </header>
 
-    <section class="projects-detail">
-        <div class="project-header">
-            <h2 class="project-title">Mage in the Maze</h2>
-            <p class="project-sub-header"> IAT167 - Digital Games</p>
-        </div>
-        <div class="project-content">
-            <div class="project-duration">
-                <h4>Project Duration</h4>
-                <p>July 2024 - August 2024 (2 weeks)</p>
+    <section class="case-study">
+
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Academic Project &middot; Mage in the Maze</p>
+
+            <figure class="case-cover">
+                <img src="assets/images/contents/project1/IAT167_Cover.png" alt="Mage in the Maze cover">
+            </figure>
+
+            <div class="case-meta">
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Role</p>
+                        <p class="case-meta-value">Game Designer, Developer</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Context</p>
+                        <p class="case-meta-value">Individual Project, Academic Project</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Timeline</p>
+                        <p class="case-meta-value">2 weeks</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Tools</p>
+                        <p class="case-meta-value">p5.js, JavaScript</p>
+                    </div>
             </div>
-            <p class="game-link-text">
-                Game Link:
-                <a href="https://editor.p5js.org/rawitphoom/full/yKDE17Tsg" target="_blank">
-                    https://editor.p5js.org/rawitphoom/full/yKDE17Tsg
-                </a>
-            </p>
+        </div>
 
-            <img class="hover-gif" src="assets/images/contents/project1/IAT167_First.gif"
-                alt="Mage in the Maze Animation">
-            <!-- <img src="assets/images/contents/IAT167_Cover.png" alt="IAT167_Cover"> -->
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#context">Context</a>
+                <a href="#process">Process</a>
+                <a href="#final-product">Final Product</a>
+                <a href="#reflection">Reflection</a>
+            </nav>
+        </aside>
 
-            <h3>Introduction</h3>
-            <p>This project focuses on creating a tile-based game using p5.js, where players navigate a maze to avoid
-                enemies, collect points to win, and unlock doors using keys. Additional mechanics include cutting trees
-                to access keys and strategic exploration within a dynamic environment.
-            </p>
+        <div class="case-main">
 
-            <img class="hover-gif" src="assets/images/contents/project1/IAT167_Second.gif"
-                alt="Mage in the Maze Animation">
-            <!-- <img src="assets/images/contents/IAT167_key.png" alt="IAT167_Key"> -->
+            <section class="case-section" id="context">
+                <h2>Context</h2>
+                <p>
+                    This project focuses on creating a tile-based game using p5.js, where players navigate a maze to avoid enemies, collect points to win, and unlock doors using keys. Additional mechanics include cutting trees to access keys and strategic exploration within a dynamic environment.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project1/IAT167_First.gif" alt="Mage in the Maze gameplay">
+                </figure>
+            </section>
 
-            <h3>Design Process</h3>
-            <p>The process began with a simple idea of finding a character and designing an environment that complements
-                its theme. Using p5.js, I developed the game world and uploaded multiple sprite images to create smooth
-                character and enemy animations, enhancing the gameplay experience.
-            </p>
+            <section class="case-section" id="process">
+                <h2>Process</h2>
+                <p>
+                    The process began with a simple idea of finding a character and designing an environment that complements its theme. Using p5.js, I developed the game world and uploaded multiple sprite images to create smooth character and enemy animations, enhancing the gameplay experience.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project1/IAT167_Second.gif" alt="Character and enemy animation">
+                </figure>
+                <p>
+                    One of the biggest challenges in this project was implementing collision detection for multiple game elements. I began by solving player and enemy collisions by using bounding box logic, where if the player&rsquo;s coordinates overlapped with an enemy&rsquo;s hitbox, health would decrease. Once this was working smoothly, I reused and modified the logic to handle collisions with doors (to prevent passage without keys), trees (to block movement unless cut), and projectiles (to trigger damage or interactions). This modular approach made the system easier to manage and ensured consistent behavior across all interactive elements in the game.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project1/IAT167_Third.gif" alt="Collision and hazard interactions">
+                </figure>
+            </section>
 
-            <img class="hover-gif" src="assets/images/contents/project1/IAT167_Third.gif"
-                alt="Mage in the Maze Animation">
-            <!-- <img src="assets/images/contents/IAT167_lava.png" alt="IAT167_lava"> -->
+            <section class="case-section" id="final-product">
+                <h2>Final Product</h2>
+                <figure>
+                    <img src="assets/images/contents/project1/IAT167_Fourth.gif" alt="Final gameplay preview">
+                </figure>
+            </section>
 
-            <h3>Challenges</h3>
-            <p>One of the biggest challenges in this project was implementing collision detection for multiple game
-                elements. I began by solving player and enemy collisions by using bounding box logic, where if the
-                player’s
-                coordinates overlapped with an enemy’s hitbox, health would decrease. Once this was working smoothly, I
-                reused and modified the logic to handle collisions with doors (to prevent passage without keys), trees
-                (to block movement unless cut), and projectiles (to trigger damage or interactions). This modular
-                approach made the system easier to manage and ensured consistent behavior across all interactive
-                elements in the game.
-            </p>
+            <section class="case-section" id="reflection">
+                <h2>Reflection</h2>
+                <p>
+                    The game was fully playable and tested by classmates, who gave helpful feedback on the controls, design, and game mechanics. Many liked the key-door system and tree-cutting feature. I used their feedback to adjust the difficulty and make interactions feel clearer. This project helped me learn how to solve problems creatively and improve designs based on what players need, which I can use in future game or interactive projects.
+                </p>
+            </section>
 
-            <img class="hover-gif" src="assets/images/contents/project1/IAT167_Fourth.gif"
-                alt="Mage in the Maze Animation">
-            <!-- <img src="assets/images/contents/IAT167_fire.png" alt="IAT167_fire"> -->
-
-            <h3>Outcome</h3>
-            <p>The game was fully playable and tested by classmates, who gave helpful feedback on the controls, design,
-                and game mechanics. Many liked the key-door system and tree-cutting feature. I used their feedback to
-                adjust the difficulty and make interactions feel clearer. This project helped me learn how to solve
-                problems creatively and improve designs based on what players need, which I can use in future game or
-                interactive projects.
-            </p>
+            <div class="case-float-wrap">
+                <a class="case-float-cta" href="https://editor.p5js.org/rawitphoom/full/yKDE17Tsg" target="_blank"
+                    rel="noopener noreferrer">View the game <span aria-hidden="true">&rarr;</span></a>
+            </div>
         </div>
     </section>
 
-    <!--------------------------- CONNECT SECTION --------------------------------------->
     <section class="connect-section">
         <div class="connect-border-wrap">
             <h2>Let's Build Together!</h2>

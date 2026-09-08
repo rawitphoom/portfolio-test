@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawi | Whimsy Bites</title>
-    <link rel="stylesheet" href="css/projects/project5.css">
+    <link rel="stylesheet" href="css/projects/case-study.css">
     <link rel="stylesheet" href="css/global.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,11 @@
     <nav class="hamburger">
         <div class="mobile-logo">
             <a href="index.html">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="mobile-logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -76,7 +80,11 @@
     <header class="desktop-header">
         <div class="logo">
             <a href="index.html" id="logo-link">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo" id="profile-pic">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -101,75 +109,100 @@
             <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
         </nav>
     </header>
-    <section class="projects-detail">
-        <h2 class="project-title">Whimsy Bites</h2>
-        <h4 class="project-sub-header">IAT339 - Web Design and Development</h4>
+    <section class="case-study">
 
-        <div class="project-content">
-            <div class="project-duration">
-                <h4>Duration</h4>
-                <p>March 2025 - April 2025 (1 Months)</p>
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Academic Project &middot; Whimsy Bites</p>
+
+            <figure class="case-cover">
+                <img src="assets/images/contents/project5/IAT339-cover.png" alt="Whimsy Bites cover">
+            </figure>
+
+            <div class="case-meta">
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Role</p>
+                        <p class="case-meta-value">Web Designer, Frontend Developer</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Context</p>
+                        <p class="case-meta-value">Individual Project, Academic Project</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Timeline</p>
+                        <p class="case-meta-value">1 month</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Tools</p>
+                        <p class="case-meta-value">Figma, HTML, CSS, JavaScript</p>
+                    </div>
             </div>
+        </div>
 
-            <div class="game-link-text">
-                <h4>Project Links</h4>
-                <p>Github Website: <a href="https://rawitphoom.github.io/Whimsy-test/home.html"
-                        target="_blank">https://rawitphoom.github.io/Whimsy-test/home.html</a></p>
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#context">Context</a>
+                <a href="#process">Process</a>
+                <a href="#final-product">Final Product</a>
+                <a href="#reflection">Reflection</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <section class="case-section" id="context">
+                <h2>Context</h2>
+                <p>
+                    Whimsy Bites is a playful dessert brand website designed to capture a sense of fun, sweetness, and charm through bold pink tones, soft typography, and friendly visuals. The website focuses on creating an inviting first impression while clearly presenting the brand story, menu highlights, and ordering information. The goal was to design a visually appealing and easy-to-navigate experience that reflects the joyful personality of the brand and makes users feel excited about desserts.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project5/IAT339-Image1.png" alt="Whimsy Bites brand visuals">
+                </figure>
+            </section>
+
+            <section class="case-section" id="process">
+                <h2>Process</h2>
+                <p>
+                    The website was designed in Figma and developed using HTML, CSS, and JavaScript, with a strong focus on front-end visuals and responsive behavior. A pink-forward color palette was paired with soft shadows, rounded components, and subtle animations to reinforce the whimsical brand identity. Reusable components such as dessert cards, buttons, and section layouts were created to keep the design consistent across the site while allowing flexibility for future updates.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project5/IAT339-FigmaFinalDesign.png" alt="Figma final design">
+                </figure>
+                <p>
+                    One challenge was maintaining visual playfulness without sacrificing clarity. With strong colors and decorative elements, careful spacing and hierarchy were needed to ensure content remained easy to scan. Another challenge involved responsive design, especially scaling dessert images and typography across different screen sizes while keeping the layout balanced and polished.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project5/IAT339-Image3.png" alt="Responsive layout work">
+                </figure>
+            </section>
+
+            <section class="case-section" id="final-product">
+                <h2>Final Product</h2>
+                <div class="case-video">
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project5/IAT339-Video.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <figure>
+                    <img src="assets/images/contents/project5/IAT339-Image2.png" alt="Final website">
+                </figure>
+            </section>
+
+            <section class="case-section" id="reflection">
+                <h2>Reflection</h2>
+                <p>
+                    The final Whimsy Bites website delivers a cohesive and joyful brand experience that feels friendly, modern, and inviting. The project strengthened my skills in visual storytelling, color-driven UI design, and responsive front-end development. The result is a website that clearly communicates brand personality while remaining functional and easy to use.
+                </p>
+            </section>
+
+            <div class="case-float-wrap">
+                <a class="case-float-cta" href="https://rawitphoom.github.io/Whimsy-test/home.html" target="_blank"
+                    rel="noopener noreferrer">View the project <span aria-hidden="true">&rarr;</span></a>
             </div>
-
-            <h3>Video</h3>
-            <div class="animation-preview-wrapper">
-                <video class="animation-preview" controls autoplay muted loop playsinline>
-                    <source src="assets/images/contents/project5/IAT339-Video.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-
-            <h3>Concept & Overview</h3>
-            <p>
-                Whimsy Bites is a playful dessert brand website designed to capture a sense of fun, sweetness, and charm
-                through bold pink tones, soft typography, and friendly visuals. The website focuses on creating an
-                inviting first impression while clearly presenting the brand story, menu highlights, and ordering
-                information. The goal was to design a visually appealing and easy-to-navigate experience that reflects
-                the joyful personality of the brand and makes users feel excited about desserts.
-            </p>
-
-            <img src="assets/images/contents/project5/IAT339-Image1.png"
-                alt="Concept Art and Storyboard from the animation project">
-            </a>
-
-            <h3>Process & Technical Skills</h3>
-            <p>
-                The website was designed in Figma and developed using HTML, CSS, and JavaScript, with a strong focus on
-                front-end visuals and responsive behavior. A pink-forward color palette was paired with soft shadows,
-                rounded components, and subtle animations to reinforce the whimsical brand identity.
-                Reusable components such as dessert cards, buttons, and section layouts were created to keep the design
-                consistent across the site while allowing flexibility for future updates. </p>
-
-            <img src="assets/images/contents/project5/IAT339-FigmaFinalDesign.png"
-                alt="Process image showing character rigging or texturing">
-            </a>
-
-            <h3>Challenges</h3>
-            <p>
-                One challenge was maintaining visual playfulness without sacrificing clarity. With strong colors and
-                decorative elements, careful spacing and hierarchy were needed to ensure content remained easy to scan.
-                Another challenge involved responsive design, especially scaling dessert images and typography across
-                different screen sizes while keeping the layout balanced and polished. </p>
-
-            <img src="assets/images/contents/project5/IAT339-Image3.png"
-                alt="Process image showing character rigging or texturing">
-            </a>
-
-            <h3>Outcome & Learning</h3>
-            <p>
-                The final Whimsy Bites website delivers a cohesive and joyful brand experience that feels friendly,
-                modern, and inviting. The project strengthened my skills in visual storytelling, color-driven UI design,
-                and responsive front-end development. The result is a website that clearly communicates brand
-                personality while remaining functional and easy to use.
-            </p>
-            <img src="assets/images/contents/project5/IAT339-Image2.png" alt="Final scene or render of the animation">
-            </a>
         </div>
     </section>
 

@@ -25,11 +25,14 @@ header {
     display: flex;
 }
 
-.logo img {
+.logo img,
+.logo .logo-avatar {
     width: 2.5rem;
     height: 2.5rem;
     border-radius: 0.5rem;
     margin-right: 1rem;
+    /* the clip is 4:5, so letterbox it rather than squashing it into the square */
+    object-fit: contain;
 }
 
 #profile-pic {
@@ -316,7 +319,8 @@ nav a:hover {
         display: flex;
     }
 
-    .logo img {
+    .logo img,
+    .logo .logo-avatar {
         width: 2.5rem;
         height: 2.5rem;
         border-radius: 0.5rem;

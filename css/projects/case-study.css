@@ -398,3 +398,47 @@
         grid-column: auto;
     }
 }
+
+/* ---------- Extras used by the other case studies ---------- */
+
+/* two or three clips side by side (prototype walkthroughs) */
+.case-video-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.case-video-row video {
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    display: block;
+}
+
+.case-section ul {
+    margin: 1.25rem 0 0;
+    padding-left: 1.15rem;
+}
+
+.case-section li {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 0.6rem;
+}
+
+.case-section li::marker {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.case-section figure a {
+    display: block;
+}
+
+.case-section code {
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.3rem;
+    background: rgba(255, 255, 255, 0.08);
+    font-size: 0.9em;
+}

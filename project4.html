@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawi | Small But Mighty</title>
-    <link rel="stylesheet" href="css/projects/project4.css">
+    <link rel="stylesheet" href="css/projects/case-study.css">
     <link rel="stylesheet" href="css/global.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,11 @@
     <nav class="hamburger">
         <div class="mobile-logo">
             <a href="index.html">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="mobile-logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -76,7 +80,11 @@
     <header class="desktop-header">
         <div class="logo">
             <a href="index.html" id="logo-link">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo" id="profile-pic">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -101,78 +109,105 @@
             <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
         </nav>
     </header>
-    <section class="projects-detail">
-        <h2 class="project-title">Small But Mighty</h2>
-        <h4 class="project-sub-header">IAT343 - Animation</h4>
+    <section class="case-study">
 
-        <div class="project-content">
-            <div class="project-duration">
-                <h4>Duration</h4>
-                <p>May 2025 - August 2025 (4 Months)</p>
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Academic Project &middot; Small But Mighty</p>
+
+            <figure class="case-cover">
+                <img src="assets/images/contents/project4/IAT343_cover.png" alt="Small But Mighty cover">
+            </figure>
+
+            <div class="case-meta">
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Role</p>
+                        <p class="case-meta-value">Animator, Designer</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Context</p>
+                        <p class="case-meta-value">Individual Project, Academic Project</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Timeline</p>
+                        <p class="case-meta-value">4 months</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Tools</p>
+                        <p class="case-meta-value">Maya, After Effects, Illustrator, Framer</p>
+                    </div>
             </div>
+        </div>
 
-            <div class="game-link-text">
-                <h4>Project Links</h4>
-                <p>Framer Website: <a href="https://iat343-small-but-mighty.framer.website/sbm-final"
-                        target="_blank">https://iat343-small-but-mighty.framer.website/sbm-final</a></p>
-                <p>Full Animation: <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A"
-                        target="_blank">https://www.youtube.com/watch?v=6_yl6zeRr0A</a></p>
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#context">Context</a>
+                <a href="#process">Process</a>
+                <a href="#final-product">Final Product</a>
+                <a href="#reflection">Reflection</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <section class="case-section" id="context">
+                <h2>Context</h2>
+                <p>
+                    The &ldquo;Small But Mighty&rdquo; project, developed for IAT 343 Animation, is a short narrative piece focusing on dynamic motion and character interaction. It explores the themes of perseverance and size discrepancy through a whimsical animated sequence. This project was a deep dive into the principles of animation, including timing, easing, squash and stretch, and anticipation.
+                </p>
+                <figure>
+                    <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/contents/project4/IAT343 - Image2.png" alt="Concept art and storyboard">
+                    </a>
+                </figure>
+            </section>
+
+            <section class="case-section" id="process">
+                <h2>Process</h2>
+                <p>
+                    The animation was primarily created using Maya. Key stages included:
+                </p>
+                <ul>
+                    <li><strong>Storyboarding:</strong> Mapping out the scene progression, camera angles, and key moments.</li>
+                    <li><strong>Character Rigging:</strong> Preparing vector assets in Illustrator and rigging them for smooth movement within After Effects.</li>
+                    <li><strong>Motion Graphics:</strong> Integrating dynamic text, environment effects, and UI elements (as seen in the Framer demo) to enhance the overall experience.</li>
+                    <li><strong>Timing &amp; Pacing:</strong> Adjusting frame rates and keyframes to convey the correct weight and speed of the characters.</li>
+                </ul>
+                <figure>
+                    <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/contents/project4/IAT343 - Image3.png" alt="Rigging and texturing process">
+                    </a>
+                </figure>
+            </section>
+
+            <section class="case-section" id="final-product">
+                <h2>Final Product</h2>
+                <figure>
+                    <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/contents/project4/IAT343 - Image1.png" alt="Still frame from the final animation">
+                    </a>
+                </figure>
+                <figure>
+                    <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank" rel="noopener noreferrer">
+                        <img src="assets/images/contents/project4/IAT343 - Image4.png" alt="Final render">
+                    </a>
+                </figure>
+            </section>
+
+            <section class="case-section" id="reflection">
+                <h2>Reflection</h2>
+                <p>
+                    The final output is a 3-minute, 28-second animation demonstrating proficiency in complex keyframe animation, hierarchical layering, and sound design synchronization. The project&rsquo;s technical complexity in combining multiple animation principles into a cohesive narrative was a significant learning experience in production workflow and creative problem-solving.
+                </p>
+            </section>
+
+            <div class="case-float-wrap">
+                <a class="case-float-cta" href="https://iat343-small-but-mighty.framer.website/sbm-final" target="_blank"
+                    rel="noopener noreferrer">View the project <span aria-hidden="true">&rarr;</span></a>
             </div>
-
-            <h3>Final Animation</h3>
-            <div class="animation-preview-wrapper">
-                <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank"
-                    aria-label="Watch Full Animation on YouTube">
-                    <img src="assets/images/contents/project4/IAT343 - Image1.png"
-                        alt="Still frame preview of the Small But Mighty animation">
-                </a>
-            </div>
-
-            <h3>Concept & Overview</h3>
-            <p>
-                The "Small But Mighty" project, developed for IAT 343 Animation, is a short narrative piece focusing on
-                dynamic motion and character interaction. It explores the themes of perseverance and size discrepancy
-                through a whimsical animated sequence. This project was a deep dive into the principles of animation,
-                including timing, easing, squash and stretch, and anticipation.
-            </p>
-            <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank"
-                aria-label="Watch Full Animation on YouTube">
-                <img src="assets/images/contents/project4/IAT343 - Image2.png"
-                    alt="Concept Art and Storyboard from the animation project">
-            </a>
-
-            <h3>Process & Technical Skills</h3>
-            <p>
-                The animation was primarily created using Maya. Key stages included:
-            </p>
-            <ul>
-                <li><strong>Storyboarding:</strong> Mapping out the scene progression, camera angles, and key moments.
-                </li>
-                <li><strong>Character Rigging:</strong> Preparing vector assets in Illustrator and rigging them for
-                    smooth movement within After Effects.</li>
-                <li><strong>Motion Graphics:</strong> Integrating dynamic text, environment effects, and UI elements (as
-                    seen in the Framer demo) to enhance the overall experience.</li>
-                <li><strong>Timing & Pacing:</strong> Adjusting frame rates and keyframes to convey the correct weight
-                    and speed of the characters.</li>
-            </ul>
-            <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank"
-                aria-label="Watch Full Animation on YouTube">
-                <img src="assets/images/contents/project4/IAT343 - Image3.png"
-                    alt="Process image showing character rigging or texturing">
-            </a>
-
-            <h3>Outcome & Learning</h3>
-            <p>
-                The final output is a 3-minute, 28-second animation demonstrating proficiency in complex keyframe
-                animation, hierarchical layering, and sound design synchronization. The project’s technical complexity
-                in combining multiple animation principles into a cohesive narrative was a significant learning
-                experience in production workflow and creative problem-solving.
-            </p>
-            <a href="https://www.youtube.com/watch?v=6_yl6zeRr0A" target="_blank"
-                aria-label="Watch Full Animation on YouTube">
-                <img src="assets/images/contents/project4/IAT343 - Image4.png"
-                    alt="Final scene or render of the animation">
-            </a>
         </div>
     </section>
 

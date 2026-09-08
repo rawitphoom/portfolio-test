@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawi | NextStep</title>
-    <link rel="stylesheet" href="css/projects/project2.css">
+    <link rel="stylesheet" href="css/projects/case-study.css">
     <link rel="stylesheet" href="css/global.css">
 
 
@@ -22,7 +22,11 @@
         <div class="mobile-logo">
             <!-- <img src="assets/images/profile_pic.png" alt="Rawi Logo"> -->
             <a href="index.html">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="mobile-logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -81,7 +85,11 @@
     <header class="desktop-header">
         <div class="logo">
             <a href="index.html" id="logo-link">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo" id="profile-pic">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -108,101 +116,120 @@
         </nav>
     </header>
 
-    <section class="projects-detail">
-        <div class="project-header">
-            <h2 class="project-title">NextStep</h2>
-            <p class="project-sub-header"> IAT334 - Interface Design</p>
+    <section class="case-study">
+
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Academic Project &middot; NextStep</p>
+
+            <figure class="case-cover">
+                <img src="assets/images/contents/project2/IAT334_Cover.png" alt="NextStep cover">
+            </figure>
+
+            <div class="case-meta">
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Role</p>
+                        <p class="case-meta-value">UX/UI Designer, Prototyper</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Context</p>
+                        <p class="case-meta-value">Team Project, Academic Project</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Timeline</p>
+                        <p class="case-meta-value">6 weeks</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Tools</p>
+                        <p class="case-meta-value">Figma, ProtoPie</p>
+                    </div>
+            </div>
         </div>
-        <div class="project-content">
-            <div class="project-duration">
-                <h4>Project Duration</h4>
-                <p>October 2024 - December 2024 (6 weeks)</p>
+
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#context">Context</a>
+                <a href="#process">Process</a>
+                <a href="#final-product">Final Product</a>
+                <a href="#reflection">Reflection</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <section class="case-section" id="context">
+                <h2>Context</h2>
+                <p>
+                    NextStep is an app designed to empower international students seeking part-time employment. The app combines job searching, AI-driven interview preparation, and work-hour tracking into one platform, this app simplifies the challenges students face when balancing work and academics.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_Mockup1.png" alt="NextStep mockup cover">
+                </figure>
+            </section>
+
+            <section class="case-section" id="process">
+                <h2>Process</h2>
+                <p>
+                    The project began by identifying key pain points for international students, including limited work-hour regulations and interview preparation barriers. My role focused on designing and prototyping the user interface and interaction flows. I created interactive elements such as the work-hour tracker, job application buttons, and navigation for key pages like Home, Saved Jobs, and Account. Using Figma and ProtoPie, I developed features such as a dynamic timer for tracking hours, login/sign-up conditions, and a search function. To ensure the app met user expectations, we conducted usability tests and refined the design based on feedback.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_Sketch1.png" alt="Early sketches">
+                </figure>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_Sketch2.png" alt="Interface sketches">
+                </figure>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_Sketch3.png" alt="Flow sketches">
+                </figure>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_FigmaDesignProcess1.png" alt="Figma design process">
+                </figure>
+                <p>
+                    One of the biggest challenges was prototyping the AI interview practice feature in ProtoPie. I had to make the counting timer that started when users pressed &ldquo;Record,&rdquo; which required adding simple code to simulate the countdown. Another challenge was creating how the AI responds to specific keywords. I set up keyword-triggered replies to make it feel interactive without real AI. Since this was just a prototype, the AI couldn&rsquo;t truly listen, so I had to carefully plan how the interactions would feel real.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_Mockup2.png" alt="UI layout challenge mockup">
+                </figure>
+            </section>
+
+            <section class="case-section" id="final-product">
+                <h2>Final Product</h2>
+                <div class="case-video-row">
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project2/IAT334_First.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project2/IAT334_Second.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project2/IAT334_Third.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <figure>
+                    <img src="assets/images/contents/project2/IAT334_Mockup3.png" alt="Final mockup result">
+                </figure>
+            </section>
+
+            <section class="case-section" id="reflection">
+                <h2>Reflection</h2>
+                <p>
+                    The prototype was tested with users, and we refined it based on their feedback. The updated version improved clarity and better supported users through the interview prep process. This project helped me improve my design thinking and understand how small changes in layout, clarity, and guidance can make a big impact on usability.
+                </p>
+            </section>
+
+            <div class="case-float-wrap">
+                <a class="case-float-cta" href="https://cloud.protopie.io/p/90d77d3f2f4c177e9902abce" target="_blank"
+                    rel="noopener noreferrer">View the prototype <span aria-hidden="true">&rarr;</span></a>
             </div>
-
-            <p class="game-link-text">
-                Prototype:
-                <a href="https://cloud.protopie.io/p/90d77d3f2f4c177e9902abce" target="_blank">
-                    https://cloud.protopie.io/p/90d77d3f2f4c177e9902abce
-                </a>
-            </p>
-
-            <!-- Introduction -->
-            <h3>Introduction</h3>
-            <p>NextStep is an app designed to empower international students seeking part-time employment. The app
-                combines job searching, AI-driven interview preparation, and work-hour tracking into one platform, this
-                app simplifies the challenges students face when balancing work and academics.
-            </p>
-
-            <!-- Mockup Cover Image -->
-            <img src="assets/images/contents/project2/IAT334_Mockup1.png" alt="NextStep Mockup Cover">
-
-            <!-- Sketches -->
-            <h3>Sketches</h3>
-            <img src="assets/images/contents/project2/IAT334_Sketch1.png" alt="Sketch 1">
-            <img src="assets/images/contents/project2/IAT334_Sketch2.png" alt="Sketch 2">
-            <img src="assets/images/contents/project2/IAT334_Sketch3.png" alt="Sketch 3">
-
-            <!-- Design Process -->
-            <h3>Design Process</h3>
-            <p>The project began by identifying key pain points for international students, including limited work-hour
-                regulations and interview preparation barriers. My role focused on designing and prototyping the user
-                interface and interaction flows. I created interactive elements such as the work-hour tracker, job
-                application buttons, and navigation for key pages like Home, Saved Jobs, and Account. Using Figma and
-                ProtoPie, I developed features such as a dynamic timer for tracking hours, login/sign-up conditions, and
-                a search function. To ensure the app met user expectations, we conducted usability tests and refined the
-                design based on feedback.</p>
-
-            <img src="assets/images/contents/project2/IAT334_FigmaDesignProcess1.png" alt="Figma Process 1">
-
-
-
-            <!-- Prototype Preview -->
-            <h3>Prototype Preview</h3>
-
-            <div class="video-row">
-                <video controls autoplay muted loop>
-                    <source src="assets/images/contents/project2/IAT334_First.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-
-                <video controls autoplay muted loop>
-                    <source src="assets/images/contents/project2/IAT334_Second.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-
-                <video controls autoplay muted loop>
-                    <source src="assets/images/contents/project2/IAT334_Third.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-
-
-            <!-- Challenges -->
-            <h3>Challenges</h3>
-            <!-- <p>One major challenge was ensuring the app effectively balanced functionality and ease of use. Designing a
-                seamless experience for features like job filtering and interview practice required iterative testing
-                and adjustments. For instance, improvements to the AI interview preparation flow were implemented after
-                observing user interactions during testing.
-            </p> -->
-            <p>One of the biggest challenges was prototyping the AI interview practice feature in ProtoPie. I had to
-                to make the counting timer that started when users pressed “Record,” which required adding simple code
-                to simulate the countdown. Another challenge was creating how the AI
-                responses to specific keywords. I set up keyword-triggered replies to make it feel interactive
-                without real AI. Since this was just a prototype, the AI couldn't truly listen, so I had
-                to carefully plan how the interactions would feel real. </p>
-            <img src="assets/images/contents/project2/IAT334_Mockup2.png" alt="UI Layout Challenge Mockup">
-
-            <!-- Outcome -->
-            <h3>Outcome</h3>
-            <p>The prototype was tested with users, and we refined it based on their feedback. The updated version
-                improved clarity and better supported users through the interview prep process. This project helped me
-                improve my design thinking and understand how small changes in layout, clarity, and guidance can make a
-                big impact on usability</p>
-            <img src="assets/images/contents/project2/IAT334_Mockup3.png" alt="Final Mockup Result">
         </div>
     </section>
 
-    <!--------------------------- CONNECT SECTION --------------------------------------->
     <section class="connect-section">
         <div class="connect-border-wrap">
             <h2>Let's Build Together!</h2>

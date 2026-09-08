@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rawi | Consistency</title>
-    <link rel="stylesheet" href="css/projects/project3.css">
+    <link rel="stylesheet" href="css/projects/case-study.css">
     <link rel="stylesheet" href="css/global.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -19,7 +19,11 @@
     <nav class="hamburger">
         <div class="mobile-logo">
             <a href="index.html">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="mobile-logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -77,7 +81,11 @@
     <header class="desktop-header">
         <div class="logo">
             <a href="index.html" id="logo-link">
-                <img src="assets/images/profile_pic_animated.png" alt="Rawi Logo" id="profile-pic">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm">
+                </video>
                 <div class="logo-text">
                     <h1>Rawitphoom Kiatthitinan</h1>
                 </div>
@@ -103,93 +111,117 @@
         </nav>
     </header>
 
-    <section class="projects-detail">
-        <div class="project-header">
-            <h2 class="project-title">Consistency</h2>
-            <p class="project-sub-header">IAT359 - Mobile Computing</p>
+    <section class="case-study">
+
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Academic Project &middot; Consistency</p>
+
+            <figure class="case-cover">
+                <img src="assets/images/contents/project3/IAT359_Cover.png" alt="Consistency cover">
+            </figure>
+
+            <div class="case-meta">
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Role</p>
+                        <p class="case-meta-value">UX/UI Designer, Frontend Developer</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Context</p>
+                        <p class="case-meta-value">Team Project, Academic Project</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Timeline</p>
+                        <p class="case-meta-value">4 months</p>
+                    </div>
+                    <div class="case-meta-card">
+                        <p class="case-meta-label">Tools</p>
+                        <p class="case-meta-value">React Native, Expo, Firebase, Figma</p>
+                    </div>
+            </div>
         </div>
-        <div class="project-content">
-            <div class="project-duration">
-                <h4>Project Duration</h4>
-                <p>September 2025 - December 2025</p>
+
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#context">Context</a>
+                <a href="#process">Process</a>
+                <a href="#final-product">Final Product</a>
+                <a href="#reflection">Reflection</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <section class="case-section" id="context">
+                <h2>Context</h2>
+                <p>
+                    Consistency is a mobile app designed to help people build and maintain healthy habits through structured tracking and motivation tools. By combining traditional habit logging with geolocation features, the app allows users to log activities based on their physical location, creating a visual journey of their progress. The goal was to encourage self-discipline and long-term commitment by merging visual progress, rewards, and spatial interaction into a cohesive experience.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project3/IAT359_Mockup1.png" alt="Consistency mockup cover">
+                </figure>
+            </section>
+
+            <section class="case-section" id="process">
+                <h2>Process</h2>
+                <p>
+                    Initial concepts focused on how to integrate map-based logging with standard habit tracking cards.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project3/IAT359 - SketchesAll.png" alt="Concept sketches">
+                </figure>
+                <p>
+                    Built using <strong>React Native</strong> and <strong>Expo</strong>, the project required a robust technical architecture including Firebase for authentication and Async Storage for local data persistence. A key focus was the &ldquo;Map Log&rdquo; feature, which uses <code>react-native-maps</code> to let users attach photos and locations to their habits. We also implemented a gamification system where users unlock achievement cards based on their streaks, adding a layer of visual motivation.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.png" alt="Figma design process">
+                </figure>
+                <p>
+                    One of the main technical challenges was managing the <strong>complex navigation structure</strong>. We needed a mix of tab-based navigation for main screens and stack-based navigation for flows like &ldquo;Create Habit.&rdquo; This required restructuring the navigation tree to allow specific screens to overlay the bottom tab bar.
+                </p>
+                <p>
+                    Another hurdle was <strong>conditional rendering</strong> on the Stats screen, which needed to display data in three drastically different formats (weekly list, monthly grid, yearly heatmap). We solved this by creating modular sub-components and using state variables to conditionally render the correct layout without code duplication.
+                </p>
+                <figure>
+                    <img src="assets/images/contents/project3/IAT359_Mockup2.png" alt="UI layout challenge mockup">
+                </figure>
+            </section>
+
+            <section class="case-section" id="final-product">
+                <h2>Final Product</h2>
+                <div class="case-video-row">
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project3/IAT359_First.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project3/IAT359_Second.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <video controls muted loop playsinline preload="metadata">
+                        <source src="assets/images/contents/project3/IAT359_Third.mp4" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+                <figure>
+                    <img src="assets/images/contents/project3/IAT359_Mockup3.png" alt="Final mockup result">
+                </figure>
+            </section>
+
+            <section class="case-section" id="reflection">
+                <h2>Reflection</h2>
+                <p>
+                    We successfully implemented all core features, resulting in a functional and cohesive user experience. The final app includes secure authentication, a dynamic home dashboard, interactive habit tracking, and the unique map logging feature. Through this project, I significantly strengthened my skills in React Native component lifecycles, state management, and creating polished &ldquo;glassmorphism&rdquo; UI styles.
+                </p>
+            </section>
+
+            <div class="case-float-wrap">
+                <a class="case-float-cta" href="https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359?page-id=0%3A1&node-id=37-27&p=f&viewport=318%2C1038%2C0.05&t=Sa8cPKwGRSoHiAhw-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=37%3A27" target="_blank"
+                    rel="noopener noreferrer">View the prototype <span aria-hidden="true">&rarr;</span></a>
             </div>
-
-            <p class="game-link-text">
-                Figma Prototype:
-                <a href="https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359?page-id=0%3A1&node-id=37-27&p=f&viewport=318%2C1038%2C0.05&t=Sa8cPKwGRSoHiAhw-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=37%3A27" target="_blank">
-                    https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359
-                </a>
-                <br>
-                Video Link:
-                <a href="https://www.youtube.com/watch?v=jkE5LUxzD9c" target="_blank">
-                    https://www.youtube.com/watch?v=jkE5LUxzD9c
-                </a>
-            </p>
-
-            <h3>Introduction</h3>
-            <p>Consistency is a mobile app designed to help people build and maintain healthy habits through structured
-                tracking and motivation tools. By combining traditional habit logging with geolocation features, the app
-                allows users to log activities based on their physical location, creating a visual journey of their
-                progress. The goal was to encourage self-discipline and long-term commitment by merging visual progress,
-                rewards, and spatial interaction into a cohesive experience.
-            </p>
-
-            <img src="assets/images/contents/project3/IAT359_Mockup1.png" alt="Consistency Mockup Cover">
-
-            <h3>Prototype Preview</h3>
-
-            <div class="video-row">
-                <video controls autoplay muted loop>
-                    <source src="assets/images/contents/project3/IAT359_First.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-
-                <video controls autoplay muted loop>
-                    <source src="assets/images/contents/project3/IAT359_Second.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-
-                <video controls autoplay muted loop>
-                    <source src="assets/images/contents/project3/IAT359_Third.mp4" type="video/mp4">
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-
-            <h3>Sketches</h3>
-            <p>Initial concepts focused on how to integrate map-based logging with standard habit tracking cards.</p>
-            <div class="sketches-container">
-                <img src="assets/images/contents/project3/IAT359 - SketchesAll.png" alt="SketchsAll">
-            </div>
-
-            <h3>Design & Development Process</h3>
-            <p>Built using <strong>React Native</strong> and <strong>Expo</strong>, the project required a robust
-                technical architecture including Firebase for authentication and Async Storage for local data
-                persistence. A key focus was the "Map Log" feature, which uses <code>react-native-maps</code> to let
-                users attach photos and locations to their habits. We also implemented a gamification system where users
-                unlock achievement cards based on their streaks, adding a layer of visual motivation.</p>
-
-            <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.png" alt="Figma Design Process">
-
-            <h3>Challenges</h3>
-            <p>One of the main technical challenges was managing the <strong>Complex Navigation Structure</strong>. We
-                needed a mix of tab-based navigation for main screens and stack-based navigation for flows like "Create
-                Habit." This required restructuring the navigation tree to allow specific screens to overlay the bottom
-                tab bar.
-            </p>
-            <p>
-                Another hurdle was <strong>Conditional Rendering</strong> on the Stats screen, which needed to display
-                data in three drastically different formats (Weekly list, Monthly grid, Yearly heatmap). We solved this
-                by creating modular sub-components and using state variables to conditionally render the correct layout
-                without code duplication.
-            </p>
-            <img src="assets/images/contents/project3/IAT359_Mockup2.png" alt="UI Layout Challenge Mockup">
-
-            <h3>Outcome</h3>
-            <p>We successfully implemented all core features, resulting in a functional and cohesive user experience.
-                The final app includes secure authentication, a dynamic home dashboard, interactive habit tracking, and
-                the unique map logging feature. Through this project, I significantly strengthened my skills in React
-                Native component lifecycles, state management, and creating polished "Glassmorphism" UI styles.</p>
-            <img src="assets/images/contents/project3/IAT359_Mockup3.png" alt="Final Mockup Result">
         </div>
     </section>
 
