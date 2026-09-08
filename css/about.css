@@ -286,36 +286,6 @@ body {
     transition: scale 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* each card breathes on its own clock - JS randomises duration and delay.
-   This animates `transform`, which composes with the `translate`/`rotate`
-   properties JS uses for placement instead of fighting them. */
-@keyframes photo-float {
-    0%,
-    100% {
-        transform: translateY(0);
-    }
-
-    50% {
-        transform: translateY(-0.7rem);
-    }
-}
-
-.photo-pile.is-scattered .photo-card {
-    animation: photo-float var(--float-dur, 6s) ease-in-out var(--float-delay, 0s) infinite;
-}
-
-.photo-pile.is-scattered .photo-card:hover,
-.photo-card.is-dragging,
-.photo-card.is-flying {
-    animation-play-state: paused;
-}
-
-/* mid-throw: no hover scaling fighting the physics */
-.photo-card.is-flying {
-    pointer-events: none;
-    box-shadow: 0 1.6rem 3.5rem rgba(0, 0, 0, 0.7);
-}
-
 .photo-card img {
     display: block;
     width: 100%;
@@ -348,7 +318,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
     .photo-pile.is-scattered .photo-card {
         transition: none;
-        animation: none;
     }
 }
 
@@ -524,5 +493,88 @@ body {
     .photo-pile.is-scattered .photo-card {
         pointer-events: none;
         cursor: default;
+    }
+}
+
+/* ---------- full-size viewer ---------- */
+
+/* An author `display` beats the browser's `[hidden] { display: none }`, so the
+   attribute alone would leave this overlay sitting on the page permanently. */
+.lightbox[hidden] {
+    display: none;
+}
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;              /* over the header too */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4vmin;
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0);
+    cursor: zoom-out;
+    perspective: 1400px;        /* gives the flip its depth */
+    transition: background-color 0.45s ease, backdrop-filter 0.45s ease;
+}
+
+.lightbox.is-open {
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(6px);
+}
+
+/* the card that turns over. JS sets the opening transform, CSS animates to rest */
+.lightbox-flip {
+    position: relative;
+    /* JS overrides these with the photo's own proportions on open */
+    width: min(78vw, 900px);
+    height: min(82vh, 1100px);
+    max-width: 92vw;
+    max-height: 92vh;
+    transform-style: preserve-3d;
+    transition: transform 0.62s cubic-bezier(0.4, 0.1, 0.2, 1);
+    will-change: transform;
+}
+
+.lightbox-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 0.5rem;
+    overflow: hidden;
+}
+
+/* the small side you clicked, which turns away */
+.lightbox-front {
+    background: #f4f4f2;
+    padding: 0.55rem 0.55rem 1.5rem;
+}
+
+.lightbox-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0.15rem;
+}
+
+/* the full photo, waiting on the other side. The panel is sized to the photo,
+   so "cover" fills it exactly with no bars; the dark fill only ever shows if an
+   image is still loading. */
+.lightbox-back {
+    transform: rotateY(180deg);
+    background: #0d0d0d;
+}
+
+.lightbox-back img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .lightbox,
+    .lightbox-flip {
+        transition: none;
     }
 }

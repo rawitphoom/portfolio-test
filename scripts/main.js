@@ -510,10 +510,6 @@ document.addEventListener('DOMContentLoaded', () => {
     card.style.setProperty('--y', y + 'px');
     card.style.setProperty('--r', rand(-11, 11).toFixed(1) + 'deg');
 
-    // its own drift rhythm, so the pile never pulses in unison
-    card.style.setProperty('--float-dur', rand(5, 9).toFixed(2) + 's');
-    card.style.setProperty('--float-delay', (-rand(0, 6)).toFixed(2) + 's');
-
     card.dataset.x = x;
     card.dataset.y = y;
   };
@@ -549,13 +545,19 @@ document.addEventListener('DOMContentLoaded', () => {
   // that becomes a velocity, and the card flies off under gravity, bouncing off
   // the edges of the pile until friction settles it.
 
-  // No gravity - the photos drift like something in orbit, coasting until the
-  // edges of the pile turn them back and drag eventually stills them.
-  const BOUNCE = 0.82;       // energy kept when it glances off an edge
-  const DRAG = 0.992;        // speed kept per frame
-  const SPIN_DRAG = 0.99;
-  const REST_SPEED = 14;     // px/s below which we call it settled
+  // ---- ambient drift ----
+  //
+  // One loop nudges every card along at a crawl, turning them back at the edges.
+  // A flick just raises that card's speed; drag lifts it out of the loop. Doing
+  // it here rather than in a CSS animation keeps the drift on the same
+  // `translate` the drag and the physics write, so nothing fights.
+
+  const AMBIENT = 11;        // px/s the cards idle at
+  const BOUNCE = 0.9;        // energy kept when turning at an edge
+  const DECAY = 0.985;       // how fast a throw bleeds back down to ambient
   const MAX_THROW = 1400;    // px/s cap so a flick can't launch it into orbit
+
+  let dragging = null;
 
   const bounds = () => {
     const box = pile.getBoundingClientRect();
@@ -569,55 +571,196 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const clampSpeed = v => Math.max(-MAX_THROW, Math.min(MAX_THROW, v));
 
-  const driftCard = (card, vx, vy, spin) => {
-    if (reduced.matches) return;
+  const setDrift = card => {
+    const angle = rand(0, Math.PI * 2);
+    const speed = rand(AMBIENT * 0.6, AMBIENT * 1.4);
+    card._vx = Math.cos(angle) * speed;
+    card._vy = Math.sin(angle) * speed;
+    card._spin = rand(-2.5, 2.5);      // deg/s
+  };
 
-    cancelAnimationFrame(card._physics);
+  const flick = (card, vx, vy) => {
+    card._vx = clampSpeed(vx);
+    card._vy = clampSpeed(vy);
+    card._spin = clampSpeed(vx) * 0.05;
+  };
 
-    let x = parseFloat(card.dataset.x) || 0;
-    let y = parseFloat(card.dataset.y) || 0;
-    let r = parseFloat(card.style.getPropertyValue('--r')) || 0;
-    let last = performance.now();
+  let frame = null;
+  let last = 0;
 
-    card.classList.add('is-flying');
+  const tick = now => {
+    const dt = Math.min((now - last) / 1000, 0.05);   // clamp after a stall
+    last = now;
+    const b = bounds();
 
-    const step = now => {
-      const dt = Math.min((now - last) / 1000, 0.032);  // clamp after a stall
-      last = now;
+    cards.forEach(card => {
+      if (card === dragging) return;
+      // leave arrivals and exits to their CSS transitions
+      if (card.classList.contains('is-arriving') || card.classList.contains('is-leaving')) return;
+      if (card._vx === undefined) setDrift(card);
 
-      vx *= DRAG;
-      vy *= DRAG;
-      spin *= SPIN_DRAG;
+      let x = parseFloat(card.dataset.x) || 0;
+      let y = parseFloat(card.dataset.y) || 0;
+      let r = parseFloat(card.style.getPropertyValue('--r')) || 0;
 
-      x += vx * dt;
-      y += vy * dt;
-      r += spin * dt;
+      const speed = Math.hypot(card._vx, card._vy);
+      if (speed > AMBIENT) {                  // a throw settling back to a drift
+        card._vx *= DECAY;
+        card._vy *= DECAY;
+        card._spin *= DECAY;
+      } else if (speed < AMBIENT * 0.5) {      // never quite stops
+        const k = (AMBIENT * 0.5) / (speed || 1);
+        card._vx *= k;
+        card._vy *= k;
+      }
 
-      const b = bounds();
+      x += card._vx * dt;
+      y += card._vy * dt;
+      r += card._spin * dt;
 
-      // glance off each wall, keeping most of the momentum
-      if (x < b.minX) { x = b.minX; vx = Math.abs(vx) * BOUNCE; spin = -spin * BOUNCE; }
-      if (x > b.maxX) { x = b.maxX; vx = -Math.abs(vx) * BOUNCE; spin = -spin * BOUNCE; }
-      if (y < b.minY) { y = b.minY; vy = Math.abs(vy) * BOUNCE; spin = -spin * BOUNCE; }
-      if (y > b.maxY) { y = b.maxY; vy = -Math.abs(vy) * BOUNCE; spin = -spin * BOUNCE; }
+      if (x < b.minX) { x = b.minX; card._vx = Math.abs(card._vx) * BOUNCE; card._spin *= -1; }
+      if (x > b.maxX) { x = b.maxX; card._vx = -Math.abs(card._vx) * BOUNCE; card._spin *= -1; }
+      if (y < b.minY) { y = b.minY; card._vy = Math.abs(card._vy) * BOUNCE; card._spin *= -1; }
+      if (y > b.maxY) { y = b.maxY; card._vy = -Math.abs(card._vy) * BOUNCE; card._spin *= -1; }
 
       card.style.setProperty('--x', x + 'px');
       card.style.setProperty('--y', y + 'px');
-      card.style.setProperty('--r', r.toFixed(1) + 'deg');
+      card.style.setProperty('--r', r.toFixed(2) + 'deg');
       card.dataset.x = x;
       card.dataset.y = y;
+    });
 
-      if (Math.hypot(vx, vy) < REST_SPEED) {
-        card.classList.remove('is-flying');
-        card._physics = null;
-        return;
-      }
-
-      card._physics = requestAnimationFrame(step);
-    };
-
-    card._physics = requestAnimationFrame(step);
+    frame = requestAnimationFrame(tick);
   };
+
+  const startDrift = () => {
+    if (reduced.matches || frame) return;
+    last = performance.now();
+    frame = requestAnimationFrame(tick);
+  };
+
+  const stopDrift = () => { cancelAnimationFrame(frame); frame = null; };
+
+  // only run while the section is on screen and the tab is in front
+  new IntersectionObserver(entries => {
+    entries[0].isIntersecting ? startDrift() : stopDrift();
+  }, { threshold: 0.05 }).observe(pile);
+
+  document.addEventListener('visibilitychange', () => {
+    document.hidden ? stopDrift() : startDrift();
+  });
+
+  // ---- full-size viewer ----
+  //
+  // The card turns over: the thumbnail you clicked rotates away and the full
+  // photo arrives on the back. Opening and closing use the same transform, read
+  // from wherever the card happens to be drifting at that moment.
+
+  const lightbox = document.querySelector('.lightbox');
+  const flip = lightbox && lightbox.querySelector('.lightbox-flip');
+  const frontImg = lightbox && lightbox.querySelector('.lightbox-front img');
+  const backImg = lightbox && lightbox.querySelector('.lightbox-back img');
+  let viewing = null;
+
+  // The panel's own rect, measured with no transform applied. Reading it live
+  // would give whatever the flip is mid-animation, so closing early would map
+  // the card onto a half-finished pose.
+  let panelRect = null;
+
+  const measurePanel = () => {
+    const previous = flip.style.transform;
+    flip.style.transform = 'none';
+    panelRect = flip.getBoundingClientRect();
+    flip.style.transform = previous;
+  };
+
+  // maps the big centred panel back onto the little card on screen
+  const transformOntoCard = card => {
+    const from = card.getBoundingClientRect();
+    const to = panelRect;
+    const sx = from.width / to.width;
+    const sy = from.height / to.height;
+    const dx = (from.left + from.width / 2) - (to.left + to.width / 2);
+    const dy = (from.top + from.height / 2) - (to.top + to.height / 2);
+    return `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotateY(0deg)`;
+  };
+
+  // Both faces have to be painted before the flip starts. Assigning .src doesn't
+  // decode synchronously, so without this the panel can turn over as a blank
+  // rectangle and only fill in once the image is ready.
+  const ready = (img, src) => {
+    img.src = src;
+    if (img.complete && img.naturalWidth) return Promise.resolve();
+    const decoded = img.decode ? img.decode() : new Promise(res => { img.onload = res; });
+    // never hold the animation for long - a slow photo can land mid-flip
+    return Promise.race([
+      decoded.catch(() => {}),
+      new Promise(res => setTimeout(res, 250)),
+    ]);
+  };
+
+  const openViewer = async card => {
+    if (!lightbox || viewing) return;
+    viewing = card;
+
+    const small = card.querySelector('img').getAttribute('src');
+    // the pile uses 480px copies; the viewer wants the 900px original
+    const large = small.replace('/about-photos/web/', '/about-photos/');
+
+    lightbox.hidden = false;
+    await Promise.all([ready(frontImg, small), ready(backImg, large)]);
+    if (viewing !== card) return;               // closed again while loading
+
+    card.style.visibility = 'hidden';           // don't show it behind the panel
+
+    // Size the panel to the photo itself so it fits edge to edge - a fixed box
+    // would letterbox anything that isn't the same shape.
+    const nw = backImg.naturalWidth || 4;
+    const nh = backImg.naturalHeight || 5;
+    const fit = Math.min(
+      (window.innerWidth * 0.86) / nw,
+      (window.innerHeight * 0.86) / nh,
+      1.25,                                      // don't upscale into mush
+    );
+    flip.style.width = Math.round(nw * fit) + 'px';
+    flip.style.height = Math.round(nh * fit) + 'px';
+
+    flip.style.transition = 'none';
+    measurePanel();
+    flip.style.transform = transformOntoCard(card);
+    void flip.offsetWidth;                       // commit that start pose
+    flip.style.transition = '';
+
+    // the reflow above is what makes this transition rather than jump - no need
+    // to wait for a frame, which would stall in a backgrounded tab
+    lightbox.classList.add('is-open');
+    flip.style.transform = 'translate(0, 0) scale(1) rotateY(180deg)';
+  };
+
+  const closeViewer = () => {
+    if (!viewing) return;
+    const card = viewing;
+    viewing = null;
+
+    lightbox.classList.remove('is-open');
+    flip.style.transform = transformOntoCard(card);   // wherever it has drifted to
+
+    const done = event => {
+      if (event && event.target !== flip) return;
+      lightbox.hidden = true;
+      card.style.visibility = '';
+      flip.removeEventListener('transitionend', done);
+    };
+    flip.addEventListener('transitionend', done);
+    setTimeout(done, 800);
+  };
+
+  if (lightbox) {
+    lightbox.addEventListener('click', closeViewer);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeViewer();
+    });
+  }
 
   const wire = card => {
     card.addEventListener('pointerdown', event => {
@@ -625,14 +768,14 @@ document.addEventListener('DOMContentLoaded', () => {
       // dragging a photo would fight scrolling on a phone - leave touches alone
       if (event.pointerType === 'touch') return;
 
-      cancelAnimationFrame(card._physics);
-      card._physics = null;
-      card.classList.remove('is-flying');
+      dragging = card;
 
       const startX = event.clientX;
       const startY = event.clientY;
       const originX = parseFloat(card.dataset.x) || 0;
       const originY = parseFloat(card.dataset.y) || 0;
+      const pressedAt = performance.now();
+      let travelled = 0;
 
       // rolling sample of recent pointer positions, for the release velocity
       let samples = [{ x: event.clientX, y: event.clientY, t: performance.now() }];
@@ -649,11 +792,13 @@ document.addEventListener('DOMContentLoaded', () => {
         card.dataset.x = x;
         card.dataset.y = y;
 
+        travelled = Math.hypot(e.clientX - startX, e.clientY - startY);
         samples.push({ x: e.clientX, y: e.clientY, t: performance.now() });
         if (samples.length > 5) samples.shift();
       };
 
       const up = () => {
+        dragging = null;
         card.classList.remove('is-dragging');
         card.removeEventListener('pointermove', move);
         card.removeEventListener('pointerup', up);
@@ -663,14 +808,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const last = samples[samples.length - 1];
         const dt = (last.t - first.t) / 1000;
 
-        // a slow drag shouldn't fling; only a real flick sets it drifting.
-        // Anything gentler simply stays where it was let go.
+        // barely moved and let go quickly? that was a click, not a drag
+        if (travelled < 5 && performance.now() - pressedAt < 500) {
+          openViewer(card);
+          return;
+        }
+
+        // a flick sends it off fast; a gentle drop just rejoins the slow drift
         if (dt > 0.005 && samples.length > 1) {
-          const vx = clampSpeed((last.x - first.x) / dt);
-          const vy = clampSpeed((last.y - first.y) / dt);
-          if (Math.hypot(vx, vy) > 60) {
-            driftCard(card, vx, vy, vx * 0.06);
-          }
+          const vx = (last.x - first.x) / dt;
+          const vy = (last.y - first.y) / dt;
+          if (Math.hypot(vx, vy) > 60) flick(card, vx, vy);
         }
       };
 
@@ -728,6 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
     cards.push(card);
     wire(card);
     raise(card);
+    setDrift(card);
 
     measure();
     // a random cell, not the last one - the last cell is always the bottom-right
@@ -766,9 +915,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const extras = cards.filter(card => !original.includes(card));
 
     extras.forEach(card => {
-      cancelAnimationFrame(card._physics);
-      card._physics = null;
-      card.classList.remove('is-flying', 'is-arriving');
+      card.classList.remove('is-arriving');
 
       const [x, y] = offscreenPoint(parseFloat(card.dataset.x), parseFloat(card.dataset.y));
       void card.offsetWidth;
@@ -785,9 +932,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // settle the keepers back into a fresh scatter
     original.forEach(card => {
-      cancelAnimationFrame(card._physics);
-      card._physics = null;
-      card.classList.remove('is-flying');
+      setDrift(card);
       card.classList.add('is-arriving');
       setTimeout(() => card.classList.remove('is-arriving'), 1100);
     });
