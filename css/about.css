@@ -1,44 +1,200 @@
+/***************************** ABOUT HERO *****************************/
+
 .about {
-    padding: 5rem 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    color: white;
-    text-align: center;
-    margin-top: 5rem;
+  padding: 3rem 2rem 5rem;
+  max-width: 1320px;
+  margin: 4rem auto 0;
+  color: white;
+  text-align: center;
+}
+
+/* The photos are absolutely positioned against this box, so it needs its own
+   height - the centred text column alone is shorter than the photo cluster. */
+.about-hero {
+  position: relative;
+  min-height: 50rem;
+  padding: 0 0 4rem;
+}
+
+.about-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 34rem;
+  margin: 0 auto;
+}
+
+.about-heading {
+  font-size: clamp(2.6rem, 6vw, 4.25rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  margin: 0 0 3.5rem;
+}
+
+.about-bio {
+  text-align: left;
+}
+
+.about-bio p {
+  margin: 0 0 1.25rem;
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: #ccc;
+}
+
+/* --- the three scattered photos --- */
+
+.about-shot {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.55);
+  /* Starts hidden and drops in; `rotate` is a separate property from the
+     `translate` the keyframes animate, so the tilt survives the entrance. */
+  opacity: 0;
+  animation:
+    about-shot-drop 1.4s cubic-bezier(0.16, 0.84, 0.3, 1) forwards,
+    about-shot-fade 0.55s ease-out forwards;
+  will-change: translate, opacity;
+  backface-visibility: hidden;
+}
+
+.about-shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.about-shot-2 img,
+.about-shot-3 img {
+  aspect-ratio: 1 / 1;
+  height: auto;
+  object-fit: cover;
+}
+
+@keyframes about-shot-drop {
+  from {
+    translate: 0 var(--drop, -50rem);
   }
-  
-  .about-title {
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 3rem;
+
+  to {
+    translate: 0 0;
   }
-  
-  .about-content {
+}
+
+@keyframes about-shot-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.about-shot-1 {
+  left: -0.5rem;
+  top: 9rem;
+  width: 20rem;
+  rotate: -1.5deg;
+  --drop: -52rem;
+  animation-delay: 0.1s;
+}
+
+.about-shot-2 {
+  right: -0.5rem;
+  top: 1rem;
+  width: 20rem;
+  rotate: -7deg;
+  --drop: -38rem;
+  animation-delay: 0.5s;
+}
+
+.about-shot-3 {
+  right: -1rem;
+  top: 26rem;
+  width: 20rem;
+  rotate: 3deg;
+  --drop: -64rem;
+  animation-delay: 0.9s;
+}
+
+@media (max-width: 1320px) {
+  .about-hero {
+    min-height: 46rem;
+  }
+
+  .about-hero-inner {
+    max-width: 30rem;
+  }
+
+  .about-shot-1 {
+    left: -0.5rem;
+    top: 9rem;
+    width: 16rem;
+  }
+
+  .about-shot-2 {
+    right: -0.5rem;
+    top: 1rem;
+    width: 17rem;
+  }
+
+  .about-shot-3 {
+    right: 0;
+    top: 20rem;
+    width: 17rem;
+  }
+}
+
+/* Below this the columns collide, so the photos leave the absolute layer and
+   stack under the bio instead - tilts kept, positions dropped. */
+@media (max-width: 1150px) {
+  .about-hero {
     display: flex;
-    flex-wrap: wrap;
-    gap: 3rem;
-    justify-content: center;
-    align-items: flex-start;
-    text-align: left;
+    flex-direction: column;
+    gap: 1.5rem;
+    min-height: 0;
+    padding: 0 0 1rem;
   }
-  
-  .about-img {
-    width: 20%;
-    height: auto;
-    border-radius: 1rem;
+
+  .about-heading {
+    margin-bottom: 2rem;
   }
-  
-  .about-text {
-    flex: 1;
-    min-width: 300px;
+
+  .about-hero-inner {
+    max-width: none;
   }
-  
-  .about-text p {
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-    color: #ccc;
+
+  .about-shot {
+    position: static;
+    align-self: center;
+    width: min(100%, 20rem);
+    --drop: -9rem;
   }
-  
+
+  .about-shot-1 {
+    rotate: -2deg;
+  }
+
+  .about-shot-2 {
+    rotate: 3deg;
+  }
+
+  .about-shot-3 {
+    rotate: -1.5deg;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-shot {
+    animation: none;
+    opacity: 1;
+  }
+}
+
   .about-highlights {
     margin-top: 4rem;
     display: flex;
@@ -70,26 +226,9 @@
   }
 
   @media (max-width: 768px) {
-    .about{
-        margin-top: 0rem;
-    }
-    .about-title{
-        font-size: 2rem;
-    }
-    .about-content {
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-    }
-  
-    .about-img {
-        width: 40%;
-        height: auto;
-        border-radius: 1rem;
-      }
-
-    .about-text {
-      text-align: center;
+    .about {
+      margin-top: 0;
+      padding: 3rem 1.25rem;
     }
   }
   
