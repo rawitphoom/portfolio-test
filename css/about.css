@@ -14,6 +14,8 @@
   position: relative;
   min-height: 50rem;
   padding: 0 0 4rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .about-hero-inner {
@@ -21,6 +23,13 @@
   z-index: 2;
   max-width: 34rem;
   margin: 0 auto;
+  /* Fills the hero so the bio can sit in the middle of the photo cluster
+     while the heading stays put at the top. */
+  flex: 1;
+  width: 100%;
+  padding-top: 8.5rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .about-heading {
@@ -28,17 +37,23 @@
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.02em;
-  margin: 0 0 3.5rem;
+  position: absolute;
+  top: 9rem;
+  left: 0;
+  right: 0;
+  margin: 0;
 }
 
 .about-bio {
   text-align: left;
+  /* auto margins centre it in whatever space the heading leaves */
+  margin: auto 0;
 }
 
 .about-bio p {
-  margin: 0 0 1.25rem;
-  font-size: 1.05rem;
-  line-height: 1.7;
+  margin: 0;
+  font-size: 1.45rem;
+  line-height: 1.65;
   color: #ccc;
 }
 
@@ -161,11 +176,17 @@
   }
 
   .about-heading {
+    position: static;
     margin-bottom: 2rem;
   }
 
   .about-hero-inner {
     max-width: none;
+    padding-top: 0;
+  }
+
+  .about-bio {
+    margin: 0;
   }
 
   .about-shot {
