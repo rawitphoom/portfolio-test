@@ -372,369 +372,155 @@
     }
 }
 
-/***************************** OFF THE CLOCK PHOTOS *****************************/
+/***************************** PHOTO RING *****************************/
 
-/* Clip at the viewport rather than at the photo section, so a tilted card near
-   the edge isn't sliced by its own container. Only the horizontal axis is
-   clipped, which stops a sideways scrollbar without cutting the vertical spill. */
+/* Clip at the viewport rather than at a section, so the tilted hero photos
+   aren't sliced by their own container, and the ring can run off the right
+   edge without adding a sideways scrollbar. */
 body {
     overflow-x: clip;
 }
 
-.about-photos {
+.about-ring {
     position: relative;
-    /* above the rest of the page so photos can lie over the heading and the
-       sections either side - but below the fixed header, which is z-index 1000 */
-    z-index: 5;
-    margin-top: 6rem;
-    text-align: center;
+    min-height: 34rem;
+    margin-top: 7rem;
+    padding: 1rem 0 2rem;
+    text-align: left;
+
+    /* one place to resize the whole thing */
+    --cell: 11rem;
+    --tilt: -3deg;
+    /* how far past touching the photos sit: 1 is edge to edge, higher opens
+       the circle out and leaves gaps between them */
+    --spread: 1.04;
 }
 
-.photos-eyebrow {
-    font-size: 0.8rem;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.4);
-    margin-bottom: 0.75rem;
-}
-
-.photos-title {
-    font-size: 1.9rem;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-    margin-bottom: 2rem;
-}
-
-/* Without JS the photos simply wrap as a tidy grid. JS adds .is-scattered and
-   takes over placement, so nothing is hidden if the script never runs. */
-.photo-pile {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.75rem;
-    padding: 1rem 0;
-}
-
-.photo-pile.is-scattered {
-    display: block;
-    position: relative;
-    /* tall enough for three loosely-spaced rows */
-    height: 38rem;
-    /* let cards escape the box */
-    overflow: visible;
-    touch-action: pan-y;
-}
-
-.photo-card {
-    width: 11rem;
-    padding: 0.55rem 0.55rem 1.5rem;
-    background: #f4f4f2;
-    border-radius: 0.35rem;
-    box-shadow: 0 0.8rem 2rem rgba(0, 0, 0, 0.5);
-}
-
-.photo-pile.is-scattered .photo-card {
+.ring-title,
+.ring-sub {
     position: absolute;
-    top: 0;
     left: 0;
+    /* above the ring, which sweeps across this side of the section */
+    z-index: 2;
+}
+
+.ring-title {
+    top: 0;
+    max-width: 15em;
+    font-size: clamp(2rem, 2.7vw, 3rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
     margin: 0;
-    cursor: grab;
-    user-select: none;
-    /* JS writes these three; the transition is what makes the shuffle glide */
-    translate: var(--x, 0) var(--y, 0);
-    rotate: var(--r, 0deg);
-    transition: scale 0.3s ease, box-shadow 0.3s ease;
 }
 
-.photo-card img {
-    display: block;
+.ring-sub {
+    bottom: 0;
+    max-width: 22em;
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+/* Pushed off to the right so roughly half the circle leaves the screen and the
+   text on the left is never covered. The vw term keeps that split at about the
+   same place whatever the window width. */
+.ring-stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    translate: calc(-50% + 30vw) calc(-50% + 4rem);
+    width: var(--cell);
+    height: var(--cell);
+    perspective: 2600px;
+    perspective-origin: 50% 44%;
+}
+
+.ring {
+    position: relative;
     width: 100%;
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-    border-radius: 0.15rem;
-    pointer-events: none;
-}
-
-/* lift whatever you point at */
-.photo-pile.is-scattered .photo-card:hover {
-    scale: 1.06;
-    box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.65);
-}
-
-/* while a card is being dragged, drop the glide so it tracks the pointer */
-.photo-card.is-dragging {
-    cursor: grabbing;
-    transition: scale 0.3s ease, box-shadow 0.3s ease;
-    scale: 1.06;
-    box-shadow: 0 1.6rem 3.5rem rgba(0, 0, 0, 0.7);
-}
-
-.photo-hint {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.35);
-    margin-top: 0.5rem;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .photo-pile.is-scattered .photo-card {
-        transition: none;
-    }
-}
-
-/* ===================PHOTOS RESPONSIVE========================= */
-
-@media (max-width: 768px) {
-}
-
-/* ---------- add / reset button ---------- */
-
-.photo-more {
-    position: relative;
-    /* .about-photos is a stacking context, so this always sits above the cards
-       no matter how high their z-index climbs as they get raised */
-    z-index: 9999;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 3.4rem;
-    height: 3.4rem;
-    margin-top: 1.5rem;
-    padding: 0;
-    border: 0;
-    border-radius: 50%;
-    background: #f4f4f2;
-    cursor: pointer;
-    box-shadow: 0 0.6rem 1.6rem rgba(0, 0, 0, 0.5);
-    transition: scale 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
-}
-
-.photo-more:hover {
-    scale: 1.08;
-    box-shadow: 0 0.9rem 2.2rem rgba(0, 0, 0, 0.65);
-}
-
-.photo-more:active {
-    scale: 0.94;
-}
-
-.photo-more svg {
-    width: 1.6rem;
-    height: 1.6rem;
-    overflow: visible;
-}
-
-.photo-more path {
-    fill: none;
-    stroke: #1a1a1a;
-    stroke-width: 2.1;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-/* the two icons live on top of each other and trade places */
-.icon-plus,
-.icon-reset {
-    transform-box: fill-box;
-    transform-origin: center;
-    transition: opacity 0.35s ease, transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1);
-}
-
-.icon-reset {
-    opacity: 0;
-    transform: rotate(-140deg) scale(0.4);
-}
-
-.photo-more:hover .icon-plus {
-    transform: rotate(90deg);
-}
-
-/* out of photos: the plus spins away and the reset arrow spins in */
-.photo-more.is-reset {
-    background: var(--accent-color);
-}
-
-.photo-more.is-reset path {
-    stroke: white;
-}
-
-.photo-more.is-reset .icon-plus {
-    opacity: 0;
-    transform: rotate(140deg) scale(0.4);
-}
-
-.photo-more.is-reset .icon-reset {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-}
-
-.photo-more.is-reset:hover .icon-reset {
-    transform: rotate(-180deg);
-}
-
-/* a freshly summoned card gliding in from off screen.
-   Needs to out-specify ".photo-pile.is-scattered .photo-card", which otherwise
-   strips translate/rotate out of the transition list. */
-.photo-pile.is-scattered .photo-card.is-arriving {
-    transition: translate 1s cubic-bezier(0.22, 1, 0.36, 1),
-        rotate 1s cubic-bezier(0.22, 1, 0.36, 1),
-        scale 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* and on the way back out - it slides clean off the edge, no fade */
-.photo-pile.is-scattered .photo-card.is-leaving {
-    transition: translate 0.7s cubic-bezier(0.55, 0, 0.85, 0.35),
-        rotate 0.7s cubic-bezier(0.55, 0, 0.85, 0.35);
-    pointer-events: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .icon-plus,
-    .icon-reset {
-        transition: none;
-    }
-
-    .photo-pile.is-scattered .photo-card.is-arriving,
-    .photo-pile.is-scattered .photo-card.is-leaving {
-        transition: none;
-    }
-}
-
-/* ---------- photo pile sizing tiers ---------- */
-
-/* Laptops and tablets: the pile narrows, so the cards come down with it -
-   otherwise they'd crowd, and at the small end they'd look lost. */
-@media (max-width: 1024px) {
-    .photo-pile.is-scattered {
-        height: 34rem;
-    }
-
-    .photo-card {
-        width: 9.25rem;
-        padding: 0.5rem 0.5rem 1.3rem;
-    }
-}
-
-@media (max-width: 700px) {
-    .about-photos {
-        margin-top: 4rem;
-    }
-
-    .photos-title {
-        font-size: 1.35rem;
-    }
-
-    .photo-pile.is-scattered {
-        height: 30rem;
-    }
-
-    .photo-card {
-        width: 7.5rem;
-        padding: 0.4rem 0.4rem 1rem;
-    }
-
-    .photo-more {
-        width: 3rem;
-        height: 3rem;
-    }
-
-    .photo-more svg {
-        width: 1.4rem;
-        height: 1.4rem;
-    }
-}
-
-/* Touch devices: the photos are decoration only. Dragging them competes with
-   scrolling the page, so let touches pass straight through to the document. */
-@media (hover: none) and (pointer: coarse) {
-    .photo-pile.is-scattered {
-        touch-action: auto;
-    }
-
-    .photo-pile.is-scattered .photo-card {
-        pointer-events: none;
-        cursor: default;
-    }
-}
-
-/* ---------- full-size viewer ---------- */
-
-/* An author `display` beats the browser's `[hidden] { display: none }`, so the
-   attribute alone would leave this overlay sitting on the page permanently. */
-.lightbox[hidden] {
-    display: none;
-}
-
-.lightbox {
-    position: fixed;
-    inset: 0;
-    z-index: 2000;              /* over the header too */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4vmin;
-    background: rgba(0, 0, 0, 0);
-    backdrop-filter: blur(0);
-    cursor: zoom-out;
-    perspective: 1400px;        /* gives the flip its depth */
-    transition: background-color 0.45s ease, backdrop-filter 0.45s ease;
-}
-
-.lightbox.is-open {
-    background: rgba(0, 0, 0, 0.82);
-    backdrop-filter: blur(6px);
-}
-
-/* the card that turns over. JS sets the opening transform, CSS animates to rest */
-.lightbox-flip {
-    position: relative;
-    /* JS overrides these with the photo's own proportions on open */
-    width: min(78vw, 900px);
-    height: min(82vh, 1100px);
-    max-width: 92vw;
-    max-height: 92vh;
+    height: 100%;
     transform-style: preserve-3d;
-    transition: transform 0.62s cubic-bezier(0.4, 0.1, 0.2, 1);
-    will-change: transform;
+    /* --spin turns it; --yaw and --lean are the cursor leaning in. */
+    transform:
+        rotateX(calc(var(--tilt) + var(--lean, 0deg)))
+        rotateY(calc(var(--spin, 0deg) + var(--yaw, 0deg)));
 }
 
-.lightbox-face {
+.ring-cell {
     position: absolute;
     inset: 0;
-    backface-visibility: hidden;
-    border-radius: 0.5rem;
+    margin: 0;
+    /* Each photo is pushed out along its own bearing, which is what forms the
+       circle. The radius is r = (w / 2) / tan(180deg / count), times --spread;
+       0.15838 is tan(9deg), i.e. the 20 photos below. More, narrower panels is
+       what makes the ring read as round rather than as a polygon. */
+    transform:
+        rotateY(calc(var(--i) * (360deg / var(--count))))
+        translateZ(calc(var(--cell) * 0.5 / 0.15838 * var(--spread)));
     overflow: hidden;
+    box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45);
 }
 
-/* the small side you clicked, which turns away */
-.lightbox-front {
-    background: #f4f4f2;
-    padding: 0.55rem 0.55rem 1.5rem;
-}
-
-.lightbox-front img {
+.ring-cell img {
+    display: block;
     width: 100%;
     height: 100%;
+    aspect-ratio: 1 / 1;
     object-fit: cover;
-    border-radius: 0.15rem;
 }
 
-/* the full photo, waiting on the other side. The panel is sized to the photo,
-   so "cover" fills it exactly with no bars; the dark fill only ever shows if an
-   image is still loading. */
-.lightbox-back {
-    transform: rotateY(180deg);
-    background: #0d0d0d;
+/* Narrow enough that text beside the ring stops working, so it goes back to
+   centred with the words stacked above and below. */
+@media (max-width: 900px) {
+    .about-ring {
+        --cell: 9rem;
+        --spread: 1.15;
+        min-height: 0;
+        margin-top: 5rem;
+        text-align: center;
+    }
+
+    .ring-title,
+    .ring-sub {
+        position: static;
+        max-width: none;
+    }
+
+    .ring-title,
+    .ring-sub {
+        max-width: none;
+    }
+
+    .ring-title {
+        font-size: 1.7rem;
+    }
+
+    .ring-sub {
+        font-size: 1rem;
+    }
+
+    .ring-stage {
+        position: relative;
+        top: auto;
+        left: auto;
+        translate: none;
+        /* the stage box is the photo box, so its height has to stay square;
+           the breathing room goes in the margin instead */
+        margin: 5rem auto;
+    }
 }
 
-.lightbox-back img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+@media (max-width: 600px) {
+    .about-ring {
+        --cell: 7rem;
+        --spread: 1.08;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .lightbox,
-    .lightbox-flip {
-        transition: none;
+    .ring {
+        transform: rotateX(var(--tilt));
     }
 }

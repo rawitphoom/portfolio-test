@@ -447,510 +447,92 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// "Off the clock" photo pile: scatter the photos at random, keep reshuffling one
-// card at a time so it plays by itself, and let anyone drag them around.
+// Photo ring: turns by itself, slowly, and takes its cue from the scroll -
+// scrolling down spins it one way, scrolling up the other, and it eases back
+// to its idle drift once you stop.
 document.addEventListener('DOMContentLoaded', () => {
-  const pile = document.querySelector('.photo-pile');
-  if (!pile) return;
+  const ring = document.querySelector('#photo-ring');
+  if (!ring) return;
 
-  const cards = [...pile.querySelectorAll('.photo-card')];   // grows as more are summoned
-  if (!cards.length) return;
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (calm.matches) return;
 
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const rand = (min, max) => min + Math.random() * (max - min);
+  const IDLE = -4;       // deg/sec at rest; negative carries the front face left to right
+  const PER_PX = -0.22;  // degrees of extra spin per pixel scrolled
+  const MAX_BOOST = 260; // ceiling, so a flick of the wheel can't send it wild
+  const DECAY = 0.93;    // how quickly the scroll boost bleeds off each frame
+  const YAW = 14;        // degrees the ring turns towards the cursor
+  const LEAN = -4;       // negative so the ring follows the cursor: down moves it down
+  const EASE = 3.5;      // how quickly it catches up with the pointer
 
-  pile.classList.add('is-scattered');
-
-  let top = cards.length;   // running z-index, always climbing
-
-  // A random resting spot. Horizontally the card stays inside the box; vertically
-  // it may hang past either edge, so photos lie over the heading and the sections
-  // above and below.
-  // Rather than placing each card independently - which clumps badly - the pile is
-  // split into a loose grid, one card per cell, jittered inside its cell. The
-  // result still looks scattered but nothing ends up buried.
-  const JITTER = 0.42;   // fraction of the spare room in a cell to wander by
-  const BLEED_X = 60;    // px a card may hang past the left/right of the column
-  const BLEED_Y = 90;    // px it may hang past the top/bottom
-
-  let layout = { cols: 1, rows: 1, cellW: 0, cellH: 0 };
-
-  const measure = () => {
-    const box = pile.getBoundingClientRect();
-    const w = cards[0].offsetWidth;
-    const h = cards[0].offsetHeight;
-
-    // roughly square cells for the pile's proportions, but never narrower
-    // than a card's width or the grid stops helping
-    let cols = Math.round(Math.sqrt(cards.length * (box.width / box.height))) || 1;
-    cols = Math.max(1, Math.min(cards.length, cols));
-    while (cols > 1 && box.width / cols < w * 0.72) cols--;
-
-    const rows = Math.ceil(cards.length / cols);
-    layout = {
-      cols, rows, w, h,
-      cellW: box.width / cols,
-      cellH: box.height / rows,
-    };
-  };
-
-  const place = (card, index) => {
-    const { cols, cellW, cellH, w, h } = layout;
-    const col = index % cols;
-    const row = Math.floor(index / cols);
-
-    // centre of the cell, then wander
-    const slackX = Math.max(cellW - w, 0) + w * 0.35;
-    const slackY = Math.max(cellH - h, 0) + h * 0.3;
-
-    const x = col * cellW + (cellW - w) / 2 + rand(-slackX, slackX) * JITTER;
-    const y = row * cellH + (cellH - h) / 2 + rand(-slackY, slackY) * JITTER;
-
-    card.style.setProperty('--x', x + 'px');
-    card.style.setProperty('--y', y + 'px');
-    card.style.setProperty('--r', rand(-11, 11).toFixed(1) + 'deg');
-
-    card.dataset.x = x;
-    card.dataset.y = y;
-  };
-
-  const raise = card => { card.style.zIndex = ++top; };
-
-  const scatter = () => {
-    measure();
-    const slots = cards.map((_, i) => i);
-    for (let i = slots.length - 1; i > 0; i--) {      // shuffle the cell order
-      const j = Math.floor(Math.random() * (i + 1));
-      [slots[i], slots[j]] = [slots[j], slots[i]];
-    }
-    cards.forEach((card, i) => { place(card, slots[i]); raise(card); });
-  };
-
-  // Scatter straight away - the card height comes from a CSS aspect-ratio, so it
-  // measures correctly before the photos load. The extra frame is only a safety
-  // net for fonts/layout settling; on its own it would leave the pile stacked in
-  // a background tab, where requestAnimationFrame never fires.
-  scatter();
-  requestAnimationFrame(scatter);
-
-  let resizeTimer = null;
-  window.addEventListener('resize', () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(scatter, 250);
-  });
-
-  // ---- drag, then throw ----
-  //
-  // While dragging we remember the last couple of pointer samples. On release
-  // that becomes a velocity, and the card flies off under gravity, bouncing off
-  // the edges of the pile until friction settles it.
-
-  // ---- ambient drift ----
-  //
-  // One loop nudges every card along at a crawl, turning them back at the edges.
-  // A flick just raises that card's speed; drag lifts it out of the loop. Doing
-  // it here rather than in a CSS animation keeps the drift on the same
-  // `translate` the drag and the physics write, so nothing fights.
-
-  const AMBIENT = 11;        // px/s the cards idle at
-  const BOUNCE = 0.9;        // energy kept when turning at an edge
-  const DECAY = 0.985;       // how fast a throw bleeds back down to ambient
-  const MAX_THROW = 1400;    // px/s cap so a flick can't launch it into orbit
-
-  let dragging = null;
-
-  const bounds = () => {
-    const box = pile.getBoundingClientRect();
-    return {
-      minX: -BLEED_X,
-      maxX: Math.max(0, box.width - layout.w) + BLEED_X,
-      minY: -BLEED_Y,
-      maxY: Math.max(0, box.height - layout.h) + BLEED_Y,
-    };
-  };
-
-  const clampSpeed = v => Math.max(-MAX_THROW, Math.min(MAX_THROW, v));
-
-  const setDrift = card => {
-    const angle = rand(0, Math.PI * 2);
-    const speed = rand(AMBIENT * 0.6, AMBIENT * 1.4);
-    card._vx = Math.cos(angle) * speed;
-    card._vy = Math.sin(angle) * speed;
-    card._spin = rand(-2.5, 2.5);      // deg/s
-  };
-
-  const flick = (card, vx, vy) => {
-    card._vx = clampSpeed(vx);
-    card._vy = clampSpeed(vy);
-    card._spin = clampSpeed(vx) * 0.05;
-  };
-
-  let frame = null;
+  let angle = 0;
+  let boost = 0;
+  let lastY = window.scrollY;
+  let wantX = 0, wantY = 0;   // where the cursor is, as -1..1
+  let leanX = 0, leanY = 0;   // where the ring has got to so far
   let last = 0;
+  let running = false;
+  let frame = null;
 
-  const tick = now => {
-    const dt = Math.min((now - last) / 1000, 0.05);   // clamp after a stall
+  const step = (now) => {
+    const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
     last = now;
-    const b = bounds();
 
-    cards.forEach(card => {
-      if (card === dragging) return;
-      // leave arrivals and exits to their CSS transitions
-      if (card.classList.contains('is-arriving') || card.classList.contains('is-leaving')) return;
-      if (card._vx === undefined) setDrift(card);
+    angle += (IDLE + boost) * dt;
+    boost *= Math.pow(DECAY, dt * 60);
+    if (Math.abs(boost) < 0.4) boost = 0;
 
-      let x = parseFloat(card.dataset.x) || 0;
-      let y = parseFloat(card.dataset.y) || 0;
-      let r = parseFloat(card.style.getPropertyValue('--r')) || 0;
+    // chase the cursor rather than snapping to it, so a fast flick across the
+    // screen still reads as the ring leaning over
+    const k = 1 - Math.exp(-EASE * dt);
+    leanX += (wantX - leanX) * k;
+    leanY += (wantY - leanY) * k;
 
-      const speed = Math.hypot(card._vx, card._vy);
-      if (speed > AMBIENT) {                  // a throw settling back to a drift
-        card._vx *= DECAY;
-        card._vy *= DECAY;
-        card._spin *= DECAY;
-      } else if (speed < AMBIENT * 0.5) {      // never quite stops
-        const k = (AMBIENT * 0.5) / (speed || 1);
-        card._vx *= k;
-        card._vy *= k;
-      }
+    ring.style.setProperty('--spin', (angle % 360).toFixed(2) + 'deg');
+    ring.style.setProperty('--yaw', (leanX * YAW).toFixed(2) + 'deg');
+    ring.style.setProperty('--lean', (leanY * LEAN).toFixed(2) + 'deg');
 
-      x += card._vx * dt;
-      y += card._vy * dt;
-      r += card._spin * dt;
-
-      if (x < b.minX) { x = b.minX; card._vx = Math.abs(card._vx) * BOUNCE; card._spin *= -1; }
-      if (x > b.maxX) { x = b.maxX; card._vx = -Math.abs(card._vx) * BOUNCE; card._spin *= -1; }
-      if (y < b.minY) { y = b.minY; card._vy = Math.abs(card._vy) * BOUNCE; card._spin *= -1; }
-      if (y > b.maxY) { y = b.maxY; card._vy = -Math.abs(card._vy) * BOUNCE; card._spin *= -1; }
-
-      card.style.setProperty('--x', x + 'px');
-      card.style.setProperty('--y', y + 'px');
-      card.style.setProperty('--r', r.toFixed(2) + 'deg');
-      card.dataset.x = x;
-      card.dataset.y = y;
-    });
-
-    frame = requestAnimationFrame(tick);
+    // keep going while the boost is still unwinding, then settle into the idle turn
+    frame = requestAnimationFrame(step);
   };
 
-  const startDrift = () => {
-    if (reduced.matches || frame) return;
-    last = performance.now();
-    frame = requestAnimationFrame(tick);
+  const start = () => {
+    if (running) return;
+    running = true;
+    last = 0;
+    frame = requestAnimationFrame(step);
   };
 
-  const stopDrift = () => { cancelAnimationFrame(frame); frame = null; };
-
-  // only run while the section is on screen and the tab is in front
-  new IntersectionObserver(entries => {
-    entries[0].isIntersecting ? startDrift() : stopDrift();
-  }, { threshold: 0.05 }).observe(pile);
-
-  document.addEventListener('visibilitychange', () => {
-    document.hidden ? stopDrift() : startDrift();
-  });
-
-  // ---- full-size viewer ----
-  //
-  // The card turns over: the thumbnail you clicked rotates away and the full
-  // photo arrives on the back. Opening and closing use the same transform, read
-  // from wherever the card happens to be drifting at that moment.
-
-  const lightbox = document.querySelector('.lightbox');
-  const flip = lightbox && lightbox.querySelector('.lightbox-flip');
-  const frontImg = lightbox && lightbox.querySelector('.lightbox-front img');
-  const backImg = lightbox && lightbox.querySelector('.lightbox-back img');
-  let viewing = null;
-
-  // The panel's own rect, measured with no transform applied. Reading it live
-  // would give whatever the flip is mid-animation, so closing early would map
-  // the card onto a half-finished pose.
-  let panelRect = null;
-
-  const measurePanel = () => {
-    const previous = flip.style.transform;
-    flip.style.transform = 'none';
-    panelRect = flip.getBoundingClientRect();
-    flip.style.transform = previous;
+  const stop = () => {
+    running = false;
+    if (frame) cancelAnimationFrame(frame);
+    frame = null;
   };
 
-  // maps the big centred panel back onto the little card on screen
-  const transformOntoCard = card => {
-    const from = card.getBoundingClientRect();
-    const to = panelRect;
-    const sx = from.width / to.width;
-    const sy = from.height / to.height;
-    const dx = (from.left + from.width / 2) - (to.left + to.width / 2);
-    const dy = (from.top + from.height / 2) - (to.top + to.height / 2);
-    return `translate(${dx}px, ${dy}px) scale(${sx}, ${sy}) rotateY(0deg)`;
-  };
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    boost += (y - lastY) * PER_PX;
+    boost = Math.max(-MAX_BOOST, Math.min(MAX_BOOST, boost));
+    lastY = y;
+  }, { passive: true });
 
-  // Both faces have to be painted before the flip starts. Assigning .src doesn't
-  // decode synchronously, so without this the panel can turn over as a blank
-  // rectangle and only fill in once the image is ready.
-  const ready = (img, src) => {
-    img.src = src;
-    if (img.complete && img.naturalWidth) return Promise.resolve();
-    const decoded = img.decode ? img.decode() : new Promise(res => { img.onload = res; });
-    // never hold the animation for long - a slow photo can land mid-flip
-    return Promise.race([
-      decoded.catch(() => {}),
-      new Promise(res => setTimeout(res, 250)),
-    ]);
-  };
+  window.addEventListener('pointermove', (e) => {
+    wantX = (e.clientX / window.innerWidth) * 2 - 1;
+    wantY = (e.clientY / window.innerHeight) * 2 - 1;
+  }, { passive: true });
 
-  const openViewer = async card => {
-    if (!lightbox || viewing) return;
-    viewing = card;
+  // a pointer that leaves the window shouldn't hold the ring over at an angle
+  window.addEventListener('pointerleave', () => {
+    wantX = 0;
+    wantY = 0;
+  }, { passive: true });
 
-    const small = card.querySelector('img').getAttribute('src');
-    // the pile uses 480px copies; the viewer wants the 900px original
-    const large = small.replace('/about-photos/web/', '/about-photos/');
-
-    lightbox.hidden = false;
-    await Promise.all([ready(frontImg, small), ready(backImg, large)]);
-    if (viewing !== card) return;               // closed again while loading
-
-    card.style.visibility = 'hidden';           // don't show it behind the panel
-
-    // Size the panel to the photo itself so it fits edge to edge - a fixed box
-    // would letterbox anything that isn't the same shape.
-    const nw = backImg.naturalWidth || 4;
-    const nh = backImg.naturalHeight || 5;
-    const fit = Math.min(
-      (window.innerWidth * 0.86) / nw,
-      (window.innerHeight * 0.86) / nh,
-      1.25,                                      // don't upscale into mush
-    );
-    flip.style.width = Math.round(nw * fit) + 'px';
-    flip.style.height = Math.round(nh * fit) + 'px';
-
-    flip.style.transition = 'none';
-    measurePanel();
-    flip.style.transform = transformOntoCard(card);
-    void flip.offsetWidth;                       // commit that start pose
-    flip.style.transition = '';
-
-    // the reflow above is what makes this transition rather than jump - no need
-    // to wait for a frame, which would stall in a backgrounded tab
-    lightbox.classList.add('is-open');
-    flip.style.transform = 'translate(0, 0) scale(1) rotateY(180deg)';
-  };
-
-  const closeViewer = () => {
-    if (!viewing) return;
-    const card = viewing;
-    viewing = null;
-
-    lightbox.classList.remove('is-open');
-    flip.style.transform = transformOntoCard(card);   // wherever it has drifted to
-
-    const done = event => {
-      if (event && event.target !== flip) return;
-      lightbox.hidden = true;
-      card.style.visibility = '';
-      flip.removeEventListener('transitionend', done);
-    };
-    flip.addEventListener('transitionend', done);
-    setTimeout(done, 800);
-  };
-
-  if (lightbox) {
-    lightbox.addEventListener('click', closeViewer);
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') closeViewer();
-    });
-  }
-
-  const wire = card => {
-    card.addEventListener('pointerdown', event => {
-      if (event.button !== 0 && event.pointerType === 'mouse') return;
-      // dragging a photo would fight scrolling on a phone - leave touches alone
-      if (event.pointerType === 'touch') return;
-
-      dragging = card;
-
-      const startX = event.clientX;
-      const startY = event.clientY;
-      const originX = parseFloat(card.dataset.x) || 0;
-      const originY = parseFloat(card.dataset.y) || 0;
-      const pressedAt = performance.now();
-      let travelled = 0;
-
-      // rolling sample of recent pointer positions, for the release velocity
-      let samples = [{ x: event.clientX, y: event.clientY, t: performance.now() }];
-
-      raise(card);
-      card.classList.add('is-dragging');
-      card.setPointerCapture(event.pointerId);
-
-      const move = e => {
-        const x = originX + (e.clientX - startX);
-        const y = originY + (e.clientY - startY);
-        card.style.setProperty('--x', x + 'px');
-        card.style.setProperty('--y', y + 'px');
-        card.dataset.x = x;
-        card.dataset.y = y;
-
-        travelled = Math.hypot(e.clientX - startX, e.clientY - startY);
-        samples.push({ x: e.clientX, y: e.clientY, t: performance.now() });
-        if (samples.length > 5) samples.shift();
-      };
-
-      const up = () => {
-        dragging = null;
-        card.classList.remove('is-dragging');
-        card.removeEventListener('pointermove', move);
-        card.removeEventListener('pointerup', up);
-        card.removeEventListener('pointercancel', up);
-
-        const first = samples[0];
-        const last = samples[samples.length - 1];
-        const dt = (last.t - first.t) / 1000;
-
-        // barely moved and let go quickly? that was a click, not a drag
-        if (travelled < 5 && performance.now() - pressedAt < 500) {
-          openViewer(card);
-          return;
-        }
-
-        // a flick sends it off fast; a gentle drop just rejoins the slow drift
-        if (dt > 0.005 && samples.length > 1) {
-          const vx = (last.x - first.x) / dt;
-          const vy = (last.y - first.y) / dt;
-          if (Math.hypot(vx, vy) > 60) flick(card, vx, vy);
-        }
-      };
-
-      card.addEventListener('pointermove', move);
-      card.addEventListener('pointerup', up);
-      card.addEventListener('pointercancel', up);
-    });
-  };
-
-  cards.forEach(wire);
-
-  // ---- the + button: fling one more photo in from off screen ----
-  //
-  // Once the pool is empty it turns into a reset: everything that was added
-  // slides back off the edges and the original dozen re-scatter.
-
-  const button = document.querySelector('.photo-more');
-  const original = [...cards];
-  const startingPool = (() => {
-    try { return JSON.parse(pile.dataset.pool || '[]'); } catch (e) { return []; }
-  })();
-  let pool = [...startingPool];
-
-  // a point beyond one of the four edges, in pile coordinates
-  const offscreenPoint = (toX, toY) => {
-    const box = pile.getBoundingClientRect();
-    const edge = Math.floor(Math.random() * 4);
-    const far = 1.4;
-    if (edge === 0) return [-box.left - layout.w * far, toY];
-    if (edge === 1) return [window.innerWidth - box.left + layout.w * far, toY];
-    if (edge === 2) return [toX, -box.top - layout.h * far];
-    return [toX, window.innerHeight - box.top + layout.h * far];
-  };
-
-  const setMode = () => {
-    const done = pool.length === 0;
-    button.classList.toggle('is-reset', done);
-    button.setAttribute('aria-label', done ? 'Reset the photos' : 'Add another photo');
-  };
-
-  const addPhoto = () => {
-    const file = pool.splice(Math.floor(Math.random() * pool.length), 1)[0];
-    if (!file) return;
-
-    const card = document.createElement('figure');
-    card.className = 'photo-card';
-    const img = document.createElement('img');
-    img.src = 'assets/images/about-photos/web/' + file;
-    img.alt = '';
-    img.draggable = false;
-    card.append(img);
-    card.dataset.file = file;
-    pile.append(card);
-
-    cards.push(card);
-    wire(card);
-    raise(card);
-    setDrift(card);
-
-    measure();
-    // a random cell, not the last one - the last cell is always the bottom-right
-    // of the grid, which is why new photos were all landing along the bottom
-    place(card, Math.floor(Math.random() * layout.cols * layout.rows));
-    const toX = parseFloat(card.dataset.x);
-    const toY = parseFloat(card.dataset.y);
-
-    const [fromX, fromY] = offscreenPoint(toX, toY);
-    card.style.setProperty('--x', fromX + 'px');
-    card.style.setProperty('--y', fromY + 'px');
-    card.style.setProperty('--r', rand(-160, 160).toFixed(1) + 'deg');
-
-    // commit that starting point before switching the transition on,
-    // otherwise the browser collapses both writes into one and nothing moves
-    void card.offsetWidth;
-
-    card.classList.add('is-arriving');
-    card.style.setProperty('--x', toX + 'px');
-    card.style.setProperty('--y', toY + 'px');
-    card.style.setProperty('--r', rand(-11, 11).toFixed(1) + 'deg');
-    card.dataset.x = toX;
-    card.dataset.y = toY;
-
-    const landed = event => {
-      // scale/box-shadow also transition; only the arrival counts
-      if (event && event.propertyName !== 'translate') return;
-      card.classList.remove('is-arriving');
-      card.removeEventListener('transitionend', landed);
-    };
-    card.addEventListener('transitionend', landed);
-    setTimeout(landed, 1400);   // in case the transition never reports back
-  };
-
-  const reset = () => {
-    const extras = cards.filter(card => !original.includes(card));
-
-    extras.forEach(card => {
-      card.classList.remove('is-arriving');
-
-      const [x, y] = offscreenPoint(parseFloat(card.dataset.x), parseFloat(card.dataset.y));
-      void card.offsetWidth;
-      card.classList.add('is-leaving');
-      card.style.setProperty('--x', x + 'px');
-      card.style.setProperty('--y', y + 'px');
-      card.style.setProperty('--r', rand(-200, 200).toFixed(1) + 'deg');
-
-      setTimeout(() => card.remove(), 800);
-    });
-
-    cards.length = 0;
-    cards.push(...original);
-
-    // settle the keepers back into a fresh scatter
-    original.forEach(card => {
-      setDrift(card);
-      card.classList.add('is-arriving');
-      setTimeout(() => card.classList.remove('is-arriving'), 1100);
-    });
-    scatter();
-
-    pool = [...startingPool];
-    setMode();
-  };
-
-  if (button) {
-    setMode();
-    button.addEventListener('click', () => {
-      if (pool.length) {
-        addPhoto();
-        setMode();
-      } else {
-        reset();
-      }
-    });
+  // no point burning frames while the ring is nowhere near the screen
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => (entry.isIntersecting ? start() : stop()));
+    }, { rootMargin: '200px 0px' }).observe(ring);
+  } else {
+    start();
   }
 });
