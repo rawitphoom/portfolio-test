@@ -155,49 +155,6 @@ nav a:hover {
     font-size: min(3.7rem, calc((100vw - 3rem) / 9.75));
 }
 
-.typing-cursor {
-    display: inline-block;
-    width: 0.06em;
-    /* Inter's cap height - sits on the baseline and tops out level with the capitals */
-    height: 0.72em;
-    margin-left: 0.06em;
-    vertical-align: baseline;
-    background: currentColor;
-    animation: typing-blink 1s steps(2, start) infinite;
-}
-
-@keyframes typing-blink {
-    50% {
-        opacity: 0;
-    }
-}
-
-/* shown as plain text until JS takes over, then left for screen readers only.
-   The 1px box matters: clip alone hides it but the element keeps its full width,
-   which pushed the page wider than the screen on phones. */
-.typing-line.is-typing .typing-fallback {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-    clip-path: inset(50%);
-    white-space: nowrap;
-    border: 0;
-}
-
-.typing-line:not(.is-typing) .typing-cursor {
-    display: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .typing-cursor {
-        animation: none;
-    }
-}
-
 .hero p {
     /* max-width: 45rem; */
     max-width: 39rem;
@@ -588,6 +545,8 @@ nav a:hover {
     bottom: 0;
     left: 0;
     width: 100%;
+    /* above anything a composed cover stacks inside itself */
+    z-index: 3;
     padding: 1.5rem;
     padding-top: 10rem;
     padding-bottom: 1.5rem;
@@ -870,6 +829,258 @@ nav a:hover {
     top: 10rem;
 } */
 
+/* Core skills: a track that runs through the stages the copy names. Every
+   stage sits on one shared 7s clock, offset by --i, so the pulse travels with
+   the head of the line rather than drifting out of step with it. */
+.flow {
+    --cycle: 7s;
+    position: relative;
+    margin-top: 2.25rem;
+    padding-top: 0.4rem;
+}
+
+.flow-track {
+    position: absolute;
+    top: 0.75rem;
+    left: 0;
+    right: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.flow-fill,
+.flow-head {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    translate: 0 -50%;
+    /* held still until the card is reached */
+    animation-play-state: paused;
+}
+
+.flow-fill {
+    width: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.35), #ffffff);
+    animation: flow-sweep var(--cycle) linear infinite;
+}
+
+.flow-head {
+    width: 0.5rem;
+    height: 0.5rem;
+    margin-left: -0.25rem;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 0.75rem rgba(255, 255, 255, 0.9);
+    animation: flow-travel var(--cycle) linear infinite;
+}
+
+.flow-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.5);
+    animation: flow-lit var(--cycle) linear infinite;
+    animation-delay: calc(var(--at) * var(--cycle) * 0.57);
+    animation-play-state: paused;
+}
+
+.flow-step:last-child {
+    align-items: flex-end;
+    text-align: right;
+}
+
+.flow-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.28);
+    animation: flow-dot var(--cycle) linear infinite;
+    animation-delay: calc(var(--at) * var(--cycle) * 0.57);
+    animation-play-state: paused;
+}
+
+.flow.is-in .flow-fill,
+.flow.is-in .flow-head,
+.flow.is-in .flow-step,
+.flow.is-in .flow-dot {
+    animation-play-state: running;
+}
+
+/* the line draws across, rests, then clears before starting over */
+@keyframes flow-sweep {
+    0% { width: 0; opacity: 1; }
+    57% { width: 100%; opacity: 1; }
+    88% { width: 100%; opacity: 1; }
+    97% { width: 100%; opacity: 0; }
+    100% { width: 0; opacity: 0; }
+}
+
+@keyframes flow-travel {
+    0% { left: 0; opacity: 0; }
+    6% { opacity: 1; }
+    57% { left: 100%; opacity: 1; }
+    88% { left: 100%; opacity: 1; }
+    97% { left: 100%; opacity: 0; }
+    100% { left: 0; opacity: 0; }
+}
+
+/* a short pulse, not a long on/off, so stages never overlap between cycles */
+@keyframes flow-lit {
+    0% { color: rgba(255, 255, 255, 0.5); }
+    2% { color: #ffffff; }
+    20% { color: #ffffff; }
+    38% { color: rgba(255, 255, 255, 0.5); }
+    100% { color: rgba(255, 255, 255, 0.5); }
+}
+
+@keyframes flow-dot {
+    0% { background: rgba(255, 255, 255, 0.28); scale: 1; box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+    2% { background: #ffffff; scale: 1.6; box-shadow: 0 0 0.6rem rgba(255, 255, 255, 0.85); }
+    20% { background: #ffffff; scale: 1.15; box-shadow: 0 0 0.4rem rgba(255, 255, 255, 0.5); }
+    38% { background: rgba(255, 255, 255, 0.28); scale: 1; box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+    100% { background: rgba(255, 255, 255, 0.28); scale: 1; box-shadow: 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@media (max-width: 768px) {
+    .flow-step {
+        font-size: 0.75rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .flow-fill,
+    .flow-head,
+    .flow-step,
+    .flow-dot {
+        animation: none;
+    }
+
+    .flow-fill {
+        width: 100%;
+    }
+
+    .flow-head {
+        display: none;
+    }
+}
+
+/* Tool badges, built from real elements rather than one flat image so each
+   one can move on its own. */
+.tool-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0.7rem 0.6rem;
+    margin: 1.75rem 0 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tool {
+    position: relative;
+    transition:
+        opacity 0.5s ease,
+        translate 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+        scale 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: calc(var(--i) * 45ms);
+}
+
+/* .js-anim is added by the script, so no-JS renders the badges as-is */
+.tool-grid.js-anim .tool {
+    opacity: 0;
+    translate: 0 14px;
+    scale: 0.8;
+}
+
+.tool-grid.js-anim.is-in .tool {
+    opacity: 1;
+    translate: 0 0;
+    scale: 1;
+}
+
+.tool-face {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 1.38;
+    background: var(--tile);
+    border-radius: 0.85rem;
+    box-shadow: 0 0.35rem 0.9rem rgba(0, 0, 0, 0.35);
+    /* the leaning parallelogram look; the art is skewed back upright inside */
+    transform: skewX(-9deg);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.35s ease;
+}
+
+.tool-art {
+    width: 58%;
+    height: 58%;
+    object-fit: contain;
+    transform: skewX(9deg);
+    transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tool:hover .tool-face {
+    transform: skewX(0deg) translateY(-0.35rem) scale(1.07);
+    box-shadow: 0 0.8rem 1.4rem rgba(0, 0, 0, 0.45);
+}
+
+.tool:hover .tool-art {
+    transform: skewX(0deg) scale(1.05);
+}
+
+/* the name only exists for screen readers and hover tooltips */
+.tool-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+@media (max-width: 768px) {
+    .tool-grid {
+        gap: 0.5rem 0.45rem;
+    }
+
+    .tool-face {
+        border-radius: 0.6rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .tool,
+    .tool-face,
+    .tool-art {
+        transition: none;
+    }
+
+    .tool {
+        opacity: 1;
+        translate: none;
+        scale: 1;
+    }
+}
+
 .skill-card p {
     font-size: 1rem;
     opacity: 0.6;
@@ -1079,3 +1290,91 @@ nav a:hover {
 }
 
 /*************************************************************************/
+
+/***************************** FOOTER WORDMARK *****************************/
+
+.site-footer {
+    padding: 2rem 0 1.5rem;
+    text-align: center;
+    overflow: hidden;
+    /* an explicit backdrop for the lens to invert against, and its own stacking
+       context so the blend stops at the footer instead of eating the page */
+    background: #000;
+    isolation: isolate;
+}
+
+.glass-mark {
+    position: relative;
+    cursor: default;
+}
+
+/* A white disc in difference mode: white against black reads as white, and
+   against the white letters it reads as black, so the word flips inside it. */
+.glass-lens {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 22px;
+    height: 22px;
+    margin: -11px 0 0 -11px;
+    border-radius: 50%;
+    /* Feathered rather than a flat disc: partial alpha means partial
+       inversion, so the edge dissolves instead of cutting a hard circle. */
+    background: radial-gradient(circle closest-side,
+            #ffffff 0%,
+            #ffffff 70%,
+            rgba(255, 255, 255, 0.7) 86%,
+            rgba(255, 255, 255, 0.22) 95%,
+            rgba(255, 255, 255, 0) 100%);
+    mix-blend-mode: difference;
+    pointer-events: none;
+    /* position and size both live in one transform, written by the script, so
+       nothing here leaves the compositor */
+    transform: translate3d(-9999px, -9999px, 0) scale(0);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    will-change: transform, opacity;
+}
+
+.glass-lens.is-on {
+    opacity: 1;
+}
+
+.glass-mark-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    /* The filter is re-evaluated over this whole area every frame, so capping
+       it keeps a wide monitor from turning the footer into a slideshow. */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.glass-text {
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 450px;
+    letter-spacing: -0.02em;
+    fill: #ffffff;
+}
+
+.footer-note {
+    margin: 0;
+    font-size: 0.8rem;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+@media (max-width: 768px) {
+    .site-footer {
+        padding: 1rem 0 1.25rem;
+    }
+
+    .footer-note {
+        font-size: 0.72rem;
+    }
+}
+
+/***************************** ANIMATED COVER *****************************/
+
+

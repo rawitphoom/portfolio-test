@@ -4,3 +4,10 @@
 # Original large video sources — use compressed -web.mp4 versions instead
 assets/images/contents/project6/IAT459 - Cover Video.mp4
 assets/images/contents/project6/IAT459 - Final Video Showcase.mov
+
+# 4K camera/screen-recording sources for the composed project covers.
+# Over GitHub's 100MB hard limit and unused by the site - it loads the
+# encoded IAT359-CoverBackground.* and IAT459-Cover*.* files instead.
+assets/images/IAT459-BackgroundImage.mov
+assets/images/IAT459-BackgroundImage-2.mov
+assets/images/IAT359-CoverBackgroundVideo.mov

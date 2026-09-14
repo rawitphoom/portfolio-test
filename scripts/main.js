@@ -94,57 +94,85 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Typing effect for the hero heading: types a phrase, holds, deletes, moves to the next
 document.addEventListener('DOMContentLoaded', () => {
-  const line = document.querySelector('.typing-line');
-  if (!line) return;
+  const lines = document.querySelectorAll('.typing-line');
+  if (!lines.length) return;
 
-  let phrases;
-  try {
-    phrases = JSON.parse(line.dataset.phrases);
-  } catch (e) {
-    return; // bad data-phrases: leave the plain fallback text in place
-  }
-  if (!Array.isArray(phrases) || !phrases.length) return;
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const out = line.querySelector('.typing-text');
+  lines.forEach((line) => {
+    let phrases;
+    try {
+      phrases = JSON.parse(line.dataset.phrases);
+    } catch (e) {
+      return; // bad data-phrases: leave the plain fallback text in place
+    }
+    if (!Array.isArray(phrases) || !phrases.length) return;
 
-  // No animation for visitors who ask for reduced motion - just show the first phrase.
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    line.classList.add('is-typing');
-    out.textContent = phrases[0];
-    return;
-  }
+    const out = line.querySelector('.typing-text');
+    if (!out) return;
 
-  const TYPE_SPEED = 90;    // ms per character while typing
-  const DELETE_SPEED = 45;  // ms per character while deleting
-  const HOLD = 1600;        // ms to sit on a finished phrase
-  const PAUSE = 400;        // ms of empty line before the next phrase
-
-  line.classList.add('is-typing');
-
-  let index = 0;
-  let chars = 0;
-  let deleting = false;
-
-  const tick = () => {
-    const phrase = phrases[index];
-    chars += deleting ? -1 : 1;
-    out.textContent = phrase.slice(0, chars);
-
-    let delay = deleting ? DELETE_SPEED : TYPE_SPEED;
-
-    if (!deleting && chars === phrase.length) {
-      deleting = true;
-      delay = HOLD;
-    } else if (deleting && chars === 0) {
-      deleting = false;
-      index = (index + 1) % phrases.length;
-      delay = PAUSE;
+    // No animation for visitors who ask for reduced motion - just show the first phrase.
+    if (calm) {
+      line.classList.add('is-typing');
+      out.textContent = phrases[0];
+      return;
     }
 
-    setTimeout(tick, delay);
-  };
+    // each line can set its own pace, so a quiet caption can be slower than a headline
+    const num = (name, fallback) => {
+      const v = parseInt(line.dataset[name], 10);
+      return Number.isFinite(v) ? v : fallback;
+    };
+    const TYPE_SPEED = num('type', 90);     // ms per character while typing
+    const DELETE_SPEED = num('delete', 45); // ms per character while deleting
+    const HOLD = num('hold', 1600);         // ms to sit on a finished phrase
+    const PAUSE = num('pause', 400);        // ms of empty line before the next phrase
+    const FADE = num('fade', 0);            // >0: dissolve the phrase instead of backspacing it
 
-  tick();
+    line.classList.add('is-typing');
+
+    let index = 0;
+    let chars = 0;
+    let deleting = false;
+
+    // Dissolving out reads far smoother than backspacing, and it is the only
+    // way the line makes sense without a cursor to justify the deletion.
+    const dissolve = () => {
+      line.classList.add('is-fading');
+      setTimeout(() => {
+        chars = 0;
+        index = (index + 1) % phrases.length;
+        out.textContent = '';
+        line.classList.remove('is-fading');
+        setTimeout(tick, PAUSE);
+      }, FADE);
+    };
+
+    const tick = () => {
+      const phrase = phrases[index];
+      chars += deleting ? -1 : 1;
+      out.textContent = phrase.slice(0, chars);
+
+      let delay = deleting ? DELETE_SPEED : TYPE_SPEED;
+
+      if (!deleting && chars === phrase.length) {
+        if (FADE) {
+          setTimeout(dissolve, HOLD);
+          return;
+        }
+        deleting = true;
+        delay = HOLD;
+      } else if (deleting && chars === 0) {
+        deleting = false;
+        index = (index + 1) % phrases.length;
+        delay = PAUSE;
+      }
+
+      setTimeout(tick, delay);
+    };
+
+    tick();
+  });
 });
 
 // Project cards: loop their video automatically, but only while the card is on screen,
@@ -532,6 +560,142 @@ document.addEventListener('DOMContentLoaded', () => {
     new IntersectionObserver((entries) => {
       entries.forEach((entry) => (entry.isIntersecting ? start() : stop()));
     }, { rootMargin: '200px 0px' }).observe(ring);
+  } else {
+    start();
+  }
+});
+
+// Skill-card flourishes hold still until their card is actually reached: the
+// tool badges pop in one after another, the core-skills track starts running.
+document.addEventListener('DOMContentLoaded', () => {
+  const targets = [...document.querySelectorAll('.tool-grid, .flow, .cover-stage')];
+  if (!targets.length) return;
+
+  if (!('IntersectionObserver' in window)) {
+    // no observer: let everything sit in its finished, visible state
+    targets.forEach((el) => el.classList.add('is-in'));
+    return;
+  }
+
+  // only hide the badges once we know we can bring them back
+  const grid = targets.find((el) => el.classList.contains('tool-grid'));
+  if (grid) grid.classList.add('js-anim');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('is-in');
+      io.unobserve(entry.target);   // each one only needs starting once
+    });
+  }, { threshold: 0.25 });
+
+  targets.forEach((el) => io.observe(el));
+});
+
+// Footer wordmark: a glass "rawi" with an inverting lens that follows the
+// cursor. The lens is a white disc in difference blend mode, so the word flips
+// to black inside it and the backdrop flips to white.
+document.addEventListener('DOMContentLoaded', () => {
+  const mark = document.querySelector('#glass-mark');
+  const lens = document.querySelector('#glass-lens');
+  if (!mark || !lens) return;
+
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const coarse = window.matchMedia('(hover: none)');
+  if (coarse.matches) return;   // nothing to follow on a touch screen
+
+  const EASE = calm.matches ? 40 : 22;   // how fast the lens catches up
+  const STRETCH = calm.matches ? 0 : 0.0024;   // squash per px/s of travel
+  const STRETCH_MAX = 0.3;
+
+  let wantX = 0, wantY = 0, wantOn = 0;
+  let x = 0, y = 0, on = 0;
+  let lean = 0, angle = 0;
+  let placed = false;
+  let running = false, frame = null, last = 0;
+
+  const draw = () => {
+    // stretched along its direction of travel and squashed across it, so a
+    // fast sweep reads as liquid rather than a disc being dragged
+    const sx = on * (1 + lean);
+    const sy = on * (1 - lean * 0.62);
+    lens.style.transform =
+      'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0)' +
+      ' rotate(' + angle.toFixed(2) + 'rad)' +
+      ' scale(' + sx.toFixed(3) + ', ' + sy.toFixed(3) + ')' +
+      ' rotate(' + (-angle).toFixed(2) + 'rad)';
+  };
+
+  const step = (now) => {
+    const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
+    last = now;
+
+    const k = 1 - Math.exp(-EASE * dt);
+    const px = x, py = y;
+    x += (wantX - x) * k;
+    y += (wantY - y) * k;
+    on += (wantOn - on) * k;
+
+    if (dt > 0) {
+      const vx = (x - px) / dt;
+      const vy = (y - py) / dt;
+      const speed = Math.hypot(vx, vy);
+      if (speed > 12) angle = Math.atan2(vy, vx);
+      const want = Math.min(speed * STRETCH, STRETCH_MAX);
+      // eases back to round on its own, so it settles rather than snapping
+      lean += (want - lean) * (1 - Math.exp(-9 * dt));
+    }
+
+    draw();
+    frame = requestAnimationFrame(step);
+  };
+
+  const start = () => {
+    if (running) return;
+    running = true;
+    last = 0;
+    frame = requestAnimationFrame(step);
+  };
+
+  const stop = () => {
+    running = false;
+    if (frame) cancelAnimationFrame(frame);
+    frame = null;
+  };
+
+  window.addEventListener('pointermove', (e) => {
+    const r = mark.getBoundingClientRect();
+    if (!r.width || !r.height) return;
+
+    wantX = e.clientX - r.left;
+    wantY = e.clientY - r.top;
+
+    // drop it straight onto the cursor the first time, rather than flying in
+    // from wherever it was parked
+    if (!placed) {
+      x = wantX;
+      y = wantY;
+      placed = true;
+      draw();
+    }
+
+    const inside = e.clientX >= r.left && e.clientX <= r.right
+                && e.clientY >= r.top && e.clientY <= r.bottom;
+    wantOn = inside ? 1 : 0;
+    lens.classList.toggle('is-on', inside);
+  }, { passive: true });
+
+  const off = () => {
+    wantOn = 0;
+    lens.classList.remove('is-on');
+  };
+  window.addEventListener('pointerleave', off, { passive: true });
+  window.addEventListener('blur', off);
+
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver((entries) => {
+      entries.forEach((entry) => (entry.isIntersecting ? start() : (stop(), off())));
+    }, { rootMargin: '150px 0px' }).observe(mark);
   } else {
     start();
   }
