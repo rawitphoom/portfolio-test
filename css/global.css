@@ -898,66 +898,22 @@ like a block-level element, so it can:
 .mixtape-stage .mixtape-title {
     position: absolute;
     left: 50%;
-    /* The monitor's top edge sits at 29.4% of the height. Sizing and placing
-       the wordmark in cqh keeps it in that gap whatever the card's aspect,
-       with the cqw term capping it so it never outgrows the width. */
-    top: -3.5cqh;
+    /* Deliberately oversized: the top of the word reads above the monitor and
+       the rest carries on behind it. cqh tracks the monitor (placed at 29.4% of
+       the height); the cqw term stops it outgrowing the card's width. */
+    top: 2.4cqh;
     translate: -50% 0;
     margin: 0;
     /* above the backdrop, below the monitor - that sandwich is the whole effect */
     z-index: 1;
     font-family: 'Space Grotesk', 'Inter', sans-serif;
     font-weight: 700;
-    font-size: min(35.5cqh, 21cqw);
+    font-size: min(44cqh, 25cqw);
     line-height: 1;
     letter-spacing: -0.015em;
     white-space: nowrap;
 
-    /* A glint that sweeps across the letters: the gradient is mostly flat brand
-       colour with one bright band, clipped to the glyphs and slid across. Both
-       ends of the keyframes sit on flat colour, so the loop point is invisible. */
-    color: transparent;
-    background-image: linear-gradient(100deg,
-            #ee3b00 0%,
-            #ee3b00 28%,
-            #f45a20 40%,
-            #ff8048 50%,
-            #f45a20 60%,
-            #ee3b00 72%,
-            #ee3b00 100%);
-    background-size: 320% 100%;
-    background-repeat: no-repeat;
-    background-position: 135% 0;
-    -webkit-background-clip: text;
-    background-clip: text;
-    animation: mixtape-wink 7.5s ease-in-out infinite;
-    animation-play-state: paused;
-}
-
-/* only winks once the card is actually on screen */
-.cover-stage.is-in .mixtape-title {
-    animation-play-state: running;
-}
-
-@keyframes mixtape-wink {
-
-    0%,
-    84% {
-        background-position: 135% 0;
-    }
-
-    96%,
-    100% {
-        background-position: -35% 0;
-    }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .mixtape-stage .mixtape-title {
-        animation: none;
-        background-image: none;
-        color: #ee3b00;
-    }
+    color: #ee3b00;
 }
 
 /* video 2 cropped to the monitor, placed where it sat in the original frame:
