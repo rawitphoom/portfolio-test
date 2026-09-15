@@ -1408,3 +1408,11 @@ nav a:hover {
         opacity: 0;
     }
 }
+
+/* Parked for now - the core-skills track (card 01) and the tool badges (card 02)
+   are hidden but left in place. Placed last so it beats their own display
+   rules; delete this block to bring them back. */
+.flow,
+.tool-grid {
+    display: none;
+}
