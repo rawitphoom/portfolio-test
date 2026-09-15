@@ -1305,14 +1305,20 @@ nav a:hover {
 
 /* --- contact bar above the wordmark --- */
 
+/* the wrapper owns the gutters; the rule below then spans exactly the content
+   width instead of running out into the padding */
+.footer-bar-wrap {
+    max-width: 1440px;
+    margin: 0 auto 3.5rem;
+    padding: 0 1.5rem;
+}
+
 .footer-bar {
     display: grid;
     grid-template-columns: 1fr auto auto auto;
     gap: 2rem 3.5rem;
     align-items: start;
-    max-width: 1200px;
-    margin: 0 auto 3.5rem;
-    padding: 2rem 1.5rem 0;
+    padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     text-align: left;
 }
@@ -1360,10 +1366,13 @@ nav a:hover {
 }
 
 @media (max-width: 860px) {
+    .footer-bar-wrap {
+        margin-bottom: 2.5rem;
+    }
+
     .footer-bar {
         grid-template-columns: 1fr 1fr;
         gap: 1.75rem 1.5rem;
-        margin-bottom: 2.5rem;
     }
 
     .footer-copy {
@@ -1377,17 +1386,43 @@ nav a:hover {
     }
 }
 
+.footer-mark-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* left exactly the size of the artwork, so the masked ripple layer above it
+   stays registered with the letters */
 .glass-mark {
     position: relative;
-    max-width: 1200px;
-    margin: 0 auto;
     cursor: default;
+    /* the wordmark is scaled past this box, so the overspill is trimmed here */
+    overflow: hidden;
 }
 
 .footer-mark {
     display: block;
     width: 100%;
-    height: auto;
+
+    /* CROP KNOB - change the FIRST number only, leave the "/ 1" alone.
+       It is width / height, so a bigger first number means a shorter box.
+       The artwork is 2:1 but the letters only occupy 16.33%-82.83% of its
+       height; the rest is empty. 3.008 / 1 is dead flush with them and anything
+       higher starts cutting into the glyphs. The width never changes, so the
+       letters keep their size - only empty space goes.
+         2.0 / 1  = 696px tall (original, all the padding)
+         2.9 / 1  = 480px tall (set here, ~5px of margin)
+         3.008 /1 = 463px tall (flush)
+       The 49.6% re-centres on the letters, which sit slightly high in the
+       source; a plain "center" would clip their tops first. */
+    aspect-ratio: 2.9 / 1;
+    object-fit: cover;
+    object-position: center 49.6%;
+
+    /* SIZE KNOB. The artwork carries ~2.5% empty space at each side, so it can
+       grow this much before the letters reach the edges. 1 = untouched. */
+    scale: 1.06;
 }
 
 /* Ripples that ride the cursor. The wrapper is pinned over the wordmark and
@@ -1402,8 +1437,8 @@ nav a:hover {
     mix-blend-mode: screen;
     opacity: 0;
     transition: opacity 0.3s ease;
-    -webkit-mask: url("../assets/images/footer-rawi-mask.png") center / 100% 100% no-repeat;
-    mask: url("../assets/images/footer-rawi-mask.png") center / 100% 100% no-repeat;
+    -webkit-mask: url("../assets/images/footer-rawi-mask.png") center 49.6% / 106% auto no-repeat;
+    mask: url("../assets/images/footer-rawi-mask.png") center 49.6% / 106% auto no-repeat;
     -webkit-mask-mode: alpha;
     mask-mode: alpha;
 }
@@ -1489,4 +1524,12 @@ nav a:hover {
 .flow,
 .tool-grid {
     display: none;
+}
+
+/* TEMPORARY - remove when done. Red box shows the footer wordmark's image
+   bounds; the artwork has transparent padding, so the image box is larger than
+   the visible letters. */
+.footer-mark {
+    outline: 2px solid red;
+    outline-offset: -1px;
 }
