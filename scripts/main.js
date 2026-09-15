@@ -592,38 +592,24 @@ document.addEventListener('DOMContentLoaded', () => {
   targets.forEach((el) => io.observe(el));
 });
 
-// Footer wordmark: a glass "rawi" with an inverting lens that follows the
-// cursor. The lens is a white disc in difference blend mode, so the word flips
-// to black inside it and the backdrop flips to white.
+// Footer wordmark: inverted ripples that spread from the cursor across the glass.
 document.addEventListener('DOMContentLoaded', () => {
   const mark = document.querySelector('#glass-mark');
-  const lens = document.querySelector('#glass-lens');
-  if (!mark || !lens) return;
+  const flare = document.querySelector('#glass-ripple');   // the moving anchor
+  const shell = document.querySelector('.glass-ripple');   // masked wrapper
+  if (!mark || !flare || !shell) return;
 
-  const calm = window.matchMedia('(prefers-reduced-motion: reduce)');
-  const coarse = window.matchMedia('(hover: none)');
-  if (coarse.matches) return;   // nothing to follow on a touch screen
+  if (window.matchMedia('(hover: none)').matches) return;   // nothing to follow
 
-  const EASE = calm.matches ? 40 : 22;   // how fast the lens catches up
-  const STRETCH = calm.matches ? 0 : 0.0024;   // squash per px/s of travel
-  const STRETCH_MAX = 0.3;
+  const EASE = 18;   // how quickly the ripples catch the pointer
 
-  let wantX = 0, wantY = 0, wantOn = 0;
-  let x = 0, y = 0, on = 0;
-  let lean = 0, angle = 0;
+  let wantX = 0, wantY = 0;
+  let x = 0, y = 0;
   let placed = false;
   let running = false, frame = null, last = 0;
 
   const draw = () => {
-    // stretched along its direction of travel and squashed across it, so a
-    // fast sweep reads as liquid rather than a disc being dragged
-    const sx = on * (1 + lean);
-    const sy = on * (1 - lean * 0.62);
-    lens.style.transform =
-      'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0)' +
-      ' rotate(' + angle.toFixed(2) + 'rad)' +
-      ' scale(' + sx.toFixed(3) + ', ' + sy.toFixed(3) + ')' +
-      ' rotate(' + (-angle).toFixed(2) + 'rad)';
+    flare.style.transform = 'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0)';
   };
 
   const step = (now) => {
@@ -631,20 +617,8 @@ document.addEventListener('DOMContentLoaded', () => {
     last = now;
 
     const k = 1 - Math.exp(-EASE * dt);
-    const px = x, py = y;
     x += (wantX - x) * k;
     y += (wantY - y) * k;
-    on += (wantOn - on) * k;
-
-    if (dt > 0) {
-      const vx = (x - px) / dt;
-      const vy = (y - py) / dt;
-      const speed = Math.hypot(vx, vy);
-      if (speed > 12) angle = Math.atan2(vy, vx);
-      const want = Math.min(speed * STRETCH, STRETCH_MAX);
-      // eases back to round on its own, so it settles rather than snapping
-      lean += (want - lean) * (1 - Math.exp(-9 * dt));
-    }
 
     draw();
     frame = requestAnimationFrame(step);
@@ -670,8 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
     wantX = e.clientX - r.left;
     wantY = e.clientY - r.top;
 
-    // drop it straight onto the cursor the first time, rather than flying in
-    // from wherever it was parked
+    // first appearance lands on the cursor rather than flying in
     if (!placed) {
       x = wantX;
       y = wantY;
@@ -681,14 +654,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const inside = e.clientX >= r.left && e.clientX <= r.right
                 && e.clientY >= r.top && e.clientY <= r.bottom;
-    wantOn = inside ? 1 : 0;
-    lens.classList.toggle('is-on', inside);
+    shell.classList.toggle('is-on', inside);
   }, { passive: true });
 
-  const off = () => {
-    wantOn = 0;
-    lens.classList.remove('is-on');
-  };
+  const off = () => shell.classList.remove('is-on');
   window.addEventListener('pointerleave', off, { passive: true });
   window.addEventListener('blur', off);
 

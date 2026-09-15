@@ -1294,87 +1294,117 @@ nav a:hover {
 /***************************** FOOTER WORDMARK *****************************/
 
 .site-footer {
-    padding: 2rem 0 1.5rem;
+    padding: 2rem 0 2.5rem;
     text-align: center;
     overflow: hidden;
-    /* an explicit backdrop for the lens to invert against, and its own stacking
-       context so the blend stops at the footer instead of eating the page */
+    /* an explicit ground to invert against, and its own stacking context so the
+       difference blend stops at the footer */
     background: #000;
     isolation: isolate;
 }
 
 .glass-mark {
     position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
     cursor: default;
 }
 
-/* A white disc in difference mode: white against black reads as white, and
-   against the white letters it reads as black, so the word flips inside it. */
-.glass-lens {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 22px;
-    height: 22px;
-    margin: -11px 0 0 -11px;
-    border-radius: 50%;
-    /* Feathered rather than a flat disc: partial alpha means partial
-       inversion, so the edge dissolves instead of cutting a hard circle. */
-    background: radial-gradient(circle closest-side,
-            #ffffff 0%,
-            #ffffff 70%,
-            rgba(255, 255, 255, 0.7) 86%,
-            rgba(255, 255, 255, 0.22) 95%,
-            rgba(255, 255, 255, 0) 100%);
-    mix-blend-mode: difference;
-    pointer-events: none;
-    /* position and size both live in one transform, written by the script, so
-       nothing here leaves the compositor */
-    transform: translate3d(-9999px, -9999px, 0) scale(0);
-    opacity: 0;
-    transition: opacity 0.25s ease;
-    will-change: transform, opacity;
-}
-
-.glass-lens.is-on {
-    opacity: 1;
-}
-
-.glass-mark-svg {
+.footer-mark {
     display: block;
     width: 100%;
     height: auto;
-    /* The filter is re-evaluated over this whole area every frame, so capping
-       it keeps a wide monitor from turning the footer into a slideshow. */
-    max-width: 1200px;
-    margin: 0 auto;
 }
 
-.glass-text {
-    font-family: 'Inter', sans-serif;
-    font-weight: 800;
-    font-size: 450px;
-    letter-spacing: -0.02em;
-    fill: #ffffff;
+/* Ripples that ride the cursor. The wrapper is pinned over the wordmark and
+   masked to its alpha, so a ring only exists where the glass is - over the
+   empty black it simply isn't drawn. Screen blending only ever adds light, so
+   a ring reads as white flaring across the letters. */
+.glass-ripple {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    -webkit-mask: url("../assets/images/footer-rawi-mask.png") center / 100% 100% no-repeat;
+    mask: url("../assets/images/footer-rawi-mask.png") center / 100% 100% no-repeat;
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
 }
 
-.footer-note {
-    margin: 0;
-    font-size: 0.8rem;
-    letter-spacing: 0.02em;
-    color: rgba(255, 255, 255, 0.35);
+.glass-ripple.is-on {
+    opacity: 1;
 }
 
-@media (max-width: 768px) {
-    .site-footer {
-        padding: 1rem 0 1.25rem;
+/* a zero-size anchor the script moves; the rings hang off it, so the mask above
+   stays put while the ripples travel */
+.ripple-origin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+}
+
+.ripple-origin i {
+    position: absolute;
+    left: -280px;
+    top: -280px;
+    width: 560px;
+    height: 560px;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    /* the glow is what carries it across the chrome, where a bare white ring
+       would vanish into an already-white highlight */
+    box-shadow:
+        0 0 26px rgba(255, 255, 255, 0.85),
+        0 0 60px rgba(180, 220, 255, 0.5),
+        inset 0 0 26px rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    animation: ripple-out 2.6s linear infinite;
+}
+
+.ripple-origin i:nth-child(2) {
+    animation-delay: 0.87s;
+}
+
+.ripple-origin i:nth-child(3) {
+    animation-delay: 1.74s;
+}
+
+/* thins and fades as it spreads, the way a real ring does */
+@keyframes ripple-out {
+    0% {
+        scale: 0.03;
+        opacity: 0;
+        border-width: 14px;
     }
 
-    .footer-note {
-        font-size: 0.72rem;
+    8% {
+        opacity: 1;
+    }
+
+    55% {
+        opacity: 0.95;
+    }
+
+    82% {
+        opacity: 0.6;
+    }
+
+    100% {
+        scale: 1;
+        opacity: 0;
+        border-width: 2px;
     }
 }
 
-/***************************** ANIMATED COVER *****************************/
-
-
+@media (prefers-reduced-motion: reduce) {
+    .ripple-origin i {
+        animation: none;
+        opacity: 0;
+    }
+}

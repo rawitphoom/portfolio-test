@@ -624,46 +624,11 @@
     <!--------------------------------- FOOTER ------------------------------------------>
     <footer class="site-footer">
         <div class="glass-mark" id="glass-mark">
-            <svg class="glass-mark-svg" viewBox="0 0 1000 440" preserveAspectRatio="xMidYMid meet" role="img"
-                aria-label="rawi">
-                <defs>
-                    <filter id="glass-fx" x="-10%" y="-15%" width="120%" height="130%"
-                        color-interpolation-filters="sRGB">
-                        <!-- a tight height field, so the lighting reads as a crisp glass tube -->
-                        <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="height" />
-                        <feSpecularLighting in="height" surfaceScale="7" specularConstant="1.4"
-                            specularExponent="42" lighting-color="#ffffff" result="spec">
-                            <fePointLight id="glass-light" x="340" y="120" z="150" />
-                        </feSpecularLighting>
-                        <feComposite in="spec" in2="SourceAlpha" operator="in" result="specIn" />
-
-                        <!-- chromatic fringe: the channels pull apart slightly at the edges -->
-                        <feOffset in="specIn" dx="-2" dy="-1" result="offR" />
-                        <feColorMatrix in="offR" type="matrix"
-                            values="1 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" result="chanR" />
-                        <feColorMatrix in="specIn" type="matrix"
-                            values="0 0 0 0 0  0 1 0 0 0  0 0 0 0 0  0 0 0 1 0" result="chanG" />
-                        <feOffset in="specIn" dx="2" dy="1" result="offB" />
-                        <feColorMatrix in="offB" type="matrix"
-                            values="0 0 0 0 0  0 0 0 0 0  0 0 1 0 0  0 0 0 1 0" result="chanB" />
-                        <feBlend in="chanR" in2="chanG" mode="screen" result="rg" />
-                        <feBlend in="rg" in2="chanB" mode="screen" result="rgb" />
-
-                        <!-- a thin rim so the letterforms stay readable where the light isn't -->
-                        <feMorphology in="SourceAlpha" operator="dilate" radius="1" result="fat" />
-                        <feComposite in="fat" in2="SourceAlpha" operator="out" result="rim" />
-                        <feFlood flood-color="#ffffff" flood-opacity="0.5" result="rimFill" />
-                        <feComposite in="rimFill" in2="rim" operator="in" result="rimWhite" />
-
-                        <feBlend in="rgb" in2="rimWhite" mode="screen" />
-                    </filter>
-                </defs>
-                <text class="glass-text" x="500" y="381" text-anchor="middle" filter="url(#glass-fx)">rawi</text>
-            </svg>
-            <span class="glass-lens" id="glass-lens" aria-hidden="true"></span>
+            <img class="footer-mark" src="assets/images/footer-rawi.svg" alt="rawi">
+            <span class="glass-ripple" aria-hidden="true">
+                <span class="ripple-origin" id="glass-ripple"><i></i><i></i><i></i></span>
+            </span>
         </div>
-
-        <p class="footer-note">&copy; 2026 Rawitphoom Kiatthitinan</p>
     </footer>
     <!----------------------------------------------------------------------------------->
 
