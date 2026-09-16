@@ -1315,74 +1315,200 @@ nav a:hover {
 
 .footer-bar {
     display: grid;
-    grid-template-columns: 1fr auto auto auto;
-    gap: 2rem 3.5rem;
+    /* Columns sized to their own text and then pushed apart, rather than four
+       equal 1fr bays. Equal bays left the last column starting at 75% and a
+       dead strip down the right; this way the first sits on the left edge and
+       the last ENDS on the right one. The gap is the floor, not the spacing. */
+    grid-template-columns: repeat(4, max-content);
+    justify-content: space-between;
+    gap: 2.5rem 2rem;
     align-items: start;
     padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.12);
     text-align: left;
 }
 
-.footer-copy {
-    margin: 0;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
-}
-
 .footer-col {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: 0.55rem;
 }
 
+/* Monospace for the column headings and the clock only. It is the system stack,
+   so it costs no extra font, and it is what separates the labels from the
+   links underneath them at this small a size. */
 .footer-label {
-    margin: 0 0 0.25rem;
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
+    margin: 0 0 0.6rem;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.35);
+    color: rgba(255, 255, 255, 0.38);
 }
 
-.footer-pill {
-    display: inline-block;
-    padding: 0.45rem 0.9rem;
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.07);
-    font-size: 0.85rem;
-    line-height: 1;
-    color: rgba(255, 255, 255, 0.82);
+/* Every row in every column is exactly this tall. Leaving it to each font's
+   own line-height put the clock a pixel and a half out of step with the links
+   beside it, which is visible once four columns sit side by side. */
+.footer-link,
+.footer-place,
+.footer-name,
+.footer-rights,
+.footer-clock {
+    line-height: 1.5rem;
+    min-height: 1.5rem;
+}
+
+.footer-link {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
-    white-space: nowrap;
-    transition: background-color 0.25s ease, color 0.25s ease;
+    transition: color 0.25s ease;
 }
 
-.footer-pill:hover,
-.footer-pill:focus-visible {
-    background: rgba(255, 255, 255, 0.16);
+/* The index column is a <nav>, which the bare `nav` / `nav a` rules near the
+   top of this file (and of global.css) style for the header: a flex row with
+   1rem of padding on every link. That was indenting the column and stretching
+   its rows taller than the other three. */
+.footer-bar nav {
+    gap: 0.55rem;
+}
+
+.footer-bar .footer-link {
+    padding: 0;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
     color: #fff;
 }
 
-@media (max-width: 860px) {
+.footer-place,
+.footer-name {
+    margin: 0;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-flag {
+    /* the system emoji font sits a touch high against Inter */
+    font-size: 0.95em;
+    margin-right: 0.15rem;
+}
+
+.footer-clock {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.55);
+    /* tabular by nature, but say so - the minute must not shift the line */
+    font-variant-numeric: tabular-nums;
+}
+
+.footer-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #35c66b;
+    box-shadow: 0 0 0.5rem rgba(53, 198, 107, 0.7);
+    animation: footer-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes footer-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/* The name and this line are one block rather than a list, so they sit closer
+   than the column gap. Pulled up from below, not by tightening the column's
+   gap, so the first row still lines up with the other three columns. */
+.footer-rights {
+    margin: -0.3rem 0 0;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.38);
+}
+
+.footer-top {
+    /* flex so the arrow is a sibling box rather than an inline that drags the
+       line height around */
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: 0.85rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.footer-top:hover,
+.footer-top:focus-visible {
+    color: #fff;
+}
+
+.footer-top span {
+    line-height: 1;
+    transition: translate 0.25s ease;
+}
+
+.footer-top:hover span,
+.footer-top:focus-visible span {
+    translate: 0 -0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .footer-top:hover span,
+    .footer-top:focus-visible span {
+        translate: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footer-dot {
+        animation: none;
+    }
+}
+
+/* Four columns stop fitting well before the page does, because "Experience &
+   Education" is the widest thing in the footer. */
+@media (max-width: 1000px) {
+    .footer-bar {
+        /* back to even bays here - space-between across two columns would fling
+           them to opposite edges */
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: normal;
+        gap: 2.25rem 2rem;
+    }
+}
+
+@media (max-width: 560px) {
     .footer-bar-wrap {
         margin-bottom: 2.5rem;
     }
 
     .footer-bar {
-        grid-template-columns: 1fr 1fr;
-        gap: 1.75rem 1.5rem;
+        grid-template-columns: minmax(0, 1fr);
+        justify-content: normal;
+        gap: 2rem;
     }
 
-    .footer-copy {
-        grid-column: 1 / -1;
-        font-size: 0.72rem;
-    }
-
-    .footer-pill {
-        font-size: 0.78rem;
-        padding: 0.4rem 0.75rem;
+    .footer-link,
+    .footer-place,
+    .footer-name,
+    .footer-rights {
+        font-size: 0.95rem;
     }
 }
 

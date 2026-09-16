@@ -625,25 +625,42 @@
     <footer class="site-footer">
         <div class="footer-bar-wrap">
             <div class="footer-bar">
-                <p class="footer-copy">&copy;2026 Rawitphoom Kiatthitinan</p>
+                <nav class="footer-col" aria-label="Footer">
+                    <p class="footer-label">Index</p>
+                    <a class="footer-link" href="about.html">About me</a>
+                    <a class="footer-link" href="resume.html">Experience &amp; Education</a>
+                    <a class="footer-link" href="assets/Rawitphoom_Kiatthitinan_Resume.pdf" target="_blank"
+                        rel="noopener noreferrer">Resume</a>
+                </nav>
 
                 <div class="footer-col">
-                    <p class="footer-label">Follow</p>
-                    <a class="footer-pill" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank"
+                    <p class="footer-label">Connect</p>
+                    <a class="footer-link" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank"
                         rel="noopener noreferrer">LinkedIn</a>
-                    <a class="footer-pill" href="https://www.instagram.com/pp.rwp/" target="_blank"
-                        rel="noopener noreferrer">Instagram</a>
+                    <a class="footer-link" href="mailto:rawitphoom1@gmail.com">Email</a>
+                    <!-- PLACEHOLDER NUMBER - swap in the real one. 000-0000 is not a
+                         dialable NANP subscriber number, so it cannot reach anybody. -->
+                    <a class="footer-link" href="tel:+16040000000">Phone</a>
                 </div>
 
                 <div class="footer-col">
-                    <p class="footer-label">Contact</p>
-                    <a class="footer-pill" href="mailto:rawitphoom1@gmail.com">rawitphoom1@gmail.com</a>
+                    <p class="footer-label">Based in</p>
+                    <p class="footer-place"><span class="footer-flag" aria-hidden="true">&#127464;&#127462;</span>
+                        Vancouver, Canada</p>
+                    <p class="footer-clock">
+                        <span class="footer-dot" aria-hidden="true"></span>
+                        <!-- filled in by main.js; the dashes are what shows with JS off -->
+                        <span id="footer-time">--:--</span>
+                    </p>
                 </div>
 
                 <div class="footer-col">
-                    <p class="footer-label">Resume</p>
-                    <a class="footer-pill" href="assets/Rawitphoom_Kiatthitinan_Resume.pdf" target="_blank"
-                        rel="noopener noreferrer">Resume (PDF)</a>
+                    <p class="footer-label">&copy; 2026</p>
+                    <p class="footer-name">Rawitphoom Kiatthitinan</p>
+                    <p class="footer-rights">All rights reserved</p>
+                    <!-- "#top" with no matching element is the document top by spec, and
+                         global.css already sets scroll-behavior: smooth -->
+                    <a class="footer-top" href="#top">Back to top <span aria-hidden="true">&#8593;</span></a>
                 </div>
             </div>
         </div>

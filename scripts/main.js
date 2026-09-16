@@ -669,3 +669,36 @@ document.addEventListener('DOMContentLoaded', () => {
     start();
   }
 });
+
+
+/* ---------------------------------------------------------------- *
+ * FOOTER CLOCK
+ * The "based in" column shows the current time where I actually am,
+ * not where the visitor is - so the zone is named rather than local.
+ * ---------------------------------------------------------------- */
+
+(function footerClock() {
+  const out = document.querySelector('#footer-time');
+  if (!out) return;
+
+  let fmt;
+  try {
+    fmt = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Vancouver',
+      hour: '2-digit',
+      minute: '2-digit',
+      hourCycle: 'h23',
+      timeZoneName: 'short'
+    });
+  } catch (e) {
+    /* a browser without that zone in its database keeps the dashes */
+    return;
+  }
+
+  const tick = () => {
+    out.textContent = fmt.format(new Date());
+    /* line up the next run with the top of the minute rather than drifting */
+    setTimeout(tick, 60000 - (Date.now() % 60000) + 250);
+  };
+  tick();
+})();
