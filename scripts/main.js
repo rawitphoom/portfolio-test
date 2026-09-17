@@ -702,3 +702,24 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   tick();
 })();
+
+// NextStep column cover: nine phone videos is a lot to leave decoding, so they only
+// run while the card is on (or near) the screen.
+document.addEventListener('DOMContentLoaded', () => {
+  const covers = document.querySelectorAll('.colcover');
+  if (!covers.length || !('IntersectionObserver' in window)) return;
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      entry.target.querySelectorAll('video').forEach(video => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {}); // ignore autoplay rejections
+        } else {
+          video.pause();
+        }
+      });
+    });
+  }, { rootMargin: '200px 0px' });
+
+  covers.forEach(cover => observer.observe(cover));
+});

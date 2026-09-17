@@ -1659,3 +1659,142 @@ nav a:hover {
     outline: 2px solid red;
     outline-offset: -1px;
 }
+
+/***************************** NEXTSTEP COLUMN COVER *****************************/
+
+/* Three columns of phone videos, always moving: the outer columns scroll up,
+   the middle one scrolls down, and the whole set pushes in. The motion is pure
+   CSS; main.js only pauses the nine videos while the card is off screen.
+
+   The scale works in two halves that multiply out to one even zoom: the zoom
+   wrapper squeezes horizontally (scaleX) and each phone squeezes vertically
+   (scaleY), both by --cz. Animating that one number is what drives the push,
+   which is why it has to be registered below - an unregistered custom property
+   can't be interpolated, it would just jump between keyframes. */
+
+@property --cz {
+    syntax: "<number>";
+    inherits: true;
+    initial-value: .75;
+}
+
+.colcover {
+    /* BACKGROUND KNOB - the card ground behind the phones */
+    --colcover-bg: #e4efe6;
+
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: hidden;
+    border-radius: 1rem;
+    background: var(--colcover-bg);
+    box-shadow: inset 0 0 0 1px #1018280d;
+    pointer-events: none;
+}
+
+.colcover__zoom {
+    display: flex;
+    gap: 4%;
+    width: 100%;
+    height: 100%;
+    --cz: .75;
+    transform: scaleX(var(--cz));
+    transform-origin: 50%;
+}
+
+.colcover__col {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    /* cqh below means "a percentage of this column's height" */
+    container-type: size;
+}
+
+/* three phone-heights stacked, parked one phone up so the middle one shows */
+.colcover__track {
+    display: block;
+    width: 100%;
+    height: calc(300cqh * (var(--cz) + .25));
+    translate: 0 -33.333%;
+}
+
+/* One phone-height slot. It carries the vertical half of the zoom. */
+.colcover__slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100cqh;
+    margin-bottom: calc((var(--cz) - .75) * 100cqh);
+    transform: scaleY(var(--cz));
+}
+
+/* Sized to the phone's own shape instead of filling the slot, so the rounded
+   corners land on the phone's corners - the video is the phone cropped out of
+   a black render, and the rounding is what hides that black. min() takes
+   whichever of the column's width or height runs out first, so the phone
+   never gets cropped however tall this card ends up. */
+.colcover__slot video {
+    display: block;
+    width: min(100cqw, 100cqh * 460 / 958);
+    height: auto;
+    aspect-ratio: 460 / 958;
+    object-fit: fill;
+    /* the mockup's own corner radius: 150px on the 832px-wide render */
+    border-radius: 18.03% / 8.66%;
+}
+
+/* Each move: a fast ease-out into place, a short hold, then a slow drift on.
+   The three hold points differ slightly (55.7 / 58.2 / 60.8%) so the columns
+   land a beat apart instead of in lockstep. */
+@keyframes colcover-up-a {
+    0% { translate: 0 33.333%; animation-timing-function: cubic-bezier(.17, .72, .3, 1); }
+    55.7%, 67.1% { translate: 0 -33.333%; animation-timing-function: cubic-bezier(.5, .02, .72, .36); }
+    to { translate: 0 -100%; }
+}
+
+@keyframes colcover-down-b {
+    0% { translate: 0 -100%; animation-timing-function: cubic-bezier(.17, .72, .3, 1); }
+    58.2%, 67.1% { translate: 0 -33.333%; animation-timing-function: cubic-bezier(.5, .02, .72, .36); }
+    to { translate: 0 33.333%; }
+}
+
+@keyframes colcover-up-c {
+    0% { translate: 0 33.333%; animation-timing-function: cubic-bezier(.17, .72, .3, 1); }
+    60.8%, 67.1% { translate: 0 -33.333%; animation-timing-function: cubic-bezier(.5, .02, .72, .36); }
+    to { translate: 0 -100%; }
+}
+
+@keyframes colcover-zoom {
+    0% { --cz: .8; animation-timing-function: ease-in; }
+    67.1% { --cz: .96; animation-timing-function: linear; }
+    to { --cz: 1.15; }
+}
+
+/* Always running - no hover needed. */
+.colcover__col:first-child .colcover__track {
+    animation: colcover-up-a 3.95s linear infinite;
+}
+
+.colcover__col.is-middle .colcover__track {
+    animation: colcover-down-b 3.95s linear infinite;
+}
+
+.colcover__col:last-child .colcover__track {
+    animation: colcover-up-c 3.95s linear infinite;
+}
+
+.colcover__zoom {
+    animation: colcover-zoom 3.95s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    /* written to score as high as the :first-child / :last-child rules above,
+       or only the middle column would stop */
+    .colcover .colcover__col .colcover__track,
+    .colcover .colcover__zoom {
+        animation: none;
+    }
+}
