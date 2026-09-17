@@ -50,6 +50,32 @@
   margin: auto 0;
 }
 
+/* Small images dropped inline in a sentence - the little stickers between
+   words. Sized in `em` so they scale with the text, and nudged down with
+   vertical-align so they sit on the baseline rather than riding above it.
+   `1.35em` is roughly cap-height plus a little, which reads as part of the
+   line instead of an interruption.
+
+   Use it as:  working on <img class="bio-sticker" src="..." alt=""> lately
+   Give it alt="" - they are decoration, and a screen reader announcing
+   "image" mid-sentence is worse than silence. */
+.bio-sticker {
+    display: inline-block;
+    height: 1.35em;
+    width: auto;
+    vertical-align: -0.3em;
+    margin: 0 0.1em;
+    -webkit-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+
+/* A text sparkle needs no image at all - U+2726 is a normal glyph. */
+.bio-mark {
+    color: rgba(255, 255, 255, 0.55);
+    padding: 0 0.15em;
+}
+
 .about-bio p {
   margin: 0;
   font-size: 1.45rem;
@@ -63,7 +89,6 @@
   position: absolute;
   z-index: 1;
   margin: 0;
-  border-radius: 0.4rem;
   overflow: hidden;
   box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.55);
   /* Starts hidden and drops in; `rotate` is a separate property from the
@@ -165,48 +190,73 @@
 }
 
 /* Below this the columns collide, so the photos leave the absolute layer and
-   stack under the bio instead - tilts kept, positions dropped. */
+   become a collage above the text: the portrait down the left, the two squares
+   stacked to its right, overlapping it slightly. The heading and paragraph
+   follow underneath.
+
+   "About Me" lives inside .about-hero-inner with the paragraph, so the two
+   can't be split across grid rows - that's why the heading sits below the
+   photos rather than above them. */
 @media (max-width: 1150px) {
-  .about-hero {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-    min-height: 0;
-    padding: 0 0 1rem;
-  }
+    .about-hero {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-areas:
+            "shot1 shot2"
+            "shot1 shot3"
+            "bio   bio";
+        /* wider gutter between the two columns, now that they have the room */
+        gap: 1.4rem;
+        min-height: 0;
+        padding: 0 0 1rem;
+    }
 
-  .about-heading {
-    position: static;
-    margin-bottom: 2rem;
-  }
+    .about-hero-inner {
+        grid-area: bio;
+        max-width: none;
+        padding-top: 2.5rem;
+    }
 
-  .about-hero-inner {
-    max-width: none;
-    padding-top: 0;
-  }
+    .about-heading {
+        position: static;
+        margin-bottom: 1.25rem;
+    }
 
-  .about-bio {
-    margin: 0;
-  }
+    .about-bio {
+        margin: 0;
+    }
 
-  .about-shot {
-    position: static;
-    align-self: center;
-    width: min(100%, 20rem);
-    --drop: -9rem;
-  }
+    .about-shot {
+        position: static;
+        width: auto;
+        --drop: -9rem;
+    }
 
-  .about-shot-1 {
-    rotate: -2deg;
-  }
+    /* the portrait runs the full height of both squares beside it */
+    .about-shot-1 {
+        grid-area: shot1;
+        align-self: stretch;
+        rotate: -2deg;
+    }
 
-  .about-shot-2 {
-    rotate: 3deg;
-  }
+    .about-shot-1 img {
+        height: 100%;
+        object-fit: cover;
+    }
 
-  .about-shot-3 {
-    rotate: -1.5deg;
-  }
+    /* pulled left over the portrait, and stacked above it, so the three read as
+       one pile rather than three tiles in a grid */
+    .about-shot-2 {
+        grid-area: shot2;
+        rotate: 3deg;
+        z-index: 2;
+    }
+
+    .about-shot-3 {
+        grid-area: shot3;
+        rotate: -1.5deg;
+        z-index: 3;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -249,7 +299,18 @@
   @media (max-width: 768px) {
     .about {
       margin-top: 0;
-      padding: 3rem 1.25rem;
+      /* the mobile nav is position: fixed and 60px tall, so the first thing on
+         the page has to start below it rather than under it */
+      padding: 6rem 1rem 3rem;
+    }
+
+    .about-heading {
+      font-size: 2.1rem;
+    }
+
+    .about-bio p {
+      font-size: 1.05rem;
+      line-height: 1.6;
     }
   }
   
@@ -543,4 +604,45 @@ body {
     .ring {
         transform: rotateX(var(--tilt));
     }
+}
+
+/***************************** INLINE 3D MODEL *****************************/
+
+/* Sized like an inline sticker rather than a block: `em` so it scales with the
+   sentence it sits in, and nudged down with vertical-align so it rides the
+   baseline instead of floating above it. The square aspect gives the canvas a
+   definite box to size its renderer against. */
+.model-stage {
+    display: inline-block;
+    position: relative;
+    height: 3.4em;
+    aspect-ratio: 1 / 1;
+    vertical-align: -1.15em;
+    margin: 0 0.15em;
+    /* fades in once the model is actually there, rather than popping */
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+
+.model-stage.is-ready {
+    opacity: 1;
+}
+
+/* No WebGL, or the file failed to load: it vanishes and the sentence closes up
+   around it, which is why the wording either side still reads without it. */
+.model-stage.is-failed {
+    display: none;
+}
+
+/* Scored above `.about-bio p`, which is a class-plus-element selector and so
+   outranks a bare class - without the extra step the credit rendered at the
+   full body size and colour. */
+.about-bio .model-credit {
+    margin: 1.25rem 0 0;
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.32);
+}
+
+.about-bio .model-credit a {
+    color: rgba(255, 255, 255, 0.55);
 }

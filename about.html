@@ -130,8 +130,30 @@
                         I&rsquo;m Rawi, a UX/UI designer and front-end developer based in Burnaby, BC. I just finished
                         my B.Sc. in Interactive Arts and Technology at SFU, and I like the part of the job where a Figma
                         file stops being a picture and turns into something you can click. Most recently I designed and
-                        built LintelAI&rsquo;s marketing site end to end, on my own.
+                        built LintelAI&rsquo;s marketing site end to end, on my own, mostly with something in my
+                        ears<span class="model-stage" data-model="assets/models/airpods_max.glb"
+                            aria-hidden="true"></span>and the same few albums on repeat.
                     </p>
+
+                    <!-- CC Attribution requires this credit. Replace with the exact string from
+                         Sketchfab's "Copy Credits" button if it differs. -->
+                    <p class="model-credit">
+                        &ldquo;Airpods MAX&rdquo; by Empty, licensed under
+                        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank"
+                            rel="noopener noreferrer">CC&nbsp;Attribution</a>.
+                    </p>
+                    <!-- INLINE STICKERS - drop a small transparent PNG/WebP anywhere in the
+                         sentences above and it sits inline with the words, like this:
+
+                           a Figma file <img class="bio-sticker"
+                               src="assets/images/stickers/notebook.png" alt=""> stops being
+
+                         Put the files in assets/images/stickers/. For a plain typographic
+                         mark instead of an image, no asset is needed:
+
+                           <span class="bio-mark">&#10022;</span>
+
+                         Both are styled in css/about.css, under .bio-sticker / .bio-mark. -->
                 </div>
             </div>
 
@@ -345,6 +367,19 @@
 
     <!----------------------------------------------------------------------------------->
     <script src="scripts/main.js"></script>
+
+    <!-- lets airpods.js import the bare specifier "three"; must come first -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "./assets/vendor/three/three.module.min.js"
+            }
+        }
+    </script>
+    <script type="module">
+        import { init } from './scripts/airpods.js';
+        init();
+    </script>
 </body>
 
 </html>
