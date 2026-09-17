@@ -697,12 +697,9 @@ nav a:hover {
         text-align: left;
     }
 
-    /* no hover on a phone, and autoplaying video here is a lot of data */
-    .hover-video,
-    .auto-video,
-    .auto-gif {
-        display: none;
-    }
+    /* The covers play on phones too now, same as desktop. They were hidden here
+       to save data; the IntersectionObserver in main.js keeps that in check
+       instead, since it only runs the ones actually on screen. */
 
     .preview-image {
         position: relative;
@@ -1703,26 +1700,34 @@ nav a:hover {
     flex: 1;
     min-width: 0;
     overflow: hidden;
-    /* cqh below means "a percentage of this column's height" */
+    /* cqh/cqw below mean "a percentage of this column's own size" */
     container-type: size;
+
+    /* The phone's height once it has been fitted to this column - capped by the
+       column's height, or by its width, whichever runs out first. Everything
+       below is measured off this rather than off the column, because on a phone
+       the columns get much narrower than a phone's own shape (0.34 against
+       0.48) and slots sized to the column left a third of each one empty. */
+    --ph: min(100cqh, 100cqw * 958 / 460);
 }
 
-/* three phone-heights stacked, parked one phone up so the middle one shows */
+/* Three slots stacked, parked one slot up so the middle phone shows. 1.34 is
+   the phone-to-gap rhythm of the original (its phones sat at 75% of a slot). */
 .colcover__track {
     display: block;
     width: 100%;
-    height: calc(300cqh * (var(--cz) + .25));
+    height: calc(3 * var(--ph) * 1.34);
     translate: 0 -33.333%;
 }
 
-/* One phone-height slot. It carries the vertical half of the zoom. */
+/* One slot: a phone plus the gap under it. It carries the vertical half of
+   the zoom, so the phone grows and shrinks while the rhythm stays put. */
 .colcover__slot {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: 100cqh;
-    margin-bottom: calc((var(--cz) - .75) * 100cqh);
+    height: calc(var(--ph) * 1.34);
     transform: scaleY(var(--cz));
 }
 
@@ -1733,8 +1738,8 @@ nav a:hover {
    never gets cropped however tall this card ends up. */
 .colcover__slot video {
     display: block;
-    width: min(100cqw, 100cqh * 460 / 958);
-    height: auto;
+    height: var(--ph);
+    width: auto;
     aspect-ratio: 460 / 958;
     object-fit: fill;
     /* the mockup's own corner radius: 150px on the 832px-wide render */
@@ -1792,5 +1797,14 @@ nav a:hover {
     .colcover .colcover__col .colcover__track,
     .colcover .colcover__zoom {
         animation: none;
+    }
+}
+
+/* On a phone the three columns are the tight dimension, so give them back the
+   width the gutters were taking - it lifts each phone from 70% of the column's
+   height to about 90%. */
+@media (max-width: 768px) {
+    .colcover__zoom {
+        gap: 2%;
     }
 }
