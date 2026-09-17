@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
         rel="stylesheet">
 </head>
 
@@ -121,7 +121,21 @@
             <p class="case-eyebrow">Academic Project &middot; Mixtape</p>
 
             <figure class="case-cover">
-                <img src="assets/images/contents/project6/IAT459_Cover.png" alt="Mixtape cover artwork">
+                <!-- Same composed cover as the home page card. Here it builds itself on load:
+                     the monitor rises, the wordmark drops, then the backdrop slides up behind. -->
+                <div class="cover-stage mixtape-stage" role="img" aria-label="Mixtape &ndash; IAT459 Internet Computing.">
+                    <video class="cover-bg" autoplay muted loop playsinline preload="metadata">
+                        <!-- mp4 only: VP9 came out nearly twice the size on this grain -->
+                        <source src="assets/images/IAT459-CoverBg.mp4" type="video/mp4">
+                    </video>
+
+                    <p class="mixtape-title">MIXTAPE</p>
+
+                    <video class="cover-screen" autoplay muted loop playsinline preload="metadata">
+                        <source src="assets/images/IAT459-CoverScreen.webm" type="video/webm">
+                        <source src="assets/images/IAT459-CoverScreen.mp4" type="video/mp4">
+                    </video>
+                </div>
             </figure>
 
             <div class="case-meta">

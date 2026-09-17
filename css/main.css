@@ -531,13 +531,9 @@ nav a:hover {
     pointer-events: none;
 }
 
-.project-card:hover .preview-image {
-    opacity: 0;
-}
-
-.project-card:hover .hover-video {
-    opacity: 1;
-}
+/* No card on this page has a hover video any more, so the cover no longer fades
+   out on hover - that would now reveal nothing and leave the card black. Hover
+   is just the card lift above. */
 
 /* Project text */
 .project-info {
