@@ -1714,7 +1714,13 @@ nav a:hover {
 /* Three slots stacked, parked one slot up so the middle phone shows. 1.34 is
    the phone-to-gap rhythm of the original (its phones sat at 75% of a slot). */
 .colcover__track {
-    display: block;
+    /* Offset so the resting slot's centre lands on the column's centre. A slot
+       is 1.34 phones tall, which is taller than the column, so aligning their
+       tops instead left the phone sitting at 61% of the column - a big gap
+       above it and almost none below. */
+    position: absolute;
+    left: 0;
+    top: calc((100cqh - var(--ph) * 1.34) / 2);
     width: 100%;
     height: calc(3 * var(--ph) * 1.34);
     translate: 0 -33.333%;

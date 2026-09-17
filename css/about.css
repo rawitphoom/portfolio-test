@@ -381,6 +381,17 @@ body {
     overflow-x: clip;
 }
 
+/* The ring is pushed sideways with a transform, and transforms do count toward
+   scrollable overflow - the page reports ~390px more width than it has. `clip`
+   above absorbs that, but it only arrived in Safari 16, so older iOS needs a
+   fallback or the whole page scrolls sideways. `hidden` makes body its own
+   scroll container, which is why it isn't the first choice. */
+@supports not (overflow: clip) {
+    body {
+        overflow-x: hidden;
+    }
+}
+
 .about-ring {
     position: relative;
     min-height: 34rem;
@@ -394,6 +405,12 @@ body {
     /* how far past touching the photos sit: 1 is edge to edge, higher opens
        the circle out and leaves gaps between them */
     --spread: 1.04;
+
+    /* The circle's radius: r = (w / 2) / tan(180deg / count), times --spread;
+       0.15838 is tan(9deg), i.e. the 20 photos below. Named here because the
+       stage offset needs it too - pushing the ring out by its own radius is
+       what puts its left edge at a known place on screen. */
+    --radius: calc(var(--cell) * 0.5 / 0.15838 * var(--spread));
 }
 
 .ring-title,
@@ -458,7 +475,7 @@ body {
        what makes the ring read as round rather than as a polygon. */
     transform:
         rotateY(calc(var(--i) * (360deg / var(--count))))
-        translateZ(calc(var(--cell) * 0.5 / 0.15838 * var(--spread)));
+        translateZ(var(--radius));
     overflow: hidden;
     box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.45);
 }
@@ -471,15 +488,20 @@ body {
     object-fit: cover;
 }
 
-/* Narrow enough that text beside the ring stops working, so it goes back to
-   centred with the words stacked above and below. */
+/* Below this the words stack above and below the ring rather than sitting
+   beside it, and the ring runs off the right edge on its own.
+
+   `left: 50%` puts the stage's centre on the section's centre whatever the page
+   padding is, so the offset reduces to arithmetic: centre sits at 50% of the
+   width, the ring reaches out by its own radius, and pulling back 35vw lands
+   its left edge at 15% - the framing in the reference. */
 @media (max-width: 900px) {
     .about-ring {
-        --cell: 9rem;
-        --spread: 1.15;
+        --cell: 8rem;
+        --spread: 1.06;
         min-height: 0;
         margin-top: 5rem;
-        text-align: center;
+        text-align: left;
     }
 
     .ring-title,
@@ -488,34 +510,32 @@ body {
         max-width: none;
     }
 
-    .ring-title,
-    .ring-sub {
-        max-width: none;
-    }
-
     .ring-title {
-        font-size: 1.7rem;
+        font-size: clamp(1.5rem, 5.5vw, 2.1rem);
     }
 
     .ring-sub {
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .ring-stage {
         position: relative;
         top: auto;
-        left: auto;
-        translate: none;
-        /* the stage box is the photo box, so its height has to stay square;
-           the breathing room goes in the margin instead */
-        margin: 5rem auto;
+        left: 50%;
+        translate: calc(-50% + var(--radius) - 35vw) 0;
+        /* the stage box is only one photo tall, so the air goes in the margin */
+        margin: 5rem 0;
     }
 }
 
 @media (max-width: 600px) {
     .about-ring {
-        --cell: 7rem;
+        --cell: 6.5rem;
         --spread: 1.08;
+    }
+
+    .ring-sub {
+        font-size: 0.9rem;
     }
 }
 
