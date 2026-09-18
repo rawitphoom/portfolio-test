@@ -27,7 +27,12 @@
      while the heading stays put at the top. */
   flex: 1;
   width: 100%;
-  padding-top: 8.5rem;
+  /* The bio centres itself in whatever space is left below this padding, so
+     the padding has to clear the heading - which is absolutely positioned at
+     9rem and sized by the same clamp() as its font. Tracking that size here
+     means a longer bio can never centre its way up underneath the heading
+     (it did, by 41px, once the paragraph grew). */
+  padding-top: calc(9rem + clamp(2.6rem, 6vw, 4.25rem) * 1.05 + 1.75rem);
   display: flex;
   flex-direction: column;
 }
@@ -79,7 +84,8 @@
 .about-bio p {
   margin: 0;
   font-size: 1.45rem;
-  line-height: 1.65;
+  /* roomy enough for the inline model to overhang into without touching */
+  line-height: 1.8;
   color: #ccc;
 }
 
@@ -310,7 +316,7 @@
 
     .about-bio p {
       font-size: 1.05rem;
-      line-height: 1.6;
+      line-height: 1.8;
     }
   }
   
@@ -435,23 +441,8 @@
 
 /***************************** PHOTO RING *****************************/
 
-/* Clip at the viewport rather than at a section, so the tilted hero photos
-   aren't sliced by their own container, and the ring can run off the right
-   edge without adding a sideways scrollbar. */
-body {
-    overflow-x: clip;
-}
-
-/* The ring is pushed sideways with a transform, and transforms do count toward
-   scrollable overflow - the page reports ~390px more width than it has. `clip`
-   above absorbs that, but it only arrived in Safari 16, so older iOS needs a
-   fallback or the whole page scrolls sideways. `hidden` makes body its own
-   scroll container, which is why it isn't the first choice. */
-@supports not (overflow: clip) {
-    body {
-        overflow-x: hidden;
-    }
-}
+/* The page-level overflow clip that lets the ring run off the right edge lives
+   in global.css now, alongside the same guard for every other page. */
 
 .about-ring {
     position: relative;
@@ -608,17 +599,21 @@ body {
 
 /***************************** INLINE 3D MODEL *****************************/
 
-/* Sized like an inline sticker rather than a block: `em` so it scales with the
-   sentence it sits in, and nudged down with vertical-align so it rides the
-   baseline instead of floating above it. The square aspect gives the canvas a
-   definite box to size its renderer against. */
+/* Sized like an inline sticker: `em` so it scales with the sentence it sits in.
+
+   The negative vertical margins are the important part. An inline-block adds
+   its margin box to the line it sits on, so at 2.4em tall it used to shove its
+   line apart from the ones above and below. Pulling 0.7em off top and bottom
+   leaves a 1em margin box - no taller than the text - so every line keeps the
+   same spacing, and the model simply overhangs into the leading, the way the
+   stickers in the reference do. */
 .model-stage {
     display: inline-block;
     position: relative;
-    height: 3.4em;
+    height: 2.4em;
     aspect-ratio: 1 / 1;
-    vertical-align: -1.15em;
-    margin: 0 0.15em;
+    vertical-align: middle;
+    margin: -0.7em 0.05em;
     /* fades in once the model is actually there, rather than popping */
     opacity: 0;
     transition: opacity 0.7s ease;

@@ -21,6 +21,28 @@ body {
     /* height: 1000vh; */
 }
 
+/* Nothing on this site is meant to scroll sideways. Transforms count toward
+   scrollable overflow, so a tilted photo or an off-canvas ring can hand a phone
+   a few hundred px of sideways drift even though nothing looks out of place.
+   `clip` stops that without making either element a scroll container, which
+   matters because the case-study contents nav and any wide tables scroll
+   horizontally inside themselves and must keep working. */
+html,
+body {
+    overflow-x: clip;
+}
+
+/* `clip` only arrived in Safari 16. `hidden` is the fallback: it does make the
+   page a scroll container, but on <html> that is the scroller anyway, so
+   position: sticky inside still behaves. */
+@supports not (overflow: clip) {
+
+    html,
+    body {
+        overflow-x: hidden;
+    }
+}
+
 /***************************** NAVIGATION BAR *****************************/
 
 /* HEADER STYLES */

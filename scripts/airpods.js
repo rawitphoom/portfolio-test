@@ -15,14 +15,14 @@ import { RoomEnvironment } from '../assets/vendor/three/RoomEnvironment.js';
 
 /* ----------------------------------------------------------------- knobs -- */
 
-const TURNS = 3.2;    // full turns over one pass through the viewport. At the
-                      // size this thing renders, barely more than a turn was
-                      // hard to even notice.
+const TURNS = 1.4;   // full turns over one pass through the viewport
 const START = -0.1;   // rotation in turns when the stage first enters, so it
                       // is already at an angle rather than dead flat
-const TILT = 0.12;    // how much it leans as it travels, in turns
-const EASE = 6;       // how hard it chases the scroll position
-const IDLE = 0.035;   // turns per second when nobody is scrolling, so it never
+const TILT = 0.09;    // how much it leans as it travels, in turns
+const EASE = 3;       // how hard it chases the scroll position. Lower is
+                      // smoother: it trails the scroll and glides to a stop
+                      // instead of tracking it one-to-one.
+const IDLE = 0.018;   // turns per second when nobody is scrolling, so it never
                       // reads as a still image
 const FILL = 0.96;    // how much of the stage the model takes up. Near 1 now
                       // that the stage is only a few em across.
