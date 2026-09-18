@@ -723,3 +723,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
   covers.forEach(cover => observer.observe(cover));
 });
+
+// About page: the little 3D stickers in the text turn as the page scrolls past
+// them. Each is a 10 x 6 sheet of 60 pre-rendered frames (one per 6 degrees);
+// this just picks which frame shows. The angle is a function of where each one
+// sits in the viewport, so scrolling back up unwinds it, eased so it glides
+// rather than ticking, with a slow drift so none of them sit dead still. One
+// loop drives all of them, and only runs while at least one is on screen.
+document.addEventListener('DOMContentLoaded', () => {
+  const els = [...document.querySelectorAll('.model-sprite')];
+  if (!els.length) return;
+
+  const FRAMES = 60, COLS = 10, ROWS = 6;
+  const TURNS = 1.4;    // full turns over one pass through the viewport
+  const START = -0.1;   // turns, when one first comes into view
+  const EASE = 3;       // lower = smoother, trails the scroll a little
+  const IDLE = 0.018;   // turns per second while nothing is scrolling
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const sprites = els.map((el) => ({ el, turn: START, shown: -1, on: false }));
+  let idle = 0, last = 0, raf = 0;
+
+  const progress = (el) => {
+    const r = el.getBoundingClientRect();
+    const span = window.innerHeight + r.height;
+    return span > 0 ? Math.min(1, Math.max(0, (window.innerHeight - r.top) / span)) : 0;
+  };
+
+  const show = (s, spin) => {
+    const f = ((Math.round(spin * FRAMES) % FRAMES) + FRAMES) % FRAMES;
+    if (f === s.shown) return;   // same frame as last time: leave the DOM alone
+    s.shown = f;
+    const x = (f % COLS) / (COLS - 1) * 100;
+    const y = Math.floor(f / COLS) / (ROWS - 1) * 100;
+    s.el.style.backgroundPosition = `${x}% ${y}%`;
+  };
+
+  const tick = (now) => {
+    raf = requestAnimationFrame(tick);
+    const dt = Math.max(0, Math.min((now - last) / 1000, 0.05));
+    last = now;
+    idle += IDLE * dt;
+    const k = 1 - Math.exp(-EASE * dt);
+    for (const s of sprites) {
+      if (!s.on) continue;
+      s.turn += (START + progress(s.el) * TURNS - s.turn) * k;
+      show(s, s.turn + idle);
+    }
+  };
+
+  sprites.forEach((s) => show(s, START));
+  if (still) return;   // reduced motion: each holds one three-quarter view
+
+  const run = () => {
+    const want = !document.hidden && sprites.some((s) => s.on);
+    if (want && !raf) { last = performance.now(); raf = requestAnimationFrame(tick); }
+    if (!want && raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      const s = sprites.find((x) => x.el === entry.target);
+      if (s) s.on = entry.isIntersecting;
+    });
+    run();
+  }, { rootMargin: '100px 0px' });
+  sprites.forEach((s) => io.observe(s.el));
+
+  document.addEventListener('visibilitychange', run);
+});

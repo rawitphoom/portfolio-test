@@ -597,36 +597,61 @@
     }
 }
 
-/***************************** INLINE 3D MODEL *****************************/
+/***************************** INLINE 3D STICKERS *****************************/
 
-/* Sized like an inline sticker: `em` so it scales with the sentence it sits in.
+/* Little 3D objects dropped into sentences: the AirPods in the bio, a tree by
+   "BC", Baby Yoda by "The path", a mug and a car in the photo-ring caption.
 
-   The negative vertical margins are the important part. An inline-block adds
-   its margin box to the line it sits on, so at 2.4em tall it used to shove its
-   line apart from the ones above and below. Pulling 0.7em off top and bottom
-   leaves a 1em margin box - no taller than the text - so every line keeps the
-   same spacing, and the model simply overhangs into the leading, the way the
-   stickers in the reference do. */
-.model-stage {
+   None of them are 3D on the page. Each is 60 pre-rendered frames of its
+   model, one every 6 degrees, packed into a 10 x 6 sheet under
+   assets/images/sprites/. main.js picks the frame to match the scroll, so they
+   still turn as you scroll past, without shipping three.js or any model file.
+
+   Sized in `em` so they scale with whatever sentence they sit in. The negative
+   vertical margins leave a 1em margin box, no taller than the text, so every
+   line keeps the same spacing and the picture overhangs into the leading
+   instead of pushing its line apart. */
+.model-sprite {
     display: inline-block;
-    position: relative;
     height: 2.4em;
     aspect-ratio: 1 / 1;
     vertical-align: middle;
     margin: -0.7em 0.05em;
-    /* fades in once the model is actually there, rather than popping */
-    opacity: 0;
-    transition: opacity 0.7s ease;
+    background-position: 0 0;
+    background-size: 1000% 600%;
+    background-repeat: no-repeat;
 }
 
-.model-stage.is-ready {
-    opacity: 1;
+/* Each: a half-resolution PNG first for browsers without AVIF (Safari before
+   16.4); anything that understands image-set() skips it for the AVIF. */
+.model-sprite--airpods {
+    background-image: url("../assets/images/sprites/airpods.png");
+    background-image: image-set(url("../assets/images/sprites/airpods.avif") type("image/avif"),
+            url("../assets/images/sprites/airpods.png") type("image/png"));
 }
 
-/* No WebGL, or the file failed to load: it vanishes and the sentence closes up
-   around it, which is why the wording either side still reads without it. */
-.model-stage.is-failed {
-    display: none;
+.model-sprite--tree {
+    background-image: url("../assets/images/sprites/tree.png");
+    background-image: image-set(url("../assets/images/sprites/tree.avif") type("image/avif"),
+            url("../assets/images/sprites/tree.png") type("image/png"));
+}
+
+.model-sprite--yoda {
+    background-image: url("../assets/images/sprites/yoda.png");
+    background-image: image-set(url("../assets/images/sprites/yoda.avif") type("image/avif"),
+            url("../assets/images/sprites/yoda.png") type("image/png"));
+}
+
+.model-sprite--mug {
+    background-image: url("../assets/images/sprites/mug.png");
+    background-image: image-set(url("../assets/images/sprites/mug.avif") type("image/avif"),
+            url("../assets/images/sprites/mug.png") type("image/png"));
+}
+
+.model-sprite--car {
+    background-image: url("../assets/images/sprites/car.png");
+    background-image: image-set(url("../assets/images/sprites/car.avif") type("image/avif"),
+            url("../assets/images/sprites/car.png") type("image/png"));
 }
 
 /* Scored above `.about-bio p`, which is a class-plus-element selector and so
