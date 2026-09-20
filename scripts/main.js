@@ -724,88 +724,140 @@ document.addEventListener('DOMContentLoaded', () => {
   covers.forEach(cover => observer.observe(cover));
 });
 
-// About page: the little 3D stickers in the bio turn as you scroll past them.
-// Each is a 10 x 6 sheet of 60 pre-rendered frames (one per 6 degrees), and
-// this slides the sheet inside its clipped box to pick one.
+// About page: the "Say hi" chat.
 //
-// Nothing runs unless the page is actually scrolling. There is no animation
-// loop and no idle drift - a scroll schedules one frame of work, that frame
-// writes a transform, and then everything stops again. The angle comes
-// straight from the scroll position, so it tracks your finger exactly rather
-// than easing along behind it.
+// The replies are scripted, not AI. A real model would need an API key, and
+// anything shipped to the browser is readable by anyone who opens DevTools -
+// the key would be public and the bill would be whoever found it. Doing it
+// properly needs a small server function (Vercel, Netlify, a Cloudflare
+// Worker) holding the key, which a static host can't run.
 //
-// The two things that keep a scroll frame cheap: the sheet is moved with a
-// transform, which the compositor handles without repainting, and no layout is
-// measured inside the handler - each sprite's page position is read once up
-// front and reused.
+// It is written so that is a small change later: everything below is plumbing,
+// and replyTo() is the only part that decides what to say. Swapping it for
+//
+//   const replyTo = async (text) => {
+//     const r = await fetch('/api/chat', { method: 'POST', body: JSON.stringify({ text }) });
+//     return (await r.json()).reply;
+//   };
+//
+// is the whole job, once such an endpoint exists.
+//
+// Nothing is sent anywhere. The email the visitor leaves is used to build a
+// mailto: link that opens their own mail app with the note already written.
 document.addEventListener('DOMContentLoaded', () => {
-  const els = [...document.querySelectorAll('.model-sprite')];
-  if (!els.length) return;
+  const root = document.querySelector('[data-chat]');
+  if (!root) return;
 
-  const COLS = 10, ROWS = 6, FRAMES = COLS * ROWS;
-  const TURNS = 1.4;    // full turns over one pass through the viewport
-  const START = -0.1;   // turns, when one first comes into view
+  const log = root.querySelector('[data-chat-log]');
+  const form = root.querySelector('[data-chat-form]');
+  const input = root.querySelector('[data-chat-input]');
+  const send = form.querySelector('button');
 
-  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ME = 'rawitphoom1@gmail.com';
+  const AVATAR = 'assets/images/profile_photo.jpg';
+  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
-  const sprites = els.map((el) => ({
-    el,
-    sheet: el.querySelector('img'),
-    top: 0, height: 0,    // measured outside the scroll handler
-    shown: -1, on: true
-  }));
+  let asked = false;        // has the email been asked for yet
+  let firstMessage = '';    // kept so the mailto can quote it back
 
-  const measure = () => {
-    const y = window.scrollY;
-    for (const s of sprites) {
-      const r = s.el.getBoundingClientRect();
-      s.top = r.top + y;
-      s.height = r.height;
+  /* ---- the only part that decides what to say ---- */
+  const replyTo = (text) => {
+    const t = text.toLowerCase();
+    // intent first: "hey, are you free for freelance work?" opens with a
+    // greeting but is not a greeting, and answering the actual ask is better
+    if (/(hire|job|role|opportunit|freelance|free\b|available|project|collab|contract|gig|work with)/.test(t))
+      return "I'd love to hear about it. What are you building?";
+    if (/(resume|cv)/.test(t)) return 'My resume is linked in the menu, under Experience and Education.';
+    if (/(name|who are you)/.test(t)) return "I'm Rawi, a UX/UI designer and front-end developer in Burnaby.";
+    if (/(figma|design|ux|ui)/.test(t)) return 'Design is most of what I do. Figma all day, then I build the thing.';
+    if (/(code|dev|front.?end|react|website)/.test(t)) return 'I build what I design, mostly front-end.';
+    // a bare greeting, checked late so it can't swallow a real question
+    if (/^(hi|hey|hello|yo|sup|hiya)\b/.test(t) && t.length < 24) return 'Hey! Good to meet you.';
+    if (/\?/.test(t)) return 'Good question. Let me give you a proper answer rather than a quick one.';
+    return 'Thanks for that.';
+  };
+
+  /* ---- plumbing ---- */
+
+  const scroll = () => { log.scrollTop = log.scrollHeight; };
+
+  const bubble = (who, node) => {
+    const row = document.createElement('div');
+    row.className = 'chat-row' + (who === 'me' ? ' is-me' : '');
+    if (who !== 'me') {
+      const img = document.createElement('img');
+      img.className = 'chat-avatar';
+      img.src = AVATAR;
+      img.alt = 'Rawitphoom Kiatthitinan';
+      row.appendChild(img);
     }
+    const b = document.createElement('div');
+    b.className = 'chat-bubble';
+    if (typeof node === 'string') b.textContent = node; else b.appendChild(node);
+    row.appendChild(b);
+    log.appendChild(row);
+    scroll();
+    return row;
   };
 
-  const show = (s, spin) => {
-    const f = ((Math.round(spin * FRAMES) % FRAMES) + FRAMES) % FRAMES;
-    if (f === s.shown) return;   // same frame as last time: nothing to write
-    s.shown = f;
-    const x = (f % COLS) * (100 / COLS);
-    const y = Math.floor(f / COLS) * (100 / ROWS);
-    s.sheet.style.transform = `translate3d(-${x}%, -${y}%, 0)`;
+  // shows the three dots for a beat, then swaps them for the message, so a
+  // reply doesn't appear the instant you hit send
+  const says = (node, wait = 700) => new Promise((done) => {
+    const dots = document.createElement('span');
+    dots.className = 'chat-dots';
+    dots.innerHTML = '<i></i><i></i><i></i>';
+    const row = bubble('them', dots);
+    setTimeout(() => {
+      row.remove();
+      bubble('them', node);
+      done();
+    }, wait);
+  });
+
+  const mailtoLink = (email) => {
+    const a = document.createElement('a');
+    const body = `Hi Rawi,\n\n${firstMessage}\n\nYou can reach me at ${email}.`;
+    a.href = `mailto:${ME}?subject=${encodeURIComponent('Hello from your portfolio')}&body=${encodeURIComponent(body)}`;
+    a.textContent = 'Open it in your mail app';
+    const wrap = document.createElement('span');
+    wrap.append('Got it. This page can\u2019t send mail on its own, so here it is ready to go: ', a, '.');
+    return wrap;
   };
 
-  const apply = () => {
-    pending = 0;
-    const vh = window.innerHeight;
-    const y = window.scrollY;
-    for (const s of sprites) {
-      if (!s.on) continue;
-      const span = vh + s.height;
-      const seen = span > 0 ? Math.min(1, Math.max(0, (vh - (s.top - y)) / span)) : 0;
-      show(s, START + seen * TURNS);
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const text = input.value.trim();
+    if (!text) return;
+
+    bubble('me', text);
+    input.value = '';
+    input.disabled = send.disabled = true;
+
+    if (!asked) {
+      firstMessage = text;
+      await says(replyTo(text));
+      await says("I'll get back to you as soon as I can. What's a good email to reach you at?", 900);
+      asked = true;
+      input.placeholder = 'Your email...';
+      input.type = 'email';
+    } else if (EMAIL_RE.test(text)) {
+      await says(mailtoLink(text), 800);
+      input.placeholder = 'Anything else?';
+      input.type = 'text';
+      asked = false;
+    } else {
+      await says("That doesn't look like an email. Mind checking it?", 600);
     }
-  };
 
-  let pending = 0;
-  // scroll events outrun frames, so collapse a burst of them into one update
-  const onScroll = () => {
-    if (!pending) pending = requestAnimationFrame(apply);
-  };
+    input.disabled = send.disabled = false;
+    input.focus();
+  });
 
-  measure();
-  apply();
-  if (still) return;   // reduced motion: each holds the view it starts on
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', () => { measure(); apply(); });
-  // the images arrive after first paint and can reflow the text around them
-  sprites.forEach((s) => s.sheet.addEventListener('load', () => { measure(); apply(); }, { once: true }));
-
-  // skip the arithmetic for any that are off screen
+  // the opening line waits until the card is actually looked at
   const io = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      const s = sprites.find((x) => x.el === entry.target);
-      if (s) s.on = entry.isIntersecting;
-    });
-  }, { rootMargin: '100px 0px' });
-  sprites.forEach((s) => io.observe(s.el));
+    if (!entries[0].isIntersecting) return;
+    io.disconnect();
+    says('Nice to meet you! Feel free to send me a message.', 500);
+  }, { threshold: 0.4 });
+  io.observe(root);
 });

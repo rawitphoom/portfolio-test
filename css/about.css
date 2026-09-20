@@ -66,13 +66,62 @@
    "image" mid-sentence is worse than silence. */
 .bio-sticker {
     display: inline-block;
+    /* below the 1.8 line-height, so it never stretches the line it sits on */
     height: 1.35em;
     width: auto;
     vertical-align: -0.3em;
     margin: 0 0.1em;
+    /* A faint light halo. OpenMoji's colour artwork is drawn with black
+       outlines, which vanish against this page - the cap in particular was
+       losing its shape entirely. */
+    filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.5));
     -webkit-user-select: none;
     user-select: none;
     pointer-events: none;
+
+    /* Turning, like the 3D ones did. This is a transform on four small
+       elements, so the compositor handles it on its own - there is no script
+       and nothing repaints. */
+    animation: bio-spin 7s ease-in-out infinite;
+}
+
+/* A swing rather than a full revolution. These are flat drawings, so a full
+   360 turns them edge-on twice a cycle - they thin to a sliver, vanish, and
+   come back mirrored. Real 3D models had sides to show; these don't. Stopping
+   at 55 degrees keeps the turn legible the whole way round.
+   For a full spin instead, make this 0 -> 360deg in one step.
+   perspective() is what makes it read as turning rather than squashing. */
+@keyframes bio-spin {
+
+    0%,
+    100% {
+        transform: perspective(240px) rotateY(-55deg);
+    }
+
+    50% {
+        transform: perspective(240px) rotateY(55deg);
+    }
+}
+
+.about-bio p .bio-sticker:nth-of-type(2) {
+    animation-duration: 8.4s;
+    animation-delay: -2.1s;
+}
+
+.about-bio p .bio-sticker:nth-of-type(3) {
+    animation-duration: 6.2s;
+    animation-delay: -4.3s;
+}
+
+.about-bio p .bio-sticker:nth-of-type(4) {
+    animation-duration: 9.1s;
+    animation-delay: -1.2s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bio-sticker {
+        animation: none;
+    }
 }
 
 /* A text sparkle needs no image at all - U+2726 is a normal glyph. */
@@ -597,45 +646,306 @@
     }
 }
 
-/***************************** INLINE 3D STICKERS *****************************/
+/***************************** SAY HI CHAT *****************************/
 
-/* Little 3D objects dropped into the bio: headphones, a tree, Baby Yoda, a mug
-   and a car. None of them are 3D on the page - each is 60 pre-rendered frames
-   of its model, one every 6 degrees, in a 10 x 6 sheet under
-   assets/images/sprites/. main.js picks the frame to match the scroll, so they
-   still turn as you scroll past, without shipping three.js or any model file.
+/* A light card against the page's black, the way the reference sits a white
+   conversation inside a phone. Nothing here talks to a server: replies are
+   scripted in main.js, and the email the visitor leaves opens their own mail
+   client rather than being posted anywhere. */
 
-   The frame is chosen by TRANSFORMING the sheet inside a clipped box, not by
-   moving a background-position. A 56px box showing a scaled-up 1440px sheet
-   had to repaint on every frame change, five of them at once, which is what
-   made it feel laggy. A transform is handled by the compositor instead, with
-   no repaint at all.
-
-   Sized in `em` so they scale with the sentence. The negative vertical margins
-   leave a 1em margin box, no taller than the text, so every line keeps the
-   same spacing and the picture overhangs into the leading instead of pushing
-   its line apart. */
-.model-sprite {
-    display: inline-block;
-    position: relative;
-    overflow: hidden;
-    height: 2.4em;
-    aspect-ratio: 1 / 1;
-    vertical-align: middle;
-    margin: -0.7em 0.05em;
-    /* the box's painting is its own business, not the page's */
-    contain: paint;
+.chat-section {
+    margin-top: 6rem;
+    text-align: left;
 }
 
-/* The sheet is 10 columns wide and 6 rows tall, so one frame fills the box and
-   a step is 10% across or 100/6% down. Scored above the global
-   `img { width: 100% }` in global.css. */
-.model-sprite img {
+
+/* The mockup, with the chat sitting behind a hole knocked out of its screen.
+   The frame image is on top, so the phone's own rounded corners and bezel do
+   the masking - there is no CSS shaping here to keep in sync with the art. */
+.phone-frame {
+    position: relative;
+    max-width: 52rem;
+    margin: 0 auto;
+    /* the exported frame's own proportions, trimmed to the phone itself */
+    aspect-ratio: 1239 / 595;
+    transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+/* Leans in when you point at it. Guarding this with :not(:focus-within) was
+   the obvious thing and it was wrong: the chat focuses its input after every
+   reply, so focus never leaves and the effect died after the first message. */
+.phone-frame:hover {
+    transform: scale(1.035);
+}
+
+/* Measured off the transparent hole: left 1.78%, top 4.37%, 96.53% x 91.43%.
+   Deliberately a shade larger than that on every side, so no sliver of page
+   shows at the edge - the overspill hides under the bezel and the opaque
+   surround the art still carries. */
+.phone-frame__screen {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 1000%;
-    height: 600%;
+    left: 1.4%;
+    top: 3.9%;
+    width: 97.3%;
+    height: 92.4%;
+    z-index: 1;
+    display: flex;
+    background: #fff;
+}
+
+.phone-frame__art {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    width: 100%;
+    height: 100%;
     max-width: none;
-    will-change: transform;
+    pointer-events: none;
+}
+
+.chat {
+    max-width: 34rem;
+    margin: 0 auto;
+    padding: 1rem;
+    border-radius: 1.6rem;
+    background: #fff;
+    color: #111;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
+}
+
+/* inside the phone the frame provides the card, so the card stops being one */
+.phone-frame .chat {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    /* Room on both sides for the hardware: the dynamic island juts in on the
+       right, and the curved bezel clips the left, which was cutting the end
+       off the input row. */
+    /* more at the top than the bottom: the first bubble was sitting right up
+       against the bezel */
+    padding: 1.3em 2.3em 0.6em 1.9em;
+    border-radius: 0;
+    box-shadow: none;
+    /* Everything inside is sized in em, so this one number scales the whole
+       conversation. Cropping the frame to the phone gave the screen a lot more
+       height than it had, so the text can be near full size. */
+    font-size: 1.1rem;
+}
+
+.phone-frame .chat-log {
+    flex: 1;
+    max-height: none;
+    min-height: 0;
+}
+
+.phone-frame .chat-form {
+    margin-top: 0.5rem;
+}
+
+.chat-log {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    /* tall enough for a few exchanges, then it scrolls rather than growing the
+       page under the visitor while they are typing */
+    max-height: 20rem;
+    overflow-y: auto;
+    padding: 0.25rem;
+    scroll-behavior: smooth;
+}
+
+.chat-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+
+.chat-row.is-me {
+    justify-content: flex-end;
+}
+
+.chat-avatar {
+    width: 2.5em;
+    height: 2.5em;
+    flex: none;
+    border-radius: 50%;
+    object-fit: cover;
+    /* beats the global `img { width: 100% }` */
+    max-width: none;
+}
+
+.chat-bubble {
+    max-width: 78%;
+    padding: 0.65rem 0.95rem;
+    border-radius: 1.2em;
+    background: #ececec;
+    font-size: 1em;
+    line-height: 1.45;
+    /* a long URL or email should wrap, not stretch the card */
+    overflow-wrap: anywhere;
+}
+
+.is-me .chat-bubble {
+    background: #0b84ff;
+    color: #fff;
+}
+
+.chat-bubble a {
+    color: inherit;
+    font-weight: 600;
+}
+
+/* the three dots while a reply is on its way */
+.chat-dots {
+    display: inline-flex;
+    gap: 0.25rem;
+    padding: 0.2rem 0;
+}
+
+.chat-dots i {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: #9a9a9a;
+    animation: chat-dot 1.2s ease-in-out infinite;
+}
+
+.chat-dots i:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+.chat-dots i:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+@keyframes chat-dot {
+
+    0%,
+    60%,
+    100% {
+        opacity: 0.35;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-0.15rem);
+    }
+}
+
+.chat-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.85rem;
+}
+
+/* the label is for screen readers; the placeholder carries it visually */
+.chat-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.chat-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.7rem 1rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 999px;
+    background: #fff;
+    color: #111;
+    font: inherit;
+    font-size: 1em;
+}
+
+.chat-input:focus-visible {
+    outline: 2px solid #0b84ff;
+    outline-offset: 1px;
+}
+
+.chat-send {
+    width: 2.6em;
+    height: 2.6em;
+    flex: none;
+    border: 0;
+    border-radius: 50%;
+    background: #0b84ff;
+    color: #fff;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: opacity 0.2s ease;
+}
+
+.chat-send svg {
+    width: 1.3rem;
+    height: 1.3rem;
+}
+
+.chat-send:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+@media (max-width: 768px) {
+    .chat-section {
+        margin-top: 4rem;
+    }
+
+    .chat-log {
+        max-height: 16rem;
+    }
+
+    /* Below this the phone is too small for the conversation to be usable, so
+       the frame steps aside and the chat goes back to being a plain card. */
+    .phone-frame {
+        aspect-ratio: auto;
+        max-width: 34rem;
+        transition: none;
+    }
+
+    .phone-frame:hover {
+        transform: none;
+    }
+
+    .phone-frame__art {
+        display: none;
+    }
+
+    .phone-frame__screen {
+        position: static;
+        width: auto;
+        height: auto;
+        background: none;
+    }
+
+    .phone-frame .chat {
+        padding: 1rem;
+        border-radius: 1.6rem;
+        box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
+        font-size: 0.95rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .phone-frame,
+    .phone-frame:hover {
+        transition: none;
+        transform: none;
+    }
+
+    .chat-dots i {
+        animation: none;
+    }
+
+    .chat-log {
+        scroll-behavior: auto;
+    }
 }

@@ -127,25 +127,13 @@
 
                 <div class="about-bio">
                     <p>
-                        I&rsquo;m Rawi, a UX/UI designer and front-end developer based in Burnaby, BC <span class="model-sprite" aria-hidden="true"><picture><source type="image/avif" srcset="assets/images/sprites/tree.avif"><img src="assets/images/sprites/tree.png" alt="" decoding="async"></picture></span>. I just finished
-                        my B.Sc. in Interactive Arts and Technology at SFU <span class="model-sprite" aria-hidden="true"><picture><source type="image/avif" srcset="assets/images/sprites/yoda.avif"><img src="assets/images/sprites/yoda.png" alt="" decoding="async"></picture></span>, and I like the part of the job where a Figma
-                        file stops being a picture and turns into something you can click. Most recently I designed and
-                        built LintelAI&rsquo;s marketing site end to end <span class="model-sprite" aria-hidden="true"><picture><source type="image/avif" srcset="assets/images/sprites/car.avif"><img src="assets/images/sprites/car.png" alt="" decoding="async"></picture></span>, on my own <span class="model-sprite" aria-hidden="true"><picture><source type="image/avif" srcset="assets/images/sprites/mug.avif"><img src="assets/images/sprites/mug.png" alt="" decoding="async"></picture></span>, mostly with something in my
-                        ears <span class="model-sprite" aria-hidden="true"><picture><source type="image/avif" srcset="assets/images/sprites/airpods.avif"><img src="assets/images/sprites/airpods.png" alt="" decoding="async"></picture></span> and the same few albums on repeat.
+                        I&rsquo;m Rawi, a UX/UI designer and front-end developer based in Burnaby, BC <img class="bio-sticker" src="assets/images/emoji/tree.svg" alt="">. I just finished
+                        my B.Sc. in Interactive Arts and Technology at SFU <img class="bio-sticker" src="assets/images/emoji/cap.svg" alt="">, and I like the part of the job where a Figma
+                        file stops being a picture and turns into something you can click <img class="bio-sticker" src="assets/images/emoji/mouse.svg" alt="">. Most recently I designed and
+                        built LintelAI&rsquo;s marketing site end to end, on my own, mostly with something in my
+                        ears <img class="bio-sticker" src="assets/images/emoji/headphones.svg" alt=""> and the same few albums on repeat.
                     </p>
 
-                    <!-- INLINE STICKERS - drop a small transparent PNG/WebP anywhere in the
-                         sentences above and it sits inline with the words, like this:
-
-                           a Figma file <img class="bio-sticker"
-                               src="assets/images/stickers/notebook.png" alt=""> stops being
-
-                         Put the files in assets/images/stickers/. For a plain typographic
-                         mark instead of an image, no asset is needed:
-
-                           <span class="bio-mark">&#10022;</span>
-
-                         Both are styled in css/about.css, under .bio-sticker / .bio-mark. -->
                 </div>
             </div>
 
@@ -159,6 +147,38 @@
                 <img src="assets/images/about-photos/IMG_0539.jpg" alt="" draggable="false">
             </figure>
         </div>
+
+        <!-- CHAT -->
+        <section class="chat-section">
+            <!-- the chat shows through a hole knocked out of the mockup, so the phone's
+                 rounded corners and bezel mask it without any CSS shaping -->
+            <div class="phone-frame">
+                <div class="phone-frame__screen">
+                    <div class="chat" data-chat>
+                <!-- the transcript. aria-live so a screen reader hears replies arrive -->
+                <div class="chat-log" data-chat-log role="log" aria-live="polite" aria-label="Conversation"></div>
+
+                <form class="chat-form" data-chat-form>
+                    <label class="chat-label" for="chat-input">Your message</label>
+                    <input class="chat-input" id="chat-input" data-chat-input type="text"
+                        placeholder="Say something..." autocomplete="off" maxlength="300">
+                    <button class="chat-send" type="submit" aria-label="Send">
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path d="M12 20V5M12 5l-6 6M12 5l6 6" fill="none" stroke="currentColor" stroke-width="2.2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PNG rather than AVIF: the AVIF that sips produced from this file
+                     decoded with its alpha dropped, which filled the screen in. Lazy
+                     because the frame sits well down the page. -->
+                <img class="phone-frame__art" src="assets/images/phone-landscape.png" alt="" aria-hidden="true"
+                    width="1239" height="595" loading="lazy" decoding="async">
+            </div>
+        </section>
 
         <section class="about-path">
             <h3 class="about-path-title">The path so far</h3>
