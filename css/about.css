@@ -599,70 +599,43 @@
 
 /***************************** INLINE 3D STICKERS *****************************/
 
-/* Little 3D objects dropped into sentences: the AirPods in the bio, a tree by
-   "BC", Baby Yoda by "The path", a mug and a car in the photo-ring caption.
-
-   None of them are 3D on the page. Each is 60 pre-rendered frames of its
-   model, one every 6 degrees, packed into a 10 x 6 sheet under
+/* Little 3D objects dropped into the bio: headphones, a tree, Baby Yoda, a mug
+   and a car. None of them are 3D on the page - each is 60 pre-rendered frames
+   of its model, one every 6 degrees, in a 10 x 6 sheet under
    assets/images/sprites/. main.js picks the frame to match the scroll, so they
    still turn as you scroll past, without shipping three.js or any model file.
 
-   Sized in `em` so they scale with whatever sentence they sit in. The negative
-   vertical margins leave a 1em margin box, no taller than the text, so every
-   line keeps the same spacing and the picture overhangs into the leading
-   instead of pushing its line apart. */
+   The frame is chosen by TRANSFORMING the sheet inside a clipped box, not by
+   moving a background-position. A 56px box showing a scaled-up 1440px sheet
+   had to repaint on every frame change, five of them at once, which is what
+   made it feel laggy. A transform is handled by the compositor instead, with
+   no repaint at all.
+
+   Sized in `em` so they scale with the sentence. The negative vertical margins
+   leave a 1em margin box, no taller than the text, so every line keeps the
+   same spacing and the picture overhangs into the leading instead of pushing
+   its line apart. */
 .model-sprite {
     display: inline-block;
+    position: relative;
+    overflow: hidden;
     height: 2.4em;
     aspect-ratio: 1 / 1;
     vertical-align: middle;
     margin: -0.7em 0.05em;
-    background-position: 0 0;
-    background-size: 1000% 600%;
-    background-repeat: no-repeat;
+    /* the box's painting is its own business, not the page's */
+    contain: paint;
 }
 
-/* Each: a half-resolution PNG first for browsers without AVIF (Safari before
-   16.4); anything that understands image-set() skips it for the AVIF. */
-.model-sprite--airpods {
-    background-image: url("../assets/images/sprites/airpods.png");
-    background-image: image-set(url("../assets/images/sprites/airpods.avif") type("image/avif"),
-            url("../assets/images/sprites/airpods.png") type("image/png"));
-}
-
-.model-sprite--tree {
-    background-image: url("../assets/images/sprites/tree.png");
-    background-image: image-set(url("../assets/images/sprites/tree.avif") type("image/avif"),
-            url("../assets/images/sprites/tree.png") type("image/png"));
-}
-
-.model-sprite--yoda {
-    background-image: url("../assets/images/sprites/yoda.png");
-    background-image: image-set(url("../assets/images/sprites/yoda.avif") type("image/avif"),
-            url("../assets/images/sprites/yoda.png") type("image/png"));
-}
-
-.model-sprite--mug {
-    background-image: url("../assets/images/sprites/mug.png");
-    background-image: image-set(url("../assets/images/sprites/mug.avif") type("image/avif"),
-            url("../assets/images/sprites/mug.png") type("image/png"));
-}
-
-.model-sprite--car {
-    background-image: url("../assets/images/sprites/car.png");
-    background-image: image-set(url("../assets/images/sprites/car.avif") type("image/avif"),
-            url("../assets/images/sprites/car.png") type("image/png"));
-}
-
-/* Scored above `.about-bio p`, which is a class-plus-element selector and so
-   outranks a bare class - without the extra step the credit rendered at the
-   full body size and colour. */
-.about-bio .model-credit {
-    margin: 1.25rem 0 0;
-    font-size: 0.78rem;
-    color: rgba(255, 255, 255, 0.32);
-}
-
-.about-bio .model-credit a {
-    color: rgba(255, 255, 255, 0.55);
+/* The sheet is 10 columns wide and 6 rows tall, so one frame fills the box and
+   a step is 10% across or 100/6% down. Scored above the global
+   `img { width: 100% }` in global.css. */
+.model-sprite img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1000%;
+    height: 600%;
+    max-width: none;
+    will-change: transform;
 }
