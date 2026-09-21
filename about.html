@@ -150,8 +150,8 @@
 
         <!-- CHAT -->
         <section class="chat-section">
-            <!-- the chat shows through a hole knocked out of the mockup, so the phone's
-                 rounded corners and bezel mask it without any CSS shaping -->
+            <!-- the phone is drawn in CSS, so the screen's corners are real corners
+                 rather than a square sitting behind a hole in a bitmap -->
             <div class="phone-frame">
                 <div class="phone-frame__screen">
                     <div class="chat" data-chat>
@@ -172,11 +172,13 @@
                     </div>
                 </div>
 
-                <!-- PNG rather than AVIF: the AVIF that sips produced from this file
-                     decoded with its alpha dropped, which filled the screen in. Lazy
-                     because the frame sits well down the page. -->
-                <img class="phone-frame__art" src="assets/images/phone-landscape.png" alt="" aria-hidden="true"
-                    width="1239" height="595" loading="lazy" decoding="async">
+                <!-- the physical buttons. The island sits on the right, so the phone's
+                     top edge is to the right: action and volume run along the top,
+                     power along the bottom. -->
+                <span class="phone-btn phone-btn--action" aria-hidden="true"></span>
+                <span class="phone-btn phone-btn--vol-up" aria-hidden="true"></span>
+                <span class="phone-btn phone-btn--vol-down" aria-hidden="true"></span>
+                <span class="phone-btn phone-btn--power" aria-hidden="true"></span>
             </div>
         </section>
 

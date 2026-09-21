@@ -659,15 +659,35 @@
 }
 
 
-/* The mockup, with the chat sitting behind a hole knocked out of its screen.
-   The frame image is on top, so the phone's own rounded corners and bezel do
-   the masking - there is no CSS shaping here to keep in sync with the art. */
+/* The phone, drawn rather than photographed.
+   
+   It replaces a 486KB PNG. Being real boxes, it stays sharp at any size, has no
+   alpha edges to clean up and no licence attached - and the screen's corners
+   are genuine CSS corners, so the chat can't poke out past them the way a
+   square div behind a bitmap hole did.
+
+   The geometry follows a real handset: a 2.17:1 body in landscape, a bezel
+   1.9% of the width all round, and a corner radius of 14% of the short side.
+   Percentage padding resolves against WIDTH on all four sides, which is what
+   keeps the bezel an even thickness rather than thicker top and bottom. */
 .phone-frame {
     position: relative;
     max-width: 52rem;
     margin: 0 auto;
-    /* the exported frame's own proportions, trimmed to the phone itself */
-    aspect-ratio: 1239 / 595;
+    aspect-ratio: 2.17 / 1;
+    padding: 1.9%;
+    /* 6.45% of width and 14% of height are the same number of pixels at this
+       aspect, which is what makes the corner circular rather than oval */
+    border-radius: 6.45% / 14%;
+    /* brushed titanium: light catching the top and bottom edges, darker down
+       the middle where the band curves away */
+    background:
+        linear-gradient(162deg, #f4f5f7 0%, #a9adb3 10%, #6b7076 26%, #3f4247 48%,
+            #55595f 62%, #9ca0a6 82%, #dfe1e4 93%, #fbfbfc 100%);
+    box-shadow:
+        /* the polished inner lip where the glass meets the frame */
+        inset 0 0 0 0.15rem rgba(255, 255, 255, 0.22),
+        0 1.75rem 3.5rem rgba(0, 0, 0, 0.55);
     transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.25, 1);
 }
 
@@ -678,28 +698,83 @@
     transform: scale(1.035);
 }
 
-/* Measured off the transparent hole: left 1.78%, top 4.37%, 96.53% x 91.43%.
-   Deliberately a shade larger than that on every side, so no sliver of page
-   shows at the edge - the overspill hides under the bezel and the opaque
-   surround the art still carries. */
-.phone-frame__screen {
+/* The black bezel between the metal rail and the glass. Without it the screen
+   reads as a white slab sitting in a silver tray; on a real handset there is
+   always a dark band there. Inset by the rail's thickness, and painted under
+   the screen because a pseudo-element comes before the element's own content
+   in paint order. */
+.phone-frame::before {
+    content: '';
     position: absolute;
-    left: 1.4%;
-    top: 3.9%;
-    width: 97.3%;
-    height: 92.4%;
-    z-index: 1;
-    display: flex;
-    background: #fff;
+    inset: 0.8%;
+    border-radius: 5.74% / 12.7%;
+    background: #0a0a0a;
 }
 
-.phone-frame__art {
-    position: absolute;
-    inset: 0;
-    z-index: 2;
+/* The screen. Its radius is the body's minus the bezel, expressed against its
+   own box - again split so both axes come out to the same pixel value. */
+.phone-frame__screen {
+    position: relative;
     width: 100%;
     height: 100%;
-    max-width: none;
+    border-radius: 4.73% / 10.84%;
+    background: #fff;
+    display: flex;
+    overflow: hidden;
+}
+
+/* The side buttons. Each sits just outside the body rather than on top of it -
+   `bottom: 100%` puts one flush above the top edge - so they read as standing
+   proud of the frame instead of being painted onto it. */
+.phone-btn {
+    position: absolute;
+    /* how far they stand out, as a share of the phone's height */
+    height: 1.4%;
+    /* kept in the rail's own tonal range - brighter than this and they read as
+       white tabs stuck on a black page rather than metal */
+    background: linear-gradient(180deg, #b7bcc2 0%, #868c93 55%, #6d737a 100%);
+    border-radius: 0.16rem 0.16rem 0 0;
+}
+
+/* along the top edge, right to left: action, then the two volume keys */
+.phone-btn--action {
+    bottom: 100%;
+    right: 29.5%;
+    width: 3.3%;
+}
+
+.phone-btn--vol-up {
+    bottom: 100%;
+    right: 35.5%;
+    width: 5.5%;
+}
+
+.phone-btn--vol-down {
+    bottom: 100%;
+    right: 43%;
+    width: 5.5%;
+}
+
+/* and the power key alone on the bottom edge */
+.phone-btn--power {
+    top: 100%;
+    right: 26%;
+    width: 7.6%;
+    background: linear-gradient(0deg, #b7bcc2 0%, #868c93 55%, #6d737a 100%);
+    border-radius: 0 0 0.16rem 0.16rem;
+}
+
+/* Dynamic Island. The phone is on its side, so it stands on the right edge. */
+.phone-frame__screen::after {
+    content: '';
+    position: absolute;
+    right: 2.4%;
+    top: 50%;
+    translate: 0 -50%;
+    width: 1.7%;
+    height: 26%;
+    border-radius: 999px;
+    background: #050505;
     pointer-events: none;
 }
 
@@ -914,15 +989,27 @@
         transform: none;
     }
 
-    .phone-frame__art {
+    /* the phone steps aside; the chat goes back to being a plain card */
+    .phone-frame {
+        padding: 0;
+        border-radius: 0;
+        background: none;
+        box-shadow: none;
+    }
+
+    .phone-frame::before,
+    .phone-btn {
         display: none;
     }
 
     .phone-frame__screen {
-        position: static;
-        width: auto;
-        height: auto;
+        border-radius: 0;
         background: none;
+        overflow: visible;
+    }
+
+    .phone-frame__screen::after {
+        display: none;
     }
 
     .phone-frame .chat {
