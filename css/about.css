@@ -739,19 +739,19 @@
 /* along the top edge, right to left: action, then the two volume keys */
 .phone-btn--action {
     bottom: 100%;
-    right: 29.5%;
+    right: 19.5%;
     width: 3.3%;
 }
 
 .phone-btn--vol-up {
     bottom: 100%;
-    right: 35.5%;
+    right: 25.5%;
     width: 5.5%;
 }
 
 .phone-btn--vol-down {
     bottom: 100%;
-    right: 43%;
+    right: 33%;
     width: 5.5%;
 }
 
