@@ -930,7 +930,10 @@
 .chat-input {
     flex: 1;
     min-width: 0;
-    padding: 0.7rem 1rem;
+    /* em, not rem: inside the phone the whole conversation is scaled by one
+       font-size, and a rem padding here refused to shrink with it - the input
+       row was eating a quarter of the screen on a phone. */
+    padding: 0.62em 0.9em;
     border: 1px solid #dcdcdc;
     border-radius: 999px;
     background: #fff;
@@ -945,8 +948,12 @@
 }
 
 .chat-send {
-    width: 2.6em;
-    height: 2.6em;
+    /* A button does not inherit the page font, so its `em` was resolving
+       against the UA's 13.33px and the circle stayed one fixed size at every
+       phone width. `font: inherit` ties it back to the conversation. */
+    font: inherit;
+    width: 2em;
+    height: 2em;
     flex: none;
     border: 0;
     border-radius: 50%;
@@ -959,8 +966,8 @@
 }
 
 .chat-send svg {
-    width: 1.3rem;
-    height: 1.3rem;
+    width: 1.2em;
+    height: 1.2em;
 }
 
 .chat-send:disabled {
@@ -977,46 +984,33 @@
         max-height: 16rem;
     }
 
-    /* Below this the phone is too small for the conversation to be usable, so
-       the frame steps aside and the chat goes back to being a plain card. */
+    /* The phone stays landscape here, just smaller - so the mockup on a phone
+       is the same object it is on a desktop. Everything below is about making
+       a ~160px-tall screen readable: the frame's own ratios are untouched. */
     .phone-frame {
-        aspect-ratio: auto;
-        max-width: 34rem;
-        transition: none;
+        max-width: 100%;
     }
 
+    /* no pointer to lean into on a touch screen */
     .phone-frame:hover {
         transform: none;
     }
 
-    /* the phone steps aside; the chat goes back to being a plain card */
-    .phone-frame {
-        padding: 0;
-        border-radius: 0;
-        background: none;
-        box-shadow: none;
-    }
-
-    .phone-frame::before,
+    /* At this size 1.4% of the body height is barely two pixels, which reads as
+       a smudge rather than a button, so the keys get a floor in rem. */
     .phone-btn {
-        display: none;
+        height: 0.2rem;
     }
 
-    .phone-frame__screen {
-        border-radius: 0;
-        background: none;
-        overflow: visible;
-    }
-
-    .phone-frame__screen::after {
-        display: none;
-    }
-
+    /* The chat is sized entirely in em off this one number, so scaling it with
+       the viewport scales the whole conversation with the phone. */
     .phone-frame .chat {
-        padding: 1rem;
-        border-radius: 1.6rem;
-        box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
-        font-size: 0.95rem;
+        font-size: clamp(0.5rem, 2.5vw, 0.95rem);
+        padding: 1.2em 2.3em 0.5em 1.9em;
+    }
+
+    .phone-frame .chat-form {
+        margin-top: 0.35em;
     }
 }
 
