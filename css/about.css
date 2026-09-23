@@ -55,73 +55,13 @@
   margin: auto 0;
 }
 
-/* Small images dropped inline in a sentence - the little stickers between
-   words. Sized in `em` so they scale with the text, and nudged down with
-   vertical-align so they sit on the baseline rather than riding above it.
-   `1.35em` is roughly cap-height plus a little, which reads as part of the
-   line instead of an interruption.
-
-   Use it as:  working on <img class="bio-sticker" src="..." alt=""> lately
-   Give it alt="" - they are decoration, and a screen reader announcing
-   "image" mid-sentence is worse than silence. */
-.bio-sticker {
-    display: inline-block;
-    /* below the 1.8 line-height, so it never stretches the line it sits on */
-    height: 1.35em;
-    width: auto;
-    vertical-align: -0.3em;
-    margin: 0 0.1em;
-    /* A faint light halo. OpenMoji's colour artwork is drawn with black
-       outlines, which vanish against this page - the cap in particular was
-       losing its shape entirely. */
-    filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.5));
-    -webkit-user-select: none;
-    user-select: none;
-    pointer-events: none;
-
-    /* Turning, like the 3D ones did. This is a transform on four small
-       elements, so the compositor handles it on its own - there is no script
-       and nothing repaints. */
-    animation: bio-spin 7s ease-in-out infinite;
-}
-
-/* A swing rather than a full revolution. These are flat drawings, so a full
-   360 turns them edge-on twice a cycle - they thin to a sliver, vanish, and
-   come back mirrored. Real 3D models had sides to show; these don't. Stopping
-   at 55 degrees keeps the turn legible the whole way round.
-   For a full spin instead, make this 0 -> 360deg in one step.
-   perspective() is what makes it read as turning rather than squashing. */
-@keyframes bio-spin {
-
-    0%,
-    100% {
-        transform: perspective(240px) rotateY(-55deg);
-    }
-
-    50% {
-        transform: perspective(240px) rotateY(55deg);
-    }
-}
-
-.about-bio p .bio-sticker:nth-of-type(2) {
-    animation-duration: 8.4s;
-    animation-delay: -2.1s;
-}
-
-.about-bio p .bio-sticker:nth-of-type(3) {
-    animation-duration: 6.2s;
-    animation-delay: -4.3s;
-}
-
-.about-bio p .bio-sticker:nth-of-type(4) {
-    animation-duration: 9.1s;
-    animation-delay: -1.2s;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .bio-sticker {
-        animation: none;
-    }
+/* The player writes its own width and height onto the SVG it builds, so this
+   has to shout to make the drawing fill the span at whatever size the text is.
+   Every lottie holder on the page uses it. */
+[data-lottie] svg {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 /* A text sparkle needs no image at all - U+2726 is a normal glyph. */
@@ -1029,4 +969,439 @@
     .chat-log {
         scroll-behavior: auto;
     }
+}
+
+/***************************** SCROLL-LIT TEXT *****************************/
+
+/* A paragraph that lights up as it passes through the middle of the screen.
+   Two things happen to each word, and they are deliberately driven by
+   different mechanisms:
+
+   - the DIM -> WHITE fade is written by the script, one opacity per word per
+     frame, so it tracks the scroll position continuously; and
+   - the BOUNCE is a CSS keyframe fired by an `is-lit` class the moment a word
+     crosses its threshold, so it has an overshoot of its own and does not
+     stutter when you scroll slowly.
+
+   Trying to do the bounce from scroll position too was the obvious thing and
+   it looked dead: a spring you drag by hand is not a spring.
+
+   Everything here is what it looks like before the script runs - and what it
+   looks like if the script never runs, which is: lit, still, readable. */
+.reveal {
+    max-width: 52rem;
+    margin: 9rem auto 7rem;
+    padding: 0 1.5rem;
+    text-align: left;
+}
+
+.reveal-text {
+    margin: 0 0 2.6rem;
+    font-size: clamp(1.45rem, 2.9vw, 2.15rem);
+    font-weight: 500;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+    color: #fff;
+}
+
+/* the line that hands over to the phone */
+.reveal-text--lead {
+    margin-bottom: 0;
+    color: #cfd2d6;
+}
+
+/* Words and inline pictures share this class, which is why the script can run
+   one queue and not care which is which. inline-block is what makes them
+   transformable at all - a plain inline span ignores translate and scale. */
+.reveal-part {
+    display: inline-block;
+    /* the resting state: still legible, just clearly not lit yet */
+    opacity: 0.18;
+    /* where the bounce starts from, so a word that is not lit yet already sits
+       low rather than jumping there on its first frame */
+    transform: translateY(0.34em) scale(0.94);
+}
+
+/* The landing. The overshoot lives in the curve: the third control point past
+   1 is what carries it above its resting size before it settles. */
+.reveal-part.is-lit {
+    animation: reveal-pop 0.62s cubic-bezier(0.22, 1.55, 0.34, 1) forwards;
+}
+
+@keyframes reveal-pop {
+    from {
+        transform: translateY(0.34em) scale(0.94);
+    }
+
+    to {
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* --- the phrases that matter --- */
+
+/* Every highlight lands harder than the words around it. What differs is HOW:
+   each phrase gets one effect and no effect is used twice, because six blue
+   underlines down a paragraph stop being an emphasis and become a texture.
+   The shared part is only the weight and the fact that something happens. */
+.reveal-key {
+    position: relative;
+    color: #fff;
+    font-weight: 600;
+    transform: translateY(0.5em) scale(0.9);
+}
+
+/* the fallback, for a key with no effect of its own */
+.reveal-key.is-lit {
+    animation: reveal-kick 0.78s cubic-bezier(0.16, 1.7, 0.3, 1) forwards;
+}
+
+@keyframes reveal-kick {
+    0% {
+        transform: translateY(0.5em) scale(0.9) rotate(-1.6deg);
+    }
+
+    58% {
+        transform: translateY(-0.11em) scale(1.07) rotate(0.7deg);
+    }
+
+    100% {
+        transform: translateY(0) scale(1) rotate(0);
+    }
+}
+
+/* 1. a line drawn under it, left to right. A background image rather than a
+      border, because a border has no direction to grow from. */
+.reveal-key--underline {
+    background-image: linear-gradient(var(--accent-color), var(--accent-color));
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 0 0.09em;
+    padding-bottom: 0.06em;
+}
+
+.reveal-key--underline.is-lit {
+    animation:
+        reveal-kick 0.78s cubic-bezier(0.16, 1.7, 0.3, 1) forwards,
+        reveal-underline 0.5s 0.16s ease-out forwards;
+}
+
+@keyframes reveal-underline {
+    to {
+        background-size: 100% 0.09em;
+    }
+}
+
+/* 2. a highlighter pulled across it, and the text goes dark as the ink
+      arrives under it */
+.reveal-key--marker {
+    padding: 0.04em 0.18em;
+    margin: 0 -0.08em;
+    border-radius: 0.2em;
+    background-image: linear-gradient(var(--accent-color), var(--accent-color));
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: 0 100%;
+}
+
+.reveal-key--marker.is-lit {
+    animation:
+        reveal-kick 0.78s cubic-bezier(0.16, 1.7, 0.3, 1) forwards,
+        reveal-ink 0.55s 0.12s cubic-bezier(0.3, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes reveal-ink {
+    from {
+        background-size: 0 100%;
+        color: #fff;
+    }
+
+    60% {
+        color: #fff;
+    }
+
+    to {
+        background-size: 100% 100%;
+        color: #04182c;
+    }
+}
+
+/* 3. no decoration at all - it blooms. The letters spread apart slightly and
+      the whole phrase glows, which reads as the sentence raising its voice. */
+.reveal-key--glow.is-lit {
+    animation: reveal-glow 0.95s cubic-bezier(0.16, 1.4, 0.3, 1) forwards;
+}
+
+@keyframes reveal-glow {
+    0% {
+        transform: translateY(0.5em) scale(0.9);
+        letter-spacing: -0.02em;
+        text-shadow: none;
+    }
+
+    55% {
+        transform: translateY(-0.1em) scale(1.06);
+        letter-spacing: 0.035em;
+        text-shadow: 0 0 1.4rem rgba(255, 255, 255, 0.75);
+    }
+
+    100% {
+        transform: translateY(0) scale(1);
+        letter-spacing: 0.012em;
+        text-shadow: 0 0 0.9rem rgba(255, 255, 255, 0.28);
+    }
+}
+
+/* 4. the word does what it says: it shakes itself into place */
+.reveal-key--shake.is-lit {
+    animation: reveal-shake 0.95s cubic-bezier(0.3, 1.2, 0.3, 1) forwards;
+}
+
+@keyframes reveal-shake {
+    0% {
+        transform: translate(0, 0.5em) scale(0.9);
+    }
+
+    35% {
+        transform: translate(-0.16em, -0.06em) scale(1.06) rotate(-2.5deg);
+    }
+
+    55% {
+        transform: translate(0.14em, 0) scale(1.04) rotate(2deg);
+    }
+
+    75% {
+        transform: translate(-0.07em, 0) scale(1.01) rotate(-1deg);
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1) rotate(0);
+    }
+}
+
+/* 5. struck through, and the colour turns with the line. The rule is a
+      pseudo-element so it can be drawn across rather than simply appearing,
+      which text-decoration cannot do. */
+.reveal-key--strike::after {
+    content: '';
+    position: absolute;
+    left: -0.06em;
+    right: -0.06em;
+    top: 55%;
+    height: 0.075em;
+    border-radius: 999px;
+    background: #ff6b6b;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+}
+
+.reveal-key--strike.is-lit {
+    animation:
+        reveal-kick 0.78s cubic-bezier(0.16, 1.7, 0.3, 1) forwards,
+        reveal-redden 0.45s 0.2s ease-out forwards;
+}
+
+.reveal-key--strike.is-lit::after {
+    animation: reveal-strike 0.42s 0.2s cubic-bezier(0.3, 0.9, 0.2, 1) forwards;
+}
+
+@keyframes reveal-strike {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes reveal-redden {
+    to {
+        color: #ff6b6b;
+    }
+}
+
+/* 6. a ring snaps around it, the way you would circle a word by hand */
+.reveal-key--pill {
+    padding: 0.06em 0.42em;
+    margin: 0 -0.12em;
+    color: var(--accent-color);
+}
+
+.reveal-key--pill::before {
+    content: '';
+    position: absolute;
+    inset: -0.04em 0;
+    border: 0.085em solid var(--accent-color);
+    /* the two radii differ so the ring is an ellipse, not a stadium - closer
+       to a circle drawn round a word than to a button */
+    border-radius: 50% / 46%;
+    opacity: 0;
+    transform: scale(0.72) rotate(-4deg);
+}
+
+.reveal-key--pill.is-lit::before {
+    animation: reveal-ring 0.62s 0.14s cubic-bezier(0.2, 1.7, 0.3, 1) forwards;
+}
+
+@keyframes reveal-ring {
+    from {
+        opacity: 0;
+        transform: scale(0.72) rotate(-4deg);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) rotate(0);
+    }
+}
+
+/* --- the pictures in the sentence --- */
+
+/* An app-icon-sized picture sitting in the run of the text. Sized in `em` so
+   it tracks the font; the explicit width is needed because global.css sets
+   every img to width: 100%. */
+.reveal-chip {
+    width: auto;
+    height: 1.15em;
+    vertical-align: -0.22em;
+    margin: 0 0.12em;
+    border-radius: 0.26em;
+}
+
+/* The wider one - a photo dropped into the sentence like a word. */
+.reveal-shot {
+    width: 2.6em;
+    height: 1.55em;
+    object-fit: cover;
+    vertical-align: -0.35em;
+    margin: 0 0.18em;
+    border-radius: 0.34em;
+    box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.5);
+}
+
+/* The same photo, cropped square. Mixing the two shapes is what stops the run
+   of pictures from reading as a row of identical stickers - object-fit means
+   either crop works from the same file. */
+.reveal-shot--sq {
+    width: 1.55em;
+    height: 1.55em;
+    border-radius: 0.3em;
+}
+
+/* A Noto animated emoji in the run of the text.
+
+   These are Lottie files that loop on their own, so there is no CSS animation
+   driving them. The element is an empty <span> the script fills with an SVG,
+   sized in `em` so it tracks the text and nudged down with vertical-align so
+   it sits on the baseline rather than riding above it. A little larger than
+   the brand chips because the artwork has built-in padding.
+
+   Use it as:  Then fixing <span class="reveal-emoji"
+                   data-lottie="assets/lottie/tools.json" aria-hidden="true"></span> the parts
+   Keep aria-hidden - they are decoration, and a screen reader announcing
+   "image" mid-sentence is worse than silence. */
+.reveal-emoji {
+    display: inline-block;
+    width: 1.3em;
+    height: 1.3em;
+    vertical-align: -0.28em;
+    margin: 0 0.08em;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* The pictures swing in rather than just rising, and overshoot a little wider
+   than the words do - they are the thing the eye goes to. */
+.reveal-chip,
+.reveal-shot,
+.reveal-emoji {
+    transform: translateY(0.45em) scale(0.8) rotate(-5deg);
+}
+
+.reveal-chip.is-lit,
+.reveal-shot.is-lit,
+.reveal-emoji.is-lit {
+    animation: reveal-swing 0.78s cubic-bezier(0.18, 1.7, 0.32, 1) forwards;
+}
+
+@keyframes reveal-swing {
+    0% {
+        transform: translateY(0.45em) scale(0.8) rotate(-5deg);
+    }
+
+    55% {
+        transform: translateY(-0.14em) scale(1.12) rotate(2.5deg);
+    }
+
+    100% {
+        transform: translateY(0) scale(1) rotate(0);
+    }
+}
+
+/* and they grow a little when pointed at, like the phone does */
+.reveal-shot.is-lit:hover,
+.reveal-chip.is-lit:hover {
+    animation: none;
+    transform: scale(1.35) rotate(-2deg);
+    transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.25, 1);
+}
+
+@media (max-width: 768px) {
+    .reveal {
+        margin: 6rem auto 5rem;
+        padding: 0 1.25rem;
+    }
+
+    .reveal-text {
+        margin-bottom: 2rem;
+        line-height: 1.55;
+    }
+}
+
+/* Without motion there is nothing to sweep, so the text is simply there - and
+   every highlight is shown already finished rather than mid-draw. The script
+   checks the same query and stops writing opacities. */
+@media (prefers-reduced-motion: reduce) {
+
+    .reveal-part,
+    .reveal-key,
+    .reveal-chip,
+    .reveal-shot,
+    .reveal-emoji {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+
+    .reveal-key--underline {
+        background-size: 100% 0.09em;
+    }
+
+    .reveal-key--marker {
+        background-size: 100% 100%;
+        color: #04182c;
+    }
+
+    .reveal-key--glow {
+        text-shadow: 0 0 0.9rem rgba(255, 255, 255, 0.28);
+    }
+
+    .reveal-key--strike {
+        color: #ff6b6b;
+    }
+
+    .reveal-key--strike::after {
+        transform: scaleX(1);
+        animation: none;
+    }
+
+    .reveal-key--pill::before {
+        opacity: 1;
+        transform: none;
+        animation: none;
+    }
+}
+
+/* Holds a part and the punctuation butted against it on the same line - see
+   the note in main.js. Inline so it still flows as part of the sentence. */
+.reveal-glue {
+    display: inline;
+    white-space: nowrap;
 }

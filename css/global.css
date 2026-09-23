@@ -666,16 +666,155 @@ like a block-level element, so it can:
     transition: 0.75s ease-out;
 }
 
-@keyframes spin {
-    from {
-        --angle: 0deg;
-    }
 
+/* ---------------- the chrome pill ----------------
+
+   Polished metal instead of the blue ring.
+
+   WHAT MAKES IT READ AS CHROME: not a rainbow, but hard white specular hits
+   separated by near-black gaps - chrome is a mirror, so what you see in it is
+   the bright and dark of the room around it. The only colour is a cool fringe
+   on one side and a pink one on the other, which is the dispersion a polished
+   edge throws. There is no orange in it at all.
+
+   WHY IT IS BUILT THIS WAY: the first version rotated the gradient by
+   animating --angle, and it stuttered - a registered custom property inside a
+   conic-gradient repaints the whole band on the main thread every frame, and
+   there were two of them plus a live blur. Now the gradient is painted once
+   onto an over-sized square and that square is spun with `rotate`, which the
+   compositor handles on its own. Same movement, no repainting.
+
+   Only .glass-pill gets any of this, so the button on the other pages keeps
+   the blue until this one is settled. */
+.connect-button.glass-pill {
+    background: #000;
+}
+
+/* the band the metal lives in: a strip the width of its own padding, cut out
+   with an XOR of "the whole box" against "the content box" - a border cannot
+   carry a gradient round a corner, this can */
+.glass-pill__ring {
+    position: absolute;
+    inset: -1px;
+    z-index: 0;
+    padding: 3px;
+    border-radius: 5rem;
+    overflow: hidden;
+    pointer-events: none;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* The reflection itself, and the only thing that moves.
+
+   A conic gradient was the wrong shape for this: on a wide pill nearly the
+   whole of the top and bottom rails maps to a few degrees around 90 and 270,
+   so the straights came out as one flat grey while all the detail crowded into
+   the two ends. A linear gradient runs ALONG the rails instead, which is where
+   the streaks are in a real reflection.
+
+   The layer is twice the pill's width and carries a repeating pattern whose
+   period is a quarter of that, so sliding it left by exactly half its width
+   lands on an identical frame - the loop has no seam. Translating a painted
+   layer is compositor work; nothing repaints while it runs.
+
+   Each highlight is a white core with a cool fringe leading it and a pink one
+   trailing it, which is what a polished edge does to light it splits. */
+.glass-pill__ring i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    height: 100%;
+    background: repeating-linear-gradient(101deg,
+            #0a0d12 0%, #3b4551 2%, #93a4b8 4%,
+            #8fb6ff 4.8%, #ffffff 5.4%, #ffffff 6%, #ff6f91 6.6%,
+            #b9c4d2 7.4%, #39424f 9.5%, #0a0d12 12%,
+            #2a323c 14%, #6d7a8a 16%,
+            #a8c8ff 17.3%, #ffffff 18%, #ff8fa8 18.7%,
+            #9dacbe 19.6%, #39424f 21.5%, #12171d 23.5%, #0a0d12 25%);
+    animation: chrome-slide 9s linear infinite;
+    will-change: transform;
+}
+
+@keyframes chrome-slide {
     to {
-        --angle: 360deg;
+        translate: -50% 0;
     }
 }
 
+/* The inner hairline. Chrome edges read as two lines with a dark channel
+   between them, and one band alone looked like a sticker. Static - a second
+   moving gradient is what the first version could not afford. */
+.connect-button.glass-pill::after {
+    inset: 2px;
+    width: auto;
+    height: auto;
+    translate: none;
+    padding: 1px;
+    border-radius: 5rem;
+    background-image: linear-gradient(200deg,
+            rgba(255, 255, 255, 0.85) 0%,
+            rgba(255, 255, 255, 0.08) 28%,
+            rgba(255, 255, 255, 0.55) 52%,
+            rgba(255, 255, 255, 0.05) 74%,
+            rgba(255, 255, 255, 0.7) 100%);
+    animation: none;
+    z-index: 0;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* The light it throws. Blurring is expensive per frame, so this one holds
+   still and only the band above it turns. */
+.connect-button.glass-pill::before {
+    inset: -1px;
+    width: auto;
+    height: auto;
+    translate: none;
+    padding: 0;
+    border-radius: 5rem;
+    background-image: none;
+    background-color: transparent;
+    animation: none;
+    z-index: -1;
+    box-shadow:
+        0 0 2.2rem rgba(214, 230, 255, 0.4),
+        0 0 5rem rgba(150, 190, 255, 0.22);
+}
+
+/* the label rides above both */
+.glass-pill__label {
+    position: relative;
+    z-index: 1;
+}
+
+/* No blue flood on hover - chrome brightens, it does not change colour. */
+.connect-button.glass-pill:hover {
+    background-color: #000;
+}
+
+.connect-button.glass-pill:hover .glass-pill__ring i {
+    filter: brightness(1.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .glass-pill__ring i {
+        animation: none;
+    }
+}
 
 /* ======================CONNECT SECTION RESPONSIVE======================= */
 

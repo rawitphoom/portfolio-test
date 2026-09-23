@@ -592,82 +592,89 @@ document.addEventListener('DOMContentLoaded', () => {
   targets.forEach((el) => io.observe(el));
 });
 
-// Footer wordmark: inverted ripples that spread from the cursor across the glass.
+// Inverted ripples that spread from the cursor across a piece of glass. Any
+// element marked [data-glass] gets them - the footer wordmark and the connect
+// button both do. What differs between the two is only the mask in the CSS:
+// here they are the same surface.
 document.addEventListener('DOMContentLoaded', () => {
-  const mark = document.querySelector('#glass-mark');
-  const flare = document.querySelector('#glass-ripple');   // the moving anchor
-  const shell = document.querySelector('.glass-ripple');   // masked wrapper
-  if (!mark || !flare || !shell) return;
-
   if (window.matchMedia('(hover: none)').matches) return;   // nothing to follow
 
-  const EASE = 18;   // how quickly the ripples catch the pointer
+  const glass = (mark) => {
+    const flare = mark.querySelector('.ripple-origin');   // the moving anchor
+    const shell = mark.querySelector('.glass-ripple');    // masked wrapper
+    if (!flare || !shell) return;
 
-  let wantX = 0, wantY = 0;
-  let x = 0, y = 0;
-  let placed = false;
-  let running = false, frame = null, last = 0;
+    const EASE = 18;   // how quickly the ripples catch the pointer
 
-  const draw = () => {
-    flare.style.transform = 'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0)';
-  };
+    let wantX = 0, wantY = 0;
+    let x = 0, y = 0;
+    let placed = false;
+    let running = false, frame = null, last = 0;
 
-  const step = (now) => {
-    const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
-    last = now;
+    const draw = () => {
+      flare.style.transform = 'translate3d(' + x.toFixed(1) + 'px, ' + y.toFixed(1) + 'px, 0)';
+    };
 
-    const k = 1 - Math.exp(-EASE * dt);
-    x += (wantX - x) * k;
-    y += (wantY - y) * k;
+    const step = (now) => {
+      const dt = last ? Math.min((now - last) / 1000, 0.05) : 0;
+      last = now;
 
-    draw();
-    frame = requestAnimationFrame(step);
-  };
+      const k = 1 - Math.exp(-EASE * dt);
+      x += (wantX - x) * k;
+      y += (wantY - y) * k;
 
-  const start = () => {
-    if (running) return;
-    running = true;
-    last = 0;
-    frame = requestAnimationFrame(step);
-  };
-
-  const stop = () => {
-    running = false;
-    if (frame) cancelAnimationFrame(frame);
-    frame = null;
-  };
-
-  window.addEventListener('pointermove', (e) => {
-    const r = mark.getBoundingClientRect();
-    if (!r.width || !r.height) return;
-
-    wantX = e.clientX - r.left;
-    wantY = e.clientY - r.top;
-
-    // first appearance lands on the cursor rather than flying in
-    if (!placed) {
-      x = wantX;
-      y = wantY;
-      placed = true;
       draw();
+      frame = requestAnimationFrame(step);
+    };
+
+    const start = () => {
+      if (running) return;
+      running = true;
+      last = 0;
+      frame = requestAnimationFrame(step);
+    };
+
+    const stop = () => {
+      running = false;
+      if (frame) cancelAnimationFrame(frame);
+      frame = null;
+    };
+
+    const off = () => shell.classList.remove('is-on');
+
+    window.addEventListener('pointermove', (e) => {
+      const r = mark.getBoundingClientRect();
+      if (!r.width || !r.height) return;
+
+      wantX = e.clientX - r.left;
+      wantY = e.clientY - r.top;
+
+      // first appearance lands on the cursor rather than flying in
+      if (!placed) {
+        x = wantX;
+        y = wantY;
+        placed = true;
+        draw();
+      }
+
+      const inside = e.clientX >= r.left && e.clientX <= r.right
+                  && e.clientY >= r.top && e.clientY <= r.bottom;
+      shell.classList.toggle('is-on', inside);
+    }, { passive: true });
+
+    window.addEventListener('pointerleave', off, { passive: true });
+    window.addEventListener('blur', off);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        entries.forEach((entry) => (entry.isIntersecting ? start() : (stop(), off())));
+      }, { rootMargin: '150px 0px' }).observe(mark);
+    } else {
+      start();
     }
+  };
 
-    const inside = e.clientX >= r.left && e.clientX <= r.right
-                && e.clientY >= r.top && e.clientY <= r.bottom;
-    shell.classList.toggle('is-on', inside);
-  }, { passive: true });
-
-  const off = () => shell.classList.remove('is-on');
-  window.addEventListener('pointerleave', off, { passive: true });
-  window.addEventListener('blur', off);
-
-  if ('IntersectionObserver' in window) {
-    new IntersectionObserver((entries) => {
-      entries.forEach((entry) => (entry.isIntersecting ? start() : (stop(), off())));
-    }, { rootMargin: '150px 0px' }).observe(mark);
-  } else {
-    start();
-  }
+  document.querySelectorAll('[data-glass]').forEach(glass);
 });
 
 
@@ -860,4 +867,307 @@ document.addEventListener('DOMContentLoaded', () => {
     says('Nice to meet you! Feel free to send me a message.', 500);
   }, { threshold: 0.4 });
   io.observe(root);
+});
+
+/* ---------------------------------------------------------------- *
+ * Scroll-lit text
+ *
+ * Each word of a [data-reveal] paragraph fades from dim to solid as the
+ * paragraph crosses the middle of the screen, a few words at a time rather
+ * than all at once, so the light reads as a sweep.
+ *
+ * Words are wrapped here rather than in the HTML: the markup stays a normal
+ * paragraph, which is what a reader without JS (and a search engine) gets.
+ * Inline images are pushed into the same queue as the words, so a picture in
+ * the middle of a sentence lights in its turn instead of sitting bright while
+ * the text around it is still dark.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const blocks = [...document.querySelectorAll('[data-reveal]')];
+  if (!blocks.length) return;
+
+  const DIM = 0.18;   // the resting opacity - matches .reveal-part in the CSS
+  const LEAD = 8;     // words lit at once; larger is a softer edge
+
+  // Split every text node into words, wrapping each in its own span. Whitespace
+  // is left as plain text between them so lines still break normally.
+  const wrap = block => {
+    const parts = [];
+
+    // Every part is inline-block, because an inline box cannot be transformed
+    // - and browsers will break a line between two inline-blocks even with no
+    // space between them, which sent the full stop after a photo down to a
+    // line of its own. A word joiner between them is the textbook fix and
+    // Chrome broke anyway; wrapping the pair in a nowrap span is what actually
+    // holds them together.
+    let spaceBefore = true;
+    let previous = null;
+
+    const glue = (prev, next) => {
+      const box = prev.parentNode?.classList?.contains('reveal-glue')
+        ? prev.parentNode
+        : Object.assign(document.createElement('span'), { className: 'reveal-glue' });
+
+      if (box !== prev.parentNode) {
+        prev.replaceWith(box);
+        box.append(prev);
+      }
+
+      box.append(next);
+    };
+
+    for (const node of [...block.childNodes]) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        node.classList.add('reveal-part');
+        parts.push(node);
+        previous = node;
+        spaceBefore = false;
+        continue;
+      }
+
+      if (node.nodeType !== Node.TEXT_NODE || !node.textContent.trim()) continue;
+
+      const frag = document.createDocumentFragment();
+
+      for (const chunk of node.textContent.split(/(\s+)/)) {
+        if (!chunk) continue;
+
+        if (/^\s+$/.test(chunk)) {
+          frag.append(chunk);
+          spaceBefore = true;
+          continue;
+        }
+
+        const span = document.createElement('span');
+        span.className = 'reveal-part';
+        span.textContent = chunk;
+
+        // butted up against the part before it (a full stop after a photo):
+        // the two have to travel together
+        if (!spaceBefore && previous) glue(previous, span);
+        else frag.append(span);
+
+        parts.push(span);
+        previous = span;
+        spaceBefore = false;
+      }
+
+      node.replaceWith(frag);
+    }
+
+    return parts;
+  };
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const items = blocks.map(block => ({
+    block,
+    parts: wrap(block),
+    // what was last written, so a frame that changes nothing touches no styles
+    last: [],
+    // whether each part has been sent off on its bounce yet
+    on: [],
+  }));
+
+  const paint = () => {
+    const vh = window.innerHeight;
+
+    for (const item of items) {
+      const box = item.block.getBoundingClientRect();
+
+      // nowhere near the screen: whatever it is showing is already right
+      if (box.bottom < -vh || box.top > vh * 2) continue;
+
+      // 0 when the paragraph's top is four fifths down the screen, 1 once its
+      // bottom has come up past the middle. Including the height means a long
+      // paragraph takes proportionally longer to light than a short one.
+      const p = Math.min(1, Math.max(0,
+        (vh * 0.8 - box.top) / (vh * 0.25 + box.height)));
+
+      const n = item.parts.length;
+
+      item.parts.forEach((part, i) => {
+        // each word's own slice of the sweep, LEAD words wide
+        const lit = Math.min(1, Math.max(0, (p * (n + LEAD) - i) / LEAD));
+        const value = DIM + (1 - DIM) * lit;
+
+        // The bounce is a CSS animation fired by this class, not something
+        // driven frame by frame - a spring dragged by the scrollbar reads as
+        // dead. The two thresholds are deliberately apart: with one value a
+        // word sitting exactly on the line flickers the class on and off as
+        // you inch the page, and the animation restarts every time.
+        if (lit > 0.4 && !item.on[i]) {
+          part.classList.add('is-lit');
+          item.on[i] = true;
+        } else if (lit < 0.08 && item.on[i]) {
+          part.classList.remove('is-lit');
+          item.on[i] = false;
+        }
+
+        if (Math.abs(value - item.last[i]) < 0.01) return;
+
+        part.style.opacity = value.toFixed(3);
+        item.last[i] = value;
+      });
+    }
+  };
+
+  const light = () => {
+    for (const item of items) {
+      for (const part of item.parts) {
+        part.style.opacity = '1';
+        part.classList.remove('is-lit');
+      }
+    }
+  };
+
+  // The scroll handler runs for the whole page, so paint() keeps itself cheap
+  // by skipping any paragraph that is nowhere near the viewport. Gating the
+  // listener on an IntersectionObserver instead was neater and more fragile:
+  // if the observer never fires, the sweep never starts at all.
+  let queued = false;
+
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      paint();
+    });
+  };
+
+  const start = () => {
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    paint();
+  };
+
+  const stop = () => {
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onScroll);
+  };
+
+  if (still.matches) light();
+  else start();
+
+  still.addEventListener('change', () => (still.matches ? (stop(), light()) : start()));
+});
+
+/* ---------------------------------------------------------------- *
+ * Animated emoji in the bio
+ *
+ * Noto Animated Emoji, played as Lottie. Each sticker is an empty span in the
+ * markup with a data-lottie path; nothing is fetched until the bio is on
+ * screen, because the player and the four animations together are heavier
+ * than the rest of this page put together and none of it matters to someone
+ * who never scrolls past the hero.
+ *
+ * Players are paused whenever their sticker leaves the viewport - four looping
+ * SVG animations repainting behind the fold is exactly the sort of thing that
+ * made the 3D models feel slow.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const stickers = [...document.querySelectorAll('[data-lottie]')];
+  if (!stickers.length || !('IntersectionObserver' in window)) return;
+
+  const PLAYER = 'scripts/vendor/lottie_light.min.js';
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  let loading = null;
+
+  const player = () => {
+    if (window.lottie) return Promise.resolve(window.lottie);
+
+    loading ||= new Promise((resolve, reject) => {
+      const tag = document.createElement('script');
+      tag.src = PLAYER;
+      tag.onload = () => resolve(window.lottie);
+      tag.onerror = reject;
+      document.head.append(tag);
+    });
+
+    return loading;
+  };
+
+  const build = async sticker => {
+    const lottie = await player();
+
+    const anim = lottie.loadAnimation({
+      container: sticker,
+      renderer: 'svg',
+      loop: true,
+      // Reduced motion gets the artwork, held on its first frame.
+      autoplay: !still.matches,
+      path: sticker.dataset.lottie,
+    });
+
+    if (still.matches) anim.goToAndStop(0, true);
+
+    return anim;
+  };
+
+  // One observer builds a sticker the first time it is seen, and from then on
+  // just plays and pauses it.
+  const io = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      const sticker = entry.target;
+
+      if (entry.isIntersecting && !sticker.dataset.built) {
+        sticker.dataset.built = '1';
+        build(sticker).then(anim => (sticker.anim = anim));
+        continue;
+      }
+
+      if (!sticker.anim || still.matches) continue;
+      entry.isIntersecting ? sticker.anim.play() : sticker.anim.pause();
+    }
+  }, { rootMargin: '25% 0px' });
+
+  stickers.forEach(sticker => io.observe(sticker));
+});
+
+
+/* ---------------------------------------------------------------- *
+ * Footer wordmark: the pull
+ *
+ * The mark stretches vertically from squashed to its true proportions over the
+ * last stretch of the page, reaching full height exactly as the scroll bottoms
+ * out. All this writes is one number; the shape of the move lives in the CSS.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const mark = document.querySelector('#glass-mark');
+  if (!mark) return;
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  // how much scrolling the stretch is spread over, in px before the bottom
+  const RUN = 560;
+
+  let queued = false;
+  let last = -1;
+
+  const sync = () => {
+    const doc = document.documentElement;
+    // distance still to go before the page is fully scrolled
+    const rest = doc.scrollHeight - (window.scrollY + window.innerHeight);
+    const pull = 1 - Math.min(Math.max(rest / RUN, 0), 1);
+
+    // a frame that would write the same number touches nothing
+    if (Math.abs(pull - last) < 0.002) return;
+    last = pull;
+    mark.style.setProperty('--pull', pull.toFixed(3));
+  };
+
+  const onScroll = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => {
+      queued = false;
+      sync();
+    });
+  };
+
+  sync();
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
 });

@@ -1518,6 +1518,32 @@ nav a:hover {
     cursor: default;
     /* the wordmark is scaled past this box, so the overspill is trimmed here */
     overflow: hidden;
+
+    /* THE PULL. The mark starts vertically squashed and stretches out to its
+       true proportions as the page bottoms out, so arriving at the end of the
+       site is something you watch happen rather than something you land on.
+
+       --pull is written by main.js, 0 at the start of the run-in and 1 with
+       the page fully scrolled. It defaults to 1, so the mark is simply itself
+       if the script never runs.
+
+       The transform sits on this wrapper rather than on the <img>, because the
+       ripple layer above is masked with the same artwork - scaling one and not
+       the other would slide the highlight off the letters.
+
+       Growing from 50% 100% means it unfurls upward off the bottom edge and
+       the page never reflows; only empty space above it closes up. */
+    --pull: 1;
+    transform: scaleY(calc(0.46 + 0.54 * var(--pull)));
+    transform-origin: 50% 100%;
+    will-change: transform;
+}
+
+/* No pull without motion - the mark is just its own shape. */
+@media (prefers-reduced-motion: reduce) {
+    .glass-mark {
+        transform: none;
+    }
 }
 
 .footer-mark {
@@ -1556,10 +1582,50 @@ nav a:hover {
     mix-blend-mode: screen;
     opacity: 0;
     transition: opacity 0.3s ease;
+}
+
+/* Over the wordmark the mask is the artwork's own alpha, so a ring only exists
+   where the glass is. */
+.glass-mark .glass-ripple {
     -webkit-mask: url("../assets/images/footer-rawi-mask.png") center 49.6% / 106% auto no-repeat;
     mask: url("../assets/images/footer-rawi-mask.png") center 49.6% / 106% auto no-repeat;
     -webkit-mask-mode: alpha;
     mask-mode: alpha;
+}
+
+/* Over the connect button there is no artwork to mask with - the shape is the
+   chrome band itself, so the same XOR trick that cuts the ring out of the
+   gradient cuts the ripples out too. The padding has to match the ring's, or
+   the light runs beside the metal instead of through it. */
+.glass-pill .glass-ripple {
+    inset: -1px;
+    /* has to match .glass-pill__ring's padding, or the light runs beside the
+       metal instead of through it */
+    padding: 3px;
+    border-radius: 5rem;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* The button is a fraction of the wordmark's size, so the rings are too -
+   at 560px across, one ring would cover the whole pill at once and read as a
+   flash rather than as something travelling. */
+.glass-pill .ripple-origin i {
+    left: -130px;
+    top: -130px;
+    width: 260px;
+    height: 260px;
+    border-width: 3px;
+    box-shadow:
+        0 0 14px rgba(255, 255, 255, 0.9),
+        0 0 32px rgba(180, 220, 255, 0.55),
+        inset 0 0 14px rgba(255, 255, 255, 0.6);
 }
 
 .glass-ripple.is-on {
