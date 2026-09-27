@@ -318,6 +318,9 @@ nav a:hover {
 /* The animate slider */
 .slider {
     /* border: 1px solid red; */
+    /* lets the logos measure this box's width in cqw, which is what the
+       scrollleft keyframes travel by */
+    container-type: inline-size;
     width: 75%;
     max-width: 1536px;
     margin-inline: auto;
@@ -347,9 +350,21 @@ nav a:hover {
         );
 }
 
+/* Moves with `translate`, not `left`. Animating left made the browser redo
+   layout for all ten logos on every frame, for as long as the page was open;
+   translate is handled by the compositor and costs almost nothing.
+
+   The distances are the same as before. The logo now rests at -2.5rem (where
+   the old animation ended) and is carried in from the right by exactly the gap
+   the old `left` covered: max(30 logos, the slider's width), plus its own
+   2.5rem. 100cqw is that width - see container-type on .slider. */
 @keyframes scrollleft {
+    from {
+        translate: max(calc(2.5rem * 31), calc(100cqw + 2.5rem)) 0;
+    }
+
     to {
-        left: -2.5rem;
+        translate: 0 0;
     }
 }
 
@@ -362,7 +377,7 @@ nav a:hover {
     max function -> applies the biggest argument at any given time, we have two
     arguments here and which one happen to be the biggest is the on thats going
     to be applied */
-    left: max(calc(2.5rem * 30), 100%);
+    left: -2.5rem;
     animation-name: scrollleft;
     animation-duration: 30s;
     animation-timing-function: linear;
@@ -1759,8 +1774,8 @@ nav a:hover {
 /* Over the wordmark the mask is the artwork's own alpha, so a ring only exists
    where the glass is. */
 .glass-mark .glass-ripple {
-    -webkit-mask: url("../assets/images/footer-rawi-mask.png") center 49.6% / 106% auto no-repeat;
-    mask: url("../assets/images/footer-rawi-mask.png") center 49.6% / 106% auto no-repeat;
+    -webkit-mask: url("../assets/images/footer-rawi-mask.webp") center 49.6% / 106% auto no-repeat;
+    mask: url("../assets/images/footer-rawi-mask.webp") center 49.6% / 106% auto no-repeat;
     -webkit-mask-mode: alpha;
     mask-mode: alpha;
 }
@@ -1831,6 +1846,17 @@ nav a:hover {
         inset 0 0 26px rgba(255, 255, 255, 0.6);
     opacity: 0;
     animation: ripple-out 2.6s linear infinite;
+}
+
+/* Held still until the pointer is over the glass. The rings animate their
+   border width, which has to be repainted every frame, and they were doing it
+   forever on both the wordmark and the button while completely invisible. */
+.ripple-origin i {
+    animation-play-state: paused;
+}
+
+.glass-ripple.is-on .ripple-origin i {
+    animation-play-state: running;
 }
 
 .ripple-origin i:nth-child(2) {

@@ -710,11 +710,20 @@ document.addEventListener('DOMContentLoaded', () => {
   tick();
 })();
 
-// NextStep column cover: nine phone videos is a lot to leave decoding, so they only
-// run while the card is on (or near) the screen.
+// Animated project covers: the NextStep column cover's nine phone videos and the
+// Consistency / Mixtape backgrounds. None of them autoplay or preload in the
+// markup - left to themselves they all downloaded the moment the page opened,
+// cover by cover, whether or not anyone scrolled that far. They start here, as
+// each card comes near the screen, and pause again once it has gone.
 document.addEventListener('DOMContentLoaded', () => {
-  const covers = document.querySelectorAll('.colcover');
-  if (!covers.length || !('IntersectionObserver' in window)) return;
+  const covers = document.querySelectorAll('.colcover, .cover-stage');
+  if (!covers.length) return;
+
+  // no observer: fall back to what autoplay used to do
+  if (!('IntersectionObserver' in window)) {
+    covers.forEach(cover => cover.querySelectorAll('video').forEach(v => v.play().catch(() => {})));
+    return;
+  }
 
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {

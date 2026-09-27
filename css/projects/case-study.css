@@ -237,10 +237,17 @@
     margin-top: 2rem;
 }
 
-.case-section figure img {
+.case-section figure img,
+.case-section figure video {
     width: 100%;
     height: auto;
     border-radius: 0.75rem;
+}
+
+/* a video sits on the baseline like text unless told otherwise, which left a
+   few px of gap under the clips that used to be GIFs */
+.case-section figure video {
+    display: block;
 }
 
 .case-video video {
