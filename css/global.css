@@ -694,11 +694,17 @@ like a block-level element, so it can:
    with an XOR of "the whole box" against "the content box" - a border cannot
    carry a gradient round a corner, this can */
 .glass-pill__ring {
+    /* how thick the metal is. 5px on the big button reads as a rod; a small
+       badge wants a fraction of that, so whoever uses the ring sets --edge on
+       the element around it. Declaring a default HERE would defeat that: a
+       property set on the element itself beats the one it inherits, so the
+       fallback lives in the var() calls instead. */
     position: absolute;
-    inset: -1px;
+    inset: -2px;
     z-index: 0;
-    padding: 3px;
-    border-radius: 5rem;
+    padding: var(--edge, 5px);
+    /* from whatever it is wrapped in, so one ring fits any shape */
+    border-radius: inherit;
     overflow: hidden;
     pointer-events: none;
     -webkit-mask:
@@ -732,14 +738,19 @@ like a block-level element, so it can:
     top: 0;
     width: 200%;
     height: 100%;
+    /* One highlight, not four. The pattern's period is half this layer's
+       width - the same distance it slides - so exactly one sweep crosses the
+       pill per cycle instead of a train of them strobing past.
+
+       What gives it life is the shape of that one sweep, not the number of
+       them: a long climb out of near-black, a hard specular core, then a fast
+       fall away. Spread evenly it read as a static grey outline. */
     background: repeating-linear-gradient(101deg,
-            #0a0d12 0%, #3b4551 2%, #93a4b8 4%,
-            #8fb6ff 4.8%, #ffffff 5.4%, #ffffff 6%, #ff6f91 6.6%,
-            #b9c4d2 7.4%, #39424f 9.5%, #0a0d12 12%,
-            #2a323c 14%, #6d7a8a 16%,
-            #a8c8ff 17.3%, #ffffff 18%, #ff8fa8 18.7%,
-            #9dacbe 19.6%, #39424f 21.5%, #12171d 23.5%, #0a0d12 25%);
-    animation: chrome-slide 9s linear infinite;
+            #0a1016 0%, #141c25 6%, #35414f 16%, #6d8199 23%,
+            #a9c4dd 26%, #d8ecff 27.2%, #ffffff 27.9%, #ffffff 28.4%,
+            #ffe2ec 29%, #9aa9bb 30.5%, #47525f 36%, #121920 44%,
+            #0a1016 50%);
+    animation: chrome-slide 10s linear infinite;
     will-change: transform;
 }
 
@@ -749,22 +760,61 @@ like a block-level element, so it can:
     }
 }
 
+/* Shading ACROSS the thickness of the band, which is what turns a strip of
+   reflection into something round. Two strips, one per rail, each the band's
+   own height - a single gradient down the whole pill would spend all of itself
+   on the hollow middle and leave the metal flat.
+
+   Overlay rather than a plain paint, so it deepens the darks and blows out the
+   highlights already there instead of greying everything towards the middle. */
+/* Shading ACROSS the thickness of the band, which is what turns a strip of
+   reflection into something round.
+
+   This used to be two full-width horizontal strips, one per rail, and they
+   left a visible line where each one stopped: a strip is a rectangle, the band
+   is a racetrack, and along the curved ends the rectangle's edge cut straight
+   across the metal. Box-shadows follow border-radius, so these two lips hug
+   the shape the whole way round instead - bright on the band's outer edge,
+   bright again on its inner one, with the gradient's own darks left showing
+   between them.
+
+   Overlay rather than plain paint, so it deepens the darks and blows out the
+   highlights already there instead of greying everything towards the middle. */
+.glass-pill__ring::after {
+    content: '';
+    position: absolute;
+    /* sits exactly on the band's inner edge */
+    inset: var(--edge, 5px);
+    border-radius: inherit;
+    box-shadow:
+        /* the inner lip, drawn just outside this box */
+        0 0 0 1px rgba(255, 255, 255, 0.5),
+        0 0 0 2px rgba(0, 0, 0, 0.35);
+    mix-blend-mode: overlay;
+    pointer-events: none;
+}
+
+/* and the outer lip, clipped to the band by the ring's own mask */
+.glass-pill__ring {
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
 /* The inner hairline. Chrome edges read as two lines with a dark channel
    between them, and one band alone looked like a sticker. Static - a second
    moving gradient is what the first version could not afford. */
 .connect-button.glass-pill::after {
-    inset: 2px;
+    inset: 4px;
     width: auto;
     height: auto;
     translate: none;
     padding: 1px;
-    border-radius: 5rem;
+    border-radius: inherit;
     background-image: linear-gradient(200deg,
-            rgba(255, 255, 255, 0.85) 0%,
-            rgba(255, 255, 255, 0.08) 28%,
-            rgba(255, 255, 255, 0.55) 52%,
-            rgba(255, 255, 255, 0.05) 74%,
-            rgba(255, 255, 255, 0.7) 100%);
+            rgba(255, 255, 255, 0.5) 0%,
+            rgba(255, 255, 255, 0.05) 30%,
+            rgba(255, 255, 255, 0.3) 52%,
+            rgba(255, 255, 255, 0.04) 74%,
+            rgba(255, 255, 255, 0.4) 100%);
     animation: none;
     z-index: 0;
     -webkit-mask:
@@ -785,14 +835,14 @@ like a block-level element, so it can:
     height: auto;
     translate: none;
     padding: 0;
-    border-radius: 5rem;
+    border-radius: inherit;
     background-image: none;
     background-color: transparent;
     animation: none;
     z-index: -1;
     box-shadow:
-        0 0 2.2rem rgba(214, 230, 255, 0.4),
-        0 0 5rem rgba(150, 190, 255, 0.22);
+        0 0 1.1rem rgba(255, 255, 255, 0.16),
+        0 0 3rem rgba(170, 210, 255, 0.3);
 }
 
 /* the label rides above both */

@@ -178,37 +178,45 @@ nav a:hover {
     color: white;
     position: relative;
 
-    /* opaque, so the spinning gradient behind only shows as a border.
-       This is rgba(0, 132, 255, 0.12) over black, flattened. */
-    background-color: #00101f;
+    /* how thick the ring's metal is - see .glass-pill__ring */
+    --edge: 2.5px;
+    /* opaque, so the ring around it only ever shows as a border */
+    background-color: #05070a;
 }
 
-/* same spinning conic-gradient border as the Say Hello button */
-.availability::after,
+/* Same chrome as the connect button, at badge scale: the ring span carries
+   the metal and --edge makes it a hairline rather than a rod. What is left
+   here is the black it sits on and the light it throws. */
+.availability::after {
+    content: none;
+}
+
 .availability::before {
     content: '';
     position: absolute;
-    width: 100%;
-    height: 100%;
-    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
-    top: 50%;
-    left: 50%;
-    translate: -50% -50%;
+    inset: -1px;
+    border-radius: inherit;
     z-index: -1;
-    padding: 2px;
-    border-radius: 20px;
-    animation: 3s spin linear infinite;
+    /* the same light the connect button throws, scaled to this size - the
+       glow belongs to the metal, not to whatever the status dot happens to be
+       saying today */
+    box-shadow:
+        0 0 0.5rem rgba(255, 255, 255, 0.14),
+        0 0 1.5rem rgba(170, 210, 255, 0.26);
 }
 
-.availability::before {
-    filter: blur(1rem);
-    opacity: 0.5;
+/* above the ring, the way the button's label is */
+.availability-label {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
 }
 
 .dot {
     width: 0.55rem;
     height: 0.55rem;
-    background: var(--accent-color);
+    background: #35d07f;
     border-radius: 50%;
     margin-right: 0.55rem;
     animation: availability-pulse 2s ease-in-out infinite;
@@ -217,12 +225,12 @@ nav a:hover {
 @keyframes availability-pulse {
     0%, 100% {
         opacity: 1;
-        box-shadow: 0 0 0 0 rgba(0, 132, 255, 0.5);
+        box-shadow: 0 0 0 0 rgba(53, 208, 127, 0.55);
     }
 
     50% {
         opacity: 0.75;
-        box-shadow: 0 0 0 0.3rem rgba(0, 132, 255, 0);
+        box-shadow: 0 0 0 0.3rem rgba(53, 208, 127, 0);
     }
 }
 
@@ -793,18 +801,182 @@ nav a:hover {
     margin: 0 auto;
     margin-bottom: 1.8rem;
     padding: 2.5rem;
-    background: linear-gradient(to bottom, rgba(8, 8, 8, 0.9), rgb(0, 132, 255));
-    border-radius: 1rem;
+    /* Plain black. The chrome rim is what separates one stacked card from the
+       next now, so the body does not need a gradient to do it. */
+    background: #000;
+    border-radius: 1.15rem;
     color: white;
     font-size: 1rem;
     font-weight: 400;
     text-align: left;
+    box-shadow: 0 1.4rem 3rem rgba(0, 0, 0, 0.6);
     transition: all 0.3s ease-in-out;
     /* box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2); */
     /* box-shadow: 0 -5px 10px black, 0 5px 10px black; */
     /* border: 3px solid red; */
 }
 
+
+/* The chrome rim. Same trick as the connect button - a gradient filling the
+   whole card with everything but a hairline at its edge masked away, because a
+   border cannot carry a gradient around a corner.
+
+   Static, unlike the button's: four large cards each running their own sweep
+   would be the busiest thing on the page, and the button should stay the one
+   piece of metal that moves. The light that does move here is the sheen below,
+   and only while you are pointing at a card. */
+.skill-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(146deg,
+            #ffffff 0%, #c6d2e2 7%, #6b7a8c 16%, #161d26 32%,
+            #39434f 46%, #93a4b8 58%, #dce8f7 66%, #ffffff 69%,
+            #ffdfe9 72%, #7c8899 80%, #2b333d 90%, #8b97a6 100%);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.9;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+}
+
+/* The card's own number, set huge in the bottom corner and cast in the same
+   chrome as the rim: bright above a hard horizon line, dark below it, which is
+   what polished metal does with a sky over it. Drawn from data-index rather
+   than typed, so it cannot drift out of step with the heading.
+
+   It is the gradient that is clipped to the letters, not the letters that are
+   coloured - so they read as metal, not as grey text. */
+.skill-card::after {
+    content: attr(data-index);
+    position: absolute;
+    inset: 2px;
+    border-radius: inherit;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 0 1.6rem 0.4rem;
+
+    font-size: clamp(5rem, 11vw, 9.5rem);
+    font-weight: 800;
+    line-height: 0.78;
+    letter-spacing: -0.04em;
+
+    background: linear-gradient(172deg,
+            #ffffff 0%, #d4dde8 24%, #7b8795 44%, #10151b 50%,
+            #3a4452 56%, #a9b5c3 72%, #eef3f9 88%, #ffffff 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+
+    opacity: 0.2;
+    transition: opacity 0.45s ease;
+    pointer-events: none;
+}
+
+/* Pointing at a card turns the light up: the rim goes to full, the numeral
+   comes forward, and the whole panel picks up a cold edge glow. */
+.skill-card:hover::before {
+    opacity: 1;
+}
+
+.skill-card:hover::after {
+    opacity: 0.5;
+}
+
+.skill-card:hover {
+    box-shadow:
+        0 1.4rem 3rem rgba(0, 0, 0, 0.6),
+        0 0 0 1px rgba(150, 195, 255, 0.12),
+        0 0 2.5rem rgba(120, 175, 255, 0.16);
+}
+
+/* the card's own contents sit above both layers */
+.skill-card>* {
+    position: relative;
+    z-index: 1;
+}
+
+/* A light that runs around the card's edge.
+
+   The static rim above is the metal; this is the reflection moving across it.
+   It is transparent except for one bright band, blended with screen so it only
+   ever adds light, and masked to the same hairline the rim occupies - so the
+   highlight travels through the chrome rather than across the card.
+
+   It never stops, because a card that only moves when pointed at looks broken
+   until you point at it. At rest it runs at under half its brightness; hover
+   brings it up. The DURATION never changes - only the opacity - because
+   retiming a running animation makes it jump to a new phase.
+
+   Scoped as .skill-card .card-edge so it outranks the position: relative that
+   the rule above puts on every direct child. */
+.skill-card .card-edge {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    padding: 2px;
+    border-radius: inherit;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    opacity: 0.45;
+    transition: opacity 0.5s ease;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+.skill-card:hover .card-edge {
+    opacity: 1;
+}
+
+/* Twice the card's width carrying a pattern half that wide, so sliding it half
+   its width lands on an identical frame and the loop has no seam. Translating
+   a painted layer is compositor work - nothing repaints while it runs. */
+.skill-card .card-edge i {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 200%;
+    height: 100%;
+    background: repeating-linear-gradient(101deg,
+            rgba(255, 255, 255, 0) 0%,
+            rgba(255, 255, 255, 0) 19%,
+            rgba(150, 200, 255, 0.28) 23.5%,
+            rgba(235, 247, 255, 0.85) 25.6%,
+            #ffffff 26.4%,
+            rgba(255, 214, 232, 0.5) 27.4%,
+            rgba(255, 255, 255, 0) 31%,
+            rgba(255, 255, 255, 0) 50%);
+    animation: card-sweep 7s linear infinite;
+    will-change: transform;
+}
+
+@keyframes card-sweep {
+    to {
+        translate: -50% 0;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .skill-card .card-edge i {
+        animation: none;
+    }
+}
 
 /* .skill-card:nth-child(2) {
     top: 7rem;
@@ -1598,10 +1770,10 @@ nav a:hover {
    gradient cuts the ripples out too. The padding has to match the ring's, or
    the light runs beside the metal instead of through it. */
 .glass-pill .glass-ripple {
-    inset: -1px;
+    inset: -2px;
     /* has to match .glass-pill__ring's padding, or the light runs beside the
        metal instead of through it */
-    padding: 3px;
+    padding: 5px;
     border-radius: 5rem;
     -webkit-mask:
         linear-gradient(#000 0 0) content-box,
