@@ -869,10 +869,9 @@ like a block-level element, so it can:
 /* ---------------- glass ripples ----------------
 
    The rings that spread from the cursor across chrome: the Let's Connect
-   button on every page, and the footer wordmark on the home page. They live
-   here because every page has the button; the one footer-only rule, the mask
-   shaped like the letters, stays in main.css. main.js drives them for any
-   element marked [data-glass]. */
+   button and the footer wordmark, which are on most pages now. The one
+   footer-only rule, the mask shaped like the letters, is with the footer below.
+   main.js drives them for any element marked [data-glass]. */
 
 /* Ripples that ride the cursor. The wrapper is pinned over the wordmark and
    masked to its alpha, so a ring only exists where the glass is - over the
@@ -1279,4 +1278,342 @@ like a block-level element, so it can:
     width: 58.4%;
     height: auto;
     z-index: 2;
+}
+
+/***************************** SITE FOOTER *****************************/
+
+/* The footer with the "rawi" wordmark. It used to be home page only and lived
+   in main.css; it is on the project pages too now, so it lives here, in the
+   one stylesheet every page loads. The markup is the same on every page, and
+   main.js runs the clock, the ripple, the stretch and the liquid chrome for
+   whichever page it finds them on. */
+
+.site-footer {
+    padding: 2rem 0 2.5rem;
+    text-align: center;
+    overflow: hidden;
+    /* an explicit ground to invert against, and its own stacking context so the
+       difference blend stops at the footer */
+    background: #000;
+    isolation: isolate;
+}
+
+/* --- contact bar above the wordmark --- */
+
+/* the wrapper owns the gutters; the rule below then spans exactly the content
+   width instead of running out into the padding */
+.footer-bar-wrap {
+    max-width: 1440px;
+    margin: 0 auto 3.5rem;
+    padding: 0 1.5rem;
+}
+
+.footer-bar {
+    display: grid;
+    /* Columns sized to their own text and then pushed apart, rather than four
+       equal 1fr bays. Equal bays left the last column starting at 75% and a
+       dead strip down the right; this way the first sits on the left edge and
+       the last ENDS on the right one. The gap is the floor, not the spacing. */
+    grid-template-columns: repeat(4, max-content);
+    justify-content: space-between;
+    gap: 2.5rem 2rem;
+    align-items: start;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    text-align: left;
+}
+
+.footer-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+}
+
+/* Monospace for the column headings and the clock only. It is the system stack,
+   so it costs no extra font, and it is what separates the labels from the
+   links underneath them at this small a size. */
+.footer-label {
+    margin: 0 0 0.6rem;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.38);
+}
+
+/* Every row in every column is exactly this tall. Leaving it to each font's
+   own line-height put the clock a pixel and a half out of step with the links
+   beside it, which is visible once four columns sit side by side. */
+.footer-link,
+.footer-place,
+.footer-name,
+.footer-rights,
+.footer-clock {
+    line-height: 1.5rem;
+    min-height: 1.5rem;
+}
+
+.footer-link {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+/* The index column is a <nav>, which the bare `nav` / `nav a` rules near the
+   top of this file (and of global.css) style for the header: a flex row with
+   1rem of padding on every link. That was indenting the column and stretching
+   its rows taller than the other three. */
+.footer-bar nav {
+    gap: 0.55rem;
+}
+
+.footer-bar .footer-link {
+    padding: 0;
+}
+
+.footer-link:hover,
+.footer-link:focus-visible {
+    color: #fff;
+}
+
+.footer-place,
+.footer-name {
+    margin: 0;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.footer-flag {
+    /* the system emoji font sits a touch high against Inter */
+    font-size: 0.95em;
+    margin-right: 0.15rem;
+}
+
+.footer-clock {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.55);
+    /* tabular by nature, but say so - the minute must not shift the line */
+    font-variant-numeric: tabular-nums;
+}
+
+.footer-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: #35c66b;
+    box-shadow: 0 0 0.5rem rgba(53, 198, 107, 0.7);
+    animation: footer-pulse 2.6s ease-in-out infinite;
+}
+
+@keyframes footer-pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+/* The name and this line are one block rather than a list, so they sit closer
+   than the column gap. Pulled up from below, not by tightening the column's
+   gap, so the first row still lines up with the other three columns. */
+.footer-rights {
+    margin: -0.3rem 0 0;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.38);
+}
+
+.footer-top {
+    /* flex so the arrow is a sibling box rather than an inline that drags the
+       line height around */
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: 0.85rem;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: color 0.25s ease;
+}
+
+.footer-top:hover,
+.footer-top:focus-visible {
+    color: #fff;
+}
+
+.footer-top span {
+    line-height: 1;
+    transition: translate 0.25s ease;
+}
+
+.footer-top:hover span,
+.footer-top:focus-visible span {
+    translate: 0 -0.2em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .footer-top:hover span,
+    .footer-top:focus-visible span {
+        translate: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footer-dot {
+        animation: none;
+    }
+}
+
+/* Four columns stop fitting well before the page does, because "Experience &
+   Education" is the widest thing in the footer. */
+@media (max-width: 1000px) {
+    .footer-bar {
+        /* back to even bays here - space-between across two columns would fling
+           them to opposite edges */
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        justify-content: normal;
+        gap: 2.25rem 2rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .footer-bar-wrap {
+        margin-bottom: 2.5rem;
+    }
+
+    .footer-bar {
+        grid-template-columns: minmax(0, 1fr);
+        justify-content: normal;
+        gap: 2rem;
+    }
+
+    .footer-link,
+    .footer-place,
+    .footer-name,
+    .footer-rights {
+        font-size: 0.95rem;
+    }
+}
+
+.footer-mark-wrap {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* left exactly the size of the artwork, so the masked ripple layer above it
+   stays registered with the letters */
+.glass-mark {
+    position: relative;
+    cursor: default;
+    /* the wordmark is scaled past this box, so the overspill is trimmed here */
+    overflow: hidden;
+
+    /* THE PULL. The mark starts vertically squashed and stretches out to its
+       true proportions as the page bottoms out, so arriving at the end of the
+       site is something you watch happen rather than something you land on.
+
+       --pull is written by main.js, 0 at the start of the run-in and 1 with
+       the page fully scrolled. It defaults to 1, so the mark is simply itself
+       if the script never runs.
+
+       The transform sits on this wrapper rather than on the <img>, because the
+       ripple layer above is masked with the same artwork - scaling one and not
+       the other would slide the highlight off the letters.
+
+       Growing from 50% 100% means it unfurls upward off the bottom edge and
+       the page never reflows; only empty space above it closes up. */
+    --pull: 1;
+    transform: scaleY(calc(0.46 + 0.54 * var(--pull)));
+    transform-origin: 50% 100%;
+    will-change: transform;
+}
+
+/* No pull without motion - the mark is just its own shape. */
+@media (prefers-reduced-motion: reduce) {
+    .glass-mark {
+        transform: none;
+    }
+}
+
+.footer-mark {
+    display: block;
+    width: 100%;
+
+    /* CROP KNOB - change the FIRST number only, leave the "/ 1" alone.
+       It is width / height, so a bigger first number means a shorter box.
+       The artwork is 2:1 but the letters only occupy 16.33%-82.83% of its
+       height; the rest is empty. 3.008 / 1 is dead flush with them and anything
+       higher starts cutting into the glyphs. The width never changes, so the
+       letters keep their size - only empty space goes.
+         2.0 / 1  = 696px tall (original, all the padding)
+         2.9 / 1  = 480px tall (set here, ~5px of margin)
+         3.008 /1 = 463px tall (flush)
+       The 49.6% re-centres on the letters, which sit slightly high in the
+       source; a plain "center" would clip their tops first. */
+    aspect-ratio: 2.9 / 1;
+    object-fit: cover;
+    object-position: center 49.6%;
+
+    /* SIZE KNOB. The artwork carries ~2.5% empty space at each side, so it can
+       grow this much before the letters reach the edges. 1 = untouched. */
+    scale: 1.06;
+}
+
+/* Over the wordmark the mask is the artwork's own alpha, so a ring only exists
+   where the glass is. */
+.glass-mark .glass-ripple {
+    -webkit-mask: url("../assets/images/footer-rawi-mask.webp") center 49.6% / 106% auto no-repeat;
+    mask: url("../assets/images/footer-rawi-mask.webp") center 49.6% / 106% auto no-repeat;
+    -webkit-mask-mode: alpha;
+    mask-mode: alpha;
+}
+
+
+/* Parked for now - the core-skills track (card 01) and the tool badges (card 02)
+   are hidden but left in place. Placed last so it beats their own display
+   rules; delete this block to bring them back. */
+.flow,
+.tool-grid {
+    display: none;
+}
+
+/* The live wordmark. The rendered image stays exactly as it is, and main.js
+   draws the same letters as moving liquid chrome over it, blended with
+   `overlay`: where the metal is bright the render's highlights brighten, where
+   it is dark they deepen, and mid grey leaves them alone. So the render keeps
+   its look (the glass tubes, the red and blue fringes) and the metal only adds
+   light moving along it.
+
+   Replacing the render outright with the metal was tried first. However it was
+   tuned, the effect paints the whole body of each tube in silver, where the
+   render's tubes are dark glass lit at the edges, so it never looked like it.
+
+   Same box as the image with the same 1.06 scale, so it lines up with the
+   letters and with the ripple mask above. It fades in once the first frame is
+   drawn (main.js adds .is-metal). */
+.footer-metal {
+    position: absolute;
+    inset: 0;
+    scale: 1.06;
+    mix-blend-mode: overlay;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.9s ease;
+}
+
+.glass-mark.is-metal .footer-metal {
+    opacity: 1;
 }
