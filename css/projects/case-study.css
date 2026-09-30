@@ -58,11 +58,41 @@
     top: 0;
     width: 2px;
     height: 0;
-    background: var(--accent-color);
     border-radius: 1px;
     transition: translate 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         height 0.35s cubic-bezier(0.4, 0, 0.2, 1),
         width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Chrome, in place of the flat blue, to match the rest of the metal on the
+       site: bright hits and a dark band down its length, a cool glow off it,
+       and the highlight slowly travelling along the bar.
+
+       The pattern is one 56px tile, the same colour at both ends, repeated;
+       sliding it exactly one tile loops with no seam whatever height the bar
+       has grown to for the current link. It is a 2px strip, so moving its
+       background costs next to nothing. */
+    background-image: linear-gradient(to bottom,
+            #8b97a8 0%, #ffffff 16%, #c8d4e4 30%, #3a4452 50%,
+            #dce6f3 70%, #ffffff 84%, #8b97a8 100%);
+    background-size: 100% 56px;
+    box-shadow:
+        0 0 5px rgba(210, 230, 255, 0.55),
+        0 0 14px rgba(150, 190, 255, 0.25);
+    animation: marker-sheen 2.8s linear infinite;
+}
+
+@keyframes marker-sheen {
+    to {
+        background-position: 0 56px;
+    }
+}
+
+/* the same, run sideways, for when the rail turns into a row and the marker
+   into an underline */
+@keyframes marker-sheen-x {
+    to {
+        background-position: 56px 0;
+    }
 }
 
 .case-contents-nav a {
@@ -175,13 +205,24 @@
     font-weight: 500;
     text-decoration: none;
 
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+    /* A chrome rim, the same ring as the Open to Work badge and the Let's
+       Connect button (global.css, .glass-pill__ring), in place of the flat grey
+       border. The ring sits in the edge of this box, so the box has to be
+       positioned; --edge keeps the metal a hairline at this size, and the old
+       border stays only as transparent space for the ring to cover. The fill
+       is darker than it was so the metal has something to stand against. */
+    position: relative;
+    --edge: 2.5px;
+    background: rgba(12, 14, 18, 0.72);
+    border: 1px solid transparent;
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
-    box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.35);
+    box-shadow:
+        0 0.5rem 2rem rgba(0, 0, 0, 0.35),
+        0 0 0.9rem rgba(255, 255, 255, 0.1),
+        0 0 2.2rem rgba(170, 210, 255, 0.2);
 
-    transition: background-color 0.25s ease, border-color 0.25s ease,
+    transition: background-color 0.25s ease, box-shadow 0.3s ease,
         opacity 0.35s ease, translate 0.35s ease;
 }
 
@@ -193,12 +234,21 @@
 @media (prefers-reduced-motion: reduce) {
     .case-contents-marker {
         transition: none;
+        animation: none;
     }
 }
 
+/* chrome brightens when pointed at, the way the Let's Connect ring does */
 .case-float-cta:hover {
-    background: rgba(255, 255, 255, 0.22);
-    border-color: rgba(255, 255, 255, 0.55);
+    background: rgba(28, 31, 37, 0.8);
+    box-shadow:
+        0 0.5rem 2rem rgba(0, 0, 0, 0.35),
+        0 0 1rem rgba(255, 255, 255, 0.16),
+        0 0 2.6rem rgba(170, 210, 255, 0.32);
+}
+
+.case-float-cta:hover .glass-pill__ring i {
+    filter: brightness(1.25);
 }
 
 .case-section {
@@ -312,6 +362,11 @@
         bottom: 0;
         width: 0;
         height: 2px;
+        background-image: linear-gradient(to right,
+                #8b97a8 0%, #ffffff 16%, #c8d4e4 30%, #3a4452 50%,
+                #dce6f3 70%, #ffffff 84%, #8b97a8 100%);
+        background-size: 56px 100%;
+        animation-name: marker-sheen-x;
     }
 
 }
