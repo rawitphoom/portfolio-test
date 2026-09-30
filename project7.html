@@ -490,7 +490,15 @@
                 Let's collaborate on creating unique designs and functional websites. Reach out
                 to discuss how I can contribute to your team and help bring your ideas to life.
             </p>
-            <a href="mailto:rawitphoom1@gmail.com" class="connect-button">Let's Connect</a>
+            <!-- the chrome ring and the ripples are both drawn around the label, so
+                 the label carries its own stacking order to stay on top -->
+            <a href="mailto:rawitphoom1@gmail.com" class="connect-button glass-pill" data-glass>
+                <span class="glass-pill__ring" aria-hidden="true"><i></i></span>
+                <span class="glass-pill__label">Let's Connect</span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin"><i></i><i></i><i></i></span>
+                </span>
+            </a>
         </div>
     </section>
 

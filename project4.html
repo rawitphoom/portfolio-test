@@ -223,7 +223,7 @@
 
             <div class="case-float-wrap">
                 <a class="case-float-cta" href="https://iat343-small-but-mighty.framer.website/sbm-final" target="_blank"
-                    rel="noopener noreferrer">View the project <span aria-hidden="true">&rarr;</span></a>
+                    rel="noopener noreferrer">View the project</a>
             </div>
         </div>
     </section>
@@ -235,7 +235,15 @@
                 Let's collaborate on creating unique designs and functional websites. Reach out
                 to discuss how I can contribute to your team and help bring your ideas to life.
             </p>
-            <a href="mailto:rawitphoom1@gmail.com" class="connect-button">Let's Connect</a>
+            <!-- the chrome ring and the ripples are both drawn around the label, so
+                 the label carries its own stacking order to stay on top -->
+            <a href="mailto:rawitphoom1@gmail.com" class="connect-button glass-pill" data-glass>
+                <span class="glass-pill__ring" aria-hidden="true"><i></i></span>
+                <span class="glass-pill__label">Let's Connect</span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin"><i></i><i></i><i></i></span>
+                </span>
+            </a>
         </div>
     </section>
 

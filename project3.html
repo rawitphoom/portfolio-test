@@ -259,7 +259,7 @@
 
             <div class="case-float-wrap">
                 <a class="case-float-cta" href="https://www.figma.com/proto/makUwxfvjAsze1WoqNsmjz/IAT359?page-id=0%3A1&node-id=37-27&p=f&viewport=318%2C1038%2C0.05&t=Sa8cPKwGRSoHiAhw-1&scaling=scale-down&content-scaling=fixed&starting-point-node-id=37%3A27" target="_blank"
-                    rel="noopener noreferrer">View the prototype <span aria-hidden="true">&rarr;</span></a>
+                    rel="noopener noreferrer">View the prototype</a>
             </div>
         </div>
     </section>
@@ -271,7 +271,15 @@
                 Let's collaborate on creating unique designs and functional websites. Reach out
                 to discuss how I can contribute to your team and help bring your ideas to life.
             </p>
-            <a href="mailto:rawitphoom1@gmail.com" class="connect-button">Let's Connect</a>
+            <!-- the chrome ring and the ripples are both drawn around the label, so
+                 the label carries its own stacking order to stay on top -->
+            <a href="mailto:rawitphoom1@gmail.com" class="connect-button glass-pill" data-glass>
+                <span class="glass-pill__ring" aria-hidden="true"><i></i></span>
+                <span class="glass-pill__label">Let's Connect</span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin"><i></i><i></i><i></i></span>
+                </span>
+            </a>
         </div>
     </section>
 

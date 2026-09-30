@@ -196,17 +196,9 @@
     }
 }
 
-.case-float-cta span {
-    transition: translate 0.25s ease-in-out;
-}
-
 .case-float-cta:hover {
     background: rgba(255, 255, 255, 0.22);
     border-color: rgba(255, 255, 255, 0.55);
-}
-
-.case-float-cta:hover span {
-    translate: 0.25rem 0;
 }
 
 .case-section {

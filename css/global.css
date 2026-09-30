@@ -866,6 +866,150 @@ like a block-level element, so it can:
     }
 }
 
+/* ---------------- glass ripples ----------------
+
+   The rings that spread from the cursor across chrome: the Let's Connect
+   button on every page, and the footer wordmark on the home page. They live
+   here because every page has the button; the one footer-only rule, the mask
+   shaped like the letters, stays in main.css. main.js drives them for any
+   element marked [data-glass]. */
+
+/* Ripples that ride the cursor. The wrapper is pinned over the wordmark and
+   masked to its alpha, so a ring only exists where the glass is - over the
+   empty black it simply isn't drawn. Screen blending only ever adds light, so
+   a ring reads as white flaring across the letters. */
+.glass-ripple {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    mix-blend-mode: screen;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+/* Over the connect button there is no artwork to mask with - the shape is the
+   chrome band itself, so the same XOR trick that cuts the ring out of the
+   gradient cuts the ripples out too. The padding has to match the ring's, or
+   the light runs beside the metal instead of through it. */
+.glass-pill .glass-ripple {
+    inset: -2px;
+    /* has to match .glass-pill__ring's padding, or the light runs beside the
+       metal instead of through it */
+    padding: 5px;
+    border-radius: 5rem;
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* The button is a fraction of the wordmark's size, so the rings are too -
+   at 560px across, one ring would cover the whole pill at once and read as a
+   flash rather than as something travelling. */
+.glass-pill .ripple-origin i {
+    left: -130px;
+    top: -130px;
+    width: 260px;
+    height: 260px;
+    border-width: 3px;
+    box-shadow:
+        0 0 14px rgba(255, 255, 255, 0.9),
+        0 0 32px rgba(180, 220, 255, 0.55),
+        inset 0 0 14px rgba(255, 255, 255, 0.6);
+}
+
+.glass-ripple.is-on {
+    opacity: 1;
+}
+
+/* a zero-size anchor the script moves; the rings hang off it, so the mask above
+   stays put while the ripples travel */
+.ripple-origin {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    will-change: transform;
+}
+
+.ripple-origin i {
+    position: absolute;
+    left: -280px;
+    top: -280px;
+    width: 560px;
+    height: 560px;
+    border-radius: 50%;
+    border: 4px solid #ffffff;
+    /* the glow is what carries it across the chrome, where a bare white ring
+       would vanish into an already-white highlight */
+    box-shadow:
+        0 0 26px rgba(255, 255, 255, 0.85),
+        0 0 60px rgba(180, 220, 255, 0.5),
+        inset 0 0 26px rgba(255, 255, 255, 0.6);
+    opacity: 0;
+    animation: ripple-out 2.6s linear infinite;
+}
+
+/* Held still until the pointer is over the glass. The rings animate their
+   border width, which has to be repainted every frame, and they were doing it
+   forever on both the wordmark and the button while completely invisible. */
+.ripple-origin i {
+    animation-play-state: paused;
+}
+
+.glass-ripple.is-on .ripple-origin i {
+    animation-play-state: running;
+}
+
+.ripple-origin i:nth-child(2) {
+    animation-delay: 0.87s;
+}
+
+.ripple-origin i:nth-child(3) {
+    animation-delay: 1.74s;
+}
+
+/* thins and fades as it spreads, the way a real ring does */
+@keyframes ripple-out {
+    0% {
+        scale: 0.03;
+        opacity: 0;
+        border-width: 14px;
+    }
+
+    8% {
+        opacity: 1;
+    }
+
+    55% {
+        opacity: 0.95;
+    }
+
+    82% {
+        opacity: 0.6;
+    }
+
+    100% {
+        scale: 1;
+        opacity: 0;
+        border-width: 2px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ripple-origin i {
+        animation: none;
+        opacity: 0;
+    }
+}
+
+
 /* ======================CONNECT SECTION RESPONSIVE======================= */
 
 /*Large Desktop (Ultra-Wide Screens) / TV */
