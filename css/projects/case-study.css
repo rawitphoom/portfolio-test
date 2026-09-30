@@ -519,3 +519,261 @@
         transition: none;
     }
 }
+
+/***************************** CLICK TO ZOOM *****************************/
+
+/* A figure whose image opens full size. It is a plain link to the big file, so
+   with no JavaScript it still works by opening the image on its own; main.js
+   takes the click over and shows it in the lightbox below instead. */
+.zoom-trigger {
+    position: relative;
+    display: block;
+    border-radius: 0.75rem;
+    cursor: zoom-in;
+}
+
+.zoom-trigger:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 4px;
+}
+
+.zoom-hint {
+    position: absolute;
+    right: 0.9rem;
+    bottom: 0.9rem;
+    padding: 0.4rem 0.85rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    color: white;
+    background: rgba(0, 0, 0, 0.62);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    opacity: 0.85;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.zoom-trigger:hover .zoom-hint,
+.zoom-trigger:focus-visible .zoom-hint {
+    opacity: 1;
+}
+
+/* The lightbox. A <dialog> opened with showModal(), so the browser handles
+   Escape, focus and keeping the page underneath inert. The image fits the
+   width and scrolls; clicking it switches to its real size and back, which is
+   what the very tall iterations board needs. */
+.zoom-box {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: white;
+    background: rgba(0, 0, 0, 0.94);
+    overflow: hidden;
+}
+
+.zoom-box::backdrop {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.zoom-scroll {
+    position: absolute;
+    inset: 0;
+    overflow: auto;
+    overscroll-behavior: contain;
+    padding: 4.75rem 1.5rem 2rem;
+}
+
+.zoom-img {
+    display: block;
+    width: 100%;
+    max-width: 1400px;
+    height: auto;
+    margin: 0 auto;
+    border-radius: 0.5rem;
+    cursor: zoom-in;
+}
+
+.zoom-box.is-actual .zoom-img {
+    width: auto;
+    max-width: none;
+    cursor: zoom-out;
+}
+
+.zoom-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent);
+}
+
+.zoom-original,
+.zoom-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    border-radius: 2rem;
+    font: inherit;
+    font-size: 0.85rem;
+    color: white;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.zoom-close {
+    width: 2.5rem;
+    padding: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.zoom-original:hover,
+.zoom-close:hover,
+.zoom-original:focus-visible,
+.zoom-close:focus-visible {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+@media (max-width: 768px) {
+    .zoom-scroll {
+        padding: 4.25rem 0.75rem 1.5rem;
+    }
+}
+
+/***************************** NEXT PROJECT *****************************/
+
+/* The last thing in every case study: one card linking on to the next project,
+   in the same order as the cards on the home page, wrapping round at the end. */
+.case-next {
+    /* global.css styles every bare <nav> as the header menu (a flex row, links
+       that turn blue on hover). This one is a single full width card, so it
+       opts out of both. */
+    display: block;
+    margin-top: 4.5rem;
+}
+
+.case-next-link {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.25rem 1.5rem 1.25rem 1.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 1rem;
+    color: white;
+    text-decoration: none;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.case-next .case-next-link:hover,
+.case-next .case-next-link:focus-visible {
+    color: white;
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.case-next-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    min-width: 0;
+}
+
+.case-next-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.case-next-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+.case-next-sub {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.case-next-thumb {
+    display: block;
+    width: 9rem;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 0.6rem;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* The arrow. It starts life as a text glyph and main.js swaps in a liquid
+   chrome version drawn with WebGL (see the note there). The box has to have a
+   real size for that, and it matches the drawn arrow's 6:5 shape; the glyph
+   sits in the middle of it until the metal is ready, and for good if WebGL
+   is not available. */
+.case-next-arrow {
+    position: relative;
+    display: grid;
+    place-items: center;
+    /* about the size of the text arrow it replaces */
+    width: 2.1rem;
+    aspect-ratio: 6 / 5;
+    font-size: 1.5rem;
+    transition: translate 0.25s ease;
+}
+
+.case-next-metal {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.case-next-arrow.is-metal {
+    color: transparent;
+}
+
+.case-next-arrow.is-metal .case-next-metal {
+    opacity: 1;
+}
+
+.case-next-link:hover .case-next-arrow,
+.case-next-link:focus-visible .case-next-arrow {
+    translate: 0.3rem 0;
+}
+
+@media (max-width: 480px) {
+    .case-next-link {
+        gap: 1rem;
+        padding: 1rem 1.1rem;
+    }
+
+    .case-next-thumb {
+        width: 5.5rem;
+    }
+
+    .case-next-title {
+        font-size: 1.25rem;
+    }
+
+    .case-next-arrow {
+        width: 1.75rem;
+    }
+}

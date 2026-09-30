@@ -1180,3 +1180,265 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
 });
+
+/* ---------------------------------------------------------------- *
+ * Click to zoom
+ *
+ * Any link marked [data-zoom] opens its image in a full screen viewer instead
+ * of navigating to it. The link's href is the big version to show; an
+ * optional data-zoom-original is offered as "Open full resolution", for boards
+ * too large to load by default (the LintelAI iterations PNG is 120 megapixels,
+ * which phones cannot reliably decode, so the viewer shows a 4800px WebP and
+ * leaves the original one tap away).
+ *
+ * Without JavaScript the links still work: they just open the image.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const triggers = document.querySelectorAll('a[data-zoom]');
+  if (!triggers.length || typeof HTMLDialogElement !== 'function') return;
+
+  const box = document.createElement('dialog');
+  box.className = 'zoom-box';
+  box.setAttribute('aria-label', 'Image viewer');
+  box.innerHTML =
+    '<div class="zoom-bar">' +
+      '<a class="zoom-original" target="_blank" rel="noopener">Open full resolution</a>' +
+      '<button class="zoom-close" type="button" aria-label="Close image viewer">&times;</button>' +
+    '</div>' +
+    '<div class="zoom-scroll"><img class="zoom-img" alt=""></div>';
+  document.body.append(box);
+
+  const img = box.querySelector('.zoom-img');
+  const original = box.querySelector('.zoom-original');
+  const scroller = box.querySelector('.zoom-scroll');
+
+  const open = (trigger) => {
+    img.src = trigger.getAttribute('href');
+    img.alt = trigger.querySelector('img')?.alt || '';
+    const full = trigger.dataset.zoomOriginal;
+    original.hidden = !full;
+    if (full) original.href = full;
+    box.classList.remove('is-actual');
+    scroller.scrollTo(0, 0);
+    box.showModal();
+    // the page behind should not scroll along with the image
+    document.documentElement.style.overflow = 'hidden';
+  };
+
+  triggers.forEach((trigger) => {
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      open(trigger);
+    });
+  });
+
+  // fit to width <-> real size, keeping the spot that was clicked under the pointer
+  img.addEventListener('click', (e) => {
+    const rect = img.getBoundingClientRect();
+    const fx = (e.clientX - rect.left) / rect.width;
+    const fy = (e.clientY - rect.top) / rect.height;
+    box.classList.toggle('is-actual');
+    const next = img.getBoundingClientRect();
+    scroller.scrollTo({
+      left: scroller.scrollLeft + next.left + fx * next.width - e.clientX,
+      top: scroller.scrollTop + next.top + fy * next.height - e.clientY,
+    });
+  });
+
+  // Hand the page its scroll back and let the big image go. Called directly by
+  // the close button and the surround rather than only from the dialog's
+  // `close` event: that event is queued, and when it did not arrive the page
+  // was left locked with nothing on screen to unlock it. Safe to run twice.
+  const release = () => {
+    document.documentElement.style.overflow = '';
+    img.removeAttribute('src');
+  };
+
+  const shut = () => {
+    box.close();
+    release();
+  };
+
+  box.querySelector('.zoom-close').addEventListener('click', shut);
+
+  // a click on the dark surround, not on the image or the buttons, closes it
+  box.addEventListener('click', (e) => {
+    if (e.target === box || e.target === scroller) shut();
+  });
+
+  // Escape closes the dialog natively; this catches that path
+  box.addEventListener('close', release);
+});
+
+/* ---------------------------------------------------------------- *
+ * Liquid chrome
+ *
+ * Two things on the site are drawn as moving liquid metal: the arrow in the
+ * Next project card at the end of every case study, and the "rawi" wordmark
+ * in the home page footer. Both use Paper Shaders' liquid metal effect
+ * (github.com/paper-design/shaders, Apache-2.0; the five files it needs are in
+ * scripts/vendor/paper-shaders with the licence).
+ *
+ * The effect needs its shape pre-processed into an edge map first. That was
+ * done once, ahead of time, and saved as a small image per shape
+ * (assets/images/chrome-arrow-metal.png, footer-rawi-metal.png), so a page
+ * only loads the result rather than doing the work itself.
+ *
+ * Nothing loads until the thing is close to the screen, and whatever was there
+ * before (the text arrow, the rendered wordmark) stays until the metal has
+ * drawn, and for good if WebGL is not available. Paper's mount pauses itself
+ * while it is off screen or the tab is hidden.
+ * ---------------------------------------------------------------- */
+const paperShadersBase = document.currentScript
+  ? new URL('vendor/paper-shaders/', document.currentScript.src).href
+  : null;
+
+// the two modules, fetched once however many things end up using them
+let liquidMetalModules = null;
+const loadLiquidMetal = () => {
+  liquidMetalModules ||= Promise.all([
+    import(paperShadersBase + 'shader-mount.js'),
+    import(paperShadersBase + 'shaders/liquid-metal.js'),
+  ]).then(([mount, metal]) => ({
+    ShaderMount: mount.ShaderMount,
+    fragmentShader: metal.liquidMetalFragmentShader,
+  }));
+  return liquidMetalModules;
+};
+
+const loadImage = (src) => new Promise((resolve, reject) => {
+  const img = new Image();
+  img.onload = () => resolve(img);
+  img.onerror = reject;
+  img.src = src;
+});
+
+// Paper's default liquid metal, on a transparent background. Each use passes
+// only what it changes.
+const liquidMetalUniforms = (shape, overrides) => ({
+  u_colorBack: [0, 0, 0, 0],
+  u_colorTint: [1, 1, 1, 1],
+  u_image: shape,
+  u_isImage: true,
+  u_shape: 0,
+  u_repetition: 2,
+  u_softness: 0.1,
+  u_shiftRed: 0.3,
+  u_shiftBlue: 0.3,
+  u_distortion: 0.07,
+  u_contour: 0.4,
+  u_angle: 70,
+  u_fit: 1,
+  u_scale: 1,
+  u_rotation: 0,
+  u_offsetX: 0,
+  u_offsetY: 0,
+  u_originX: 0.5,
+  u_originY: 0.5,
+  u_worldWidth: 0,
+  u_worldHeight: 0,
+  ...overrides,
+});
+
+// Start `start` once any of `targets` comes within `margin` of the screen.
+const whenNear = (targets, margin, start) => {
+  const io = new IntersectionObserver((entries) => {
+    if (!entries.some((e) => e.isIntersecting)) return;
+    io.disconnect();
+    start().catch(() => {});   // any failure leaves the original in place
+  }, { rootMargin: margin + ' 0px' });
+  targets.forEach((t) => io.observe(t));
+};
+
+// --- the Next project arrow ---
+document.addEventListener('DOMContentLoaded', () => {
+  const arrows = [...document.querySelectorAll('.case-next-arrow')];
+  if (!arrows.length || !paperShadersBase || !('IntersectionObserver' in window)) return;
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPEED = still ? 0 : 1;          // reduced motion gets one still frame of chrome
+  const HOVER_SPEED = still ? 0 : 2.4;  // and the card quickens it when pointed at
+
+  whenNear(arrows, '400px', async () => {
+    const [{ ShaderMount, fragmentShader }, shape] = await Promise.all([
+      loadLiquidMetal(),
+      loadImage('assets/images/chrome-arrow-metal.png'),
+    ]);
+
+    arrows.forEach((arrow) => {
+      const stage = document.createElement('span');
+      stage.className = 'case-next-metal';
+      arrow.append(stage);
+
+      try {
+        const mount = new ShaderMount(stage, fragmentShader, liquidMetalUniforms(shape, {
+          // Paper's default is 0.3 on both. At that the edges threw a warm
+          // orange glint, and the chrome button is kept free of orange; this
+          // keeps a cool edge and only a trace of warmth.
+          u_shiftRed: 0.08,
+          u_shiftBlue: 0.2,
+          // contain the arrow in its box, nearly edge to edge
+          u_scale: 0.92,
+        }), undefined, SPEED, 0, 2, undefined, ['u_image']);
+
+        // swap the text arrow out only once there is a frame to show instead
+        requestAnimationFrame(() => arrow.classList.add('is-metal'));
+
+        const card = arrow.closest('.case-next-link');
+        card?.addEventListener('pointerenter', () => mount.setSpeed(HOVER_SPEED));
+        card?.addEventListener('pointerleave', () => mount.setSpeed(SPEED));
+      } catch (err) {
+        // no WebGL2: the text arrow stays exactly as it was
+        stage.remove();
+      }
+    });
+  });
+});
+
+// --- the footer wordmark ---
+//
+// Drawn over the rendered image rather than instead of it: the CSS blends it
+// with `overlay`, so the render keeps its own look and the metal only moves
+// light along the letters (see .footer-metal in main.css for why).
+//
+// The shape is the render's own outline (every pixel at least half opaque),
+// so the moving light follows exactly the render's letters. The settings are
+// pushed well past Paper's default: hard edges, five reflections, a strong
+// pull at the rims and heavy colour dispersion. Under an overlay blend that
+// is what reads as highlights sliding along glass, rather than a grey wash.
+document.addEventListener('DOMContentLoaded', () => {
+  const mark = document.querySelector('#glass-mark');
+  const stage = mark?.querySelector('.footer-metal');
+  if (!stage || !paperShadersBase || !('IntersectionObserver' in window)) return;
+
+  // With reduced motion the render alone is the answer - it is the designed
+  // still version, and it costs no WebGL at all.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  whenNear([mark], '600px', async () => {
+    const [{ ShaderMount, fragmentShader }, shape] = await Promise.all([
+      loadLiquidMetal(),
+      loadImage('assets/images/footer-rawi-metal.png'),
+    ]);
+
+    try {
+      new ShaderMount(stage, fragmentShader, liquidMetalUniforms(shape, {
+        u_repetition: 5,
+        u_softness: 0,
+        u_contour: 1,
+        u_distortion: 0.12,
+        u_shiftRed: 0.75,
+        u_shiftBlue: 0.75,
+        u_angle: 90,
+        // the box is wider than the artwork (2.9:1 against 2:1) and the image
+        // fills it with object-fit: cover; this does the same
+        u_fit: 2,
+      }), undefined, 1, 0, 2, undefined, ['u_image']);
+
+      requestAnimationFrame(() => mark.classList.add('is-metal'));
+    } catch (err) {
+      // no WebGL2: the render on its own, exactly as before
+      stage.remove();
+    }
+  });
+});

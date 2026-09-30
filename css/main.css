@@ -1909,6 +1909,34 @@ nav a:hover {
     display: none;
 }
 
+/* The live wordmark. The rendered image stays exactly as it is, and main.js
+   draws the same letters as moving liquid chrome over it, blended with
+   `overlay`: where the metal is bright the render's highlights brighten, where
+   it is dark they deepen, and mid grey leaves them alone. So the render keeps
+   its look (the glass tubes, the red and blue fringes) and the metal only adds
+   light moving along it.
+
+   Replacing the render outright with the metal was tried first. However it was
+   tuned, the effect paints the whole body of each tube in silver, where the
+   render's tubes are dark glass lit at the edges, so it never looked like it.
+
+   Same box as the image with the same 1.06 scale, so it lines up with the
+   letters and with the ripple mask above. It fades in once the first frame is
+   drawn (main.js adds .is-metal). */
+.footer-metal {
+    position: absolute;
+    inset: 0;
+    scale: 1.06;
+    mix-blend-mode: overlay;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.9s ease;
+}
+
+.glass-mark.is-metal .footer-metal {
+    opacity: 1;
+}
+
 /* TEMPORARY - remove when done. Red box shows the footer wordmark's image
    bounds; the artwork has transparent padding, so the image box is larger than
    the visible letters. */

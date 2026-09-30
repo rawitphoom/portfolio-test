@@ -1,0 +1,306 @@
+/***************************** LINTELAI (PROJECT 7) *****************************/
+
+/* Everything here is specific to the LintelAI case study. The layout, contents
+   rail, meta cards, click to zoom figures and the Next project block all come
+   from case-study.css like every other project page. */
+
+/* ---------- Hero ---------- */
+
+/* The other case studies open on the eyebrow alone. This one names the project
+   too, sized to sit between the eyebrow and the cover without competing with it. */
+.case-title {
+    font-size: clamp(2rem, 4.2vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: -0.5rem 0 2rem;
+}
+
+/* The cover is a recording rather than an image, in the same 16:9 box */
+.case-cover video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* ---------- Videos ---------- */
+
+/* Every recording on the page. The width and height attributes in the markup
+   give each one its shape before a single byte has loaded, so nothing jumps as
+   the posters and then the videos arrive. */
+.lintel .case-main video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+/* The phone and navigation recordings are portrait. At full column width they
+   would run well past the height of the screen, so they are capped by height
+   and centred instead. */
+.lintel .case-main video.is-portrait {
+    width: auto;
+    max-width: 100%;
+    max-height: min(36rem, 80vh);
+    margin-inline: auto;
+}
+
+/* A few paragraphs below restyle text that .case-section p already sizes and
+   colours, so they are written as .case-section .x to outrank it. */
+
+/* ---------- Iterations: the section the case study turns on ---------- */
+
+/* Set apart as a panel so it reads as the centre of the page rather than one
+   section among ten. The short accent bar on its top edge is the same blue the
+   contents rail uses. */
+.lintel-feature {
+    position: relative;
+    margin-top: 3rem;
+    padding: 2.25rem 2.25rem 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1.25rem;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+}
+
+.lintel-feature::before {
+    content: '';
+    position: absolute;
+    left: 2.25rem;
+    top: -1px;
+    width: 3.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent-color);
+}
+
+.lintel-feature h2 {
+    font-size: 2.1rem;
+}
+
+/* Figma prototype, first release, final: three steps with arrows between */
+.lintel-steps {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.75rem;
+}
+
+/* The arrow lives inside the video's box, so it centres on the video and not on
+   the video plus its label. The three recordings are not quite the same shape
+   (the Figma one is 1782x1080, narrower than 16:9), so each box is a fixed 16:9.
+
+   The video fills its box rather than fitting inside it. Fitting it left the
+   Figma clip letterboxed: the rounded corners landed on the dark bars around
+   it, and the picture itself kept square corners, unlike every other video on
+   the page. Filling costs 7% of that clip's height, taken from the bottom so
+   the heading at its top stays in frame. */
+.lintel-step-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+}
+
+.lintel .lintel-step-media video {
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+}
+
+.lintel-arrow {
+    position: absolute;
+    left: -2.05rem;
+    top: 50%;
+    translate: 0 -50%;
+    font-size: 1.2rem;
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.case-section .lintel-step-label {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    color: white;
+    text-align: center;
+}
+
+.case-section .lintel-caption {
+    margin-top: 1.75rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- Final design ---------- */
+
+/* Desktop and phone side by side at the same height. The columns are in the
+   ratio that makes a 16:9 recording and a 1080x2330 one come out equally tall:
+   2330/1080 divided by 1080/1920 is 3.835. */
+.lintel-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 3.835fr) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: start;
+    margin-top: 2rem;
+}
+
+.lintel .lintel-pair video.is-portrait {
+    width: 100%;
+    max-height: none;
+}
+
+.lintel-pair + p {
+    margin-top: 1.75rem;
+}
+
+/* ---------- Interactions ---------- */
+
+/* Video on one side, its description on the other, alternating down the page.
+   The rows that put the video on the right are marked with --flip in the
+   markup rather than picked by odd/even, because the full width Scroll/Click
+   row in the middle would otherwise throw the count off. */
+.lintel-ix {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+    margin-top: 3.5rem;
+}
+
+.lintel-ix--flip {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+}
+
+.lintel-ix--flip .lintel-ix-media {
+    order: 2;
+}
+
+.case-section .lintel-ix-num {
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.lintel-ix-text h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+/* two clips side by side need the whole width, so this row stacks: clips on
+   top, description underneath */
+.lintel-ix--wide {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+}
+
+.lintel-duo {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.lintel-duo figure {
+    margin: 0;
+}
+
+.lintel-duo figcaption {
+    margin-top: 0.6rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---------- Outcome ---------- */
+
+/* Hidden in the markup until there is a quote to show. Styled already, so
+   deleting `hidden` is the only step. */
+.lintel-quote {
+    margin: 2rem 0 0;
+    padding: 1.5rem 1.75rem;
+    border-left: 2px solid var(--accent-color);
+    border-radius: 0 0.75rem 0.75rem 0;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.case-section .lintel-quote p {
+    font-size: 1.15rem;
+    color: white;
+}
+
+.lintel-quote footer {
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===================LINTELAI RESPONSIVE========================= */
+
+/* Mobile: everything stacks, video first */
+@media (max-width: 768px) {
+    .lintel-feature {
+        padding: 1.75rem 1.1rem 2rem;
+    }
+
+    .lintel-feature::before {
+        left: 1.1rem;
+    }
+
+    .lintel-feature h2 {
+        font-size: 1.6rem;
+    }
+
+    /* the steps stack, and each arrow moves above its step and turns to point down */
+    .lintel-steps {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 3.25rem;
+    }
+
+    .lintel-arrow {
+        left: 50%;
+        top: -2.35rem;
+        translate: -50% 0;
+        rotate: 90deg;
+    }
+
+    .lintel-pair {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+    }
+
+    .lintel .lintel-pair video.is-portrait {
+        width: auto;
+        max-width: 100%;
+        max-height: min(32rem, 75vh);
+    }
+
+    .lintel-ix,
+    .lintel-ix--flip {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+        margin-top: 2.75rem;
+    }
+
+    .lintel-ix--flip .lintel-ix-media {
+        order: 0;
+    }
+
+    .lintel .case-main video.is-portrait {
+        max-height: min(32rem, 75vh);
+    }
+
+    .lintel-duo {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+    }
+}
