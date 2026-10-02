@@ -53,34 +53,10 @@
 /* A few paragraphs below restyle text that .case-section p already sizes and
    colours, so they are written as .case-section .x to outrank it. */
 
-/* ---------- Iterations: the section the case study turns on ---------- */
+/* ---------- Iterations ---------- */
 
-/* Set apart as a panel so it reads as the centre of the page rather than one
-   section among ten. The short accent bar on its top edge is the same blue the
-   contents rail uses. */
-.lintel-feature {
-    position: relative;
-    margin-top: 3rem;
-    padding: 2.25rem 2.25rem 2.5rem;
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 1.25rem;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
-}
-
-.lintel-feature::before {
-    content: '';
-    position: absolute;
-    left: 2.25rem;
-    top: -1px;
-    width: 3.5rem;
-    height: 2px;
-    border-radius: 2px;
-    background: var(--accent-color);
-}
-
-.lintel-feature h2 {
-    font-size: 2.1rem;
-}
+/* The section the case study turns on. It is set apart with .case-feature,
+   the shared highlighted panel in case-study.css. */
 
 /* Figma prototype, first release, final: three steps with arrows between */
 .lintel-steps {
@@ -248,18 +224,6 @@
 
 /* Mobile: everything stacks, video first */
 @media (max-width: 768px) {
-    .lintel-feature {
-        padding: 1.75rem 1.1rem 2rem;
-    }
-
-    .lintel-feature::before {
-        left: 1.1rem;
-    }
-
-    .lintel-feature h2 {
-        font-size: 1.6rem;
-    }
-
     /* the steps stack, and each arrow moves above its step and turns to point down */
     .lintel-steps {
         grid-template-columns: minmax(0, 1fr);

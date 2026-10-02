@@ -1,0 +1,131 @@
+/***************************** MIXTAPE (PROJECT 6) *****************************/
+
+/* Mixtape only. The layout, contents rail, captions, click to zoom, the
+   highlighted Design Process panel and the reduced motion play button all
+   come from case-study.css, the same as the LintelAI page. */
+
+/* ---------- Design process ---------- */
+
+/* Four Figma boards of very different shapes: the album and sign in boards are
+   roughly square, the dashboard board is twice as tall as it is wide, and the
+   profile board is three and a half times as wide as it is tall. A plain 2x2
+   grid left big holes, so the grid is laid out by shape instead: album and
+   sign in stack on the left, the tall dashboard runs down the right beside
+   them, and the wide profile board takes the full width underneath. The two
+   columns end close together (about 120px apart at 1440 wide), where a 2x2
+   grid left the album board stranded beside a column twice its height. */
+.mix-process {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.5rem 2rem;
+    margin-top: 2rem;
+    align-items: start;
+}
+
+.mix-step--tall {
+    grid-row: span 2;
+}
+
+.mix-step--wide {
+    grid-column: 1 / -1;
+}
+
+.mix-step h3,
+.mix-group h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+}
+
+.mix-step figure {
+    margin: 0;
+}
+
+/* the shared rule spaces copy 2rem off an image; inside a step it sits under
+   its own caption, so it can come in closer */
+.case-section .mix-step figure + p {
+    margin-top: 0.85rem;
+}
+
+/* ---------- Final product ---------- */
+
+/* one group per stop in the walkthrough, each with its own small heading */
+.mix-group {
+    margin-top: 3rem;
+}
+
+.mix-group:first-of-type {
+    margin-top: 1.5rem;
+}
+
+/* two clips side by side; a clip marked .mix-wide takes the whole row */
+.mix-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 1.25rem;
+}
+
+.mix-wide {
+    grid-column: 1 / -1;
+}
+
+.case-section .mix-clip {
+    margin: 0;
+}
+
+/* positioned so the reduced motion play button can sit over the clip */
+.mix-clip-media {
+    position: relative;
+}
+
+/* Every walkthrough clip is 1280x832, and the box is held to that shape.
+   Without it the browser sizes the box from the poster until the video's own
+   size arrives, and the desktop walkthrough's poster is 16:9 - so its box was
+   shorter than the clip beside it, then jumped when the video loaded. */
+.mix-clip video {
+    aspect-ratio: 1280 / 832;
+    object-fit: cover;
+}
+
+/* The phone recording is a phone width site in the middle of a wide black
+   frame (the screen is 290 of its 960px). This box is the phone's own shape
+   and the video fills it, so only the phone shows and none of the black. */
+.mix-phone video {
+    aspect-ratio: 290 / 624;
+    object-fit: cover;
+}
+
+/* The desktop walkthrough and the phone side by side at the same height.
+   1280x832 is 1.538 wide per unit of height and the phone 0.465, so the
+   columns are in that ratio: 1.538 / 0.465 = 3.31. */
+.mix-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 3.31fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+/* ===================MIXTAPE RESPONSIVE========================= */
+
+/* single column on phones; the phone clip stays phone sized and centred */
+@media (max-width: 768px) {
+
+    .mix-process,
+    .mix-grid,
+    .mix-pair {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .mix-step--tall {
+        grid-row: auto;
+    }
+
+    .mix-group {
+        margin-top: 2.5rem;
+    }
+
+    .mix-phone {
+        width: min(100%, 15rem);
+        justify-self: center;
+    }
+}

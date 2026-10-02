@@ -824,3 +824,111 @@
         width: 1.75rem;
     }
 }
+
+/***************************** HIGHLIGHTED SECTION *****************************/
+
+/* A section set apart as a panel, so it reads as the centre of a case study
+   rather than one section among many: the LintelAI iterations, the Mixtape
+   design process. A short accent bar marks its top edge. */
+.case-feature {
+    position: relative;
+    margin-top: 3rem;
+    padding: 2.25rem 2.25rem 2.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 1.25rem;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
+}
+
+.case-feature::before {
+    content: '';
+    position: absolute;
+    left: 2.25rem;
+    top: -1px;
+    width: 3.5rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--accent-color);
+}
+
+.case-feature h2 {
+    font-size: 2.1rem;
+}
+
+@media (max-width: 768px) {
+    .case-feature {
+        padding: 1.75rem 1.1rem 2rem;
+    }
+
+    .case-feature::before {
+        left: 1.1rem;
+    }
+
+    .case-feature h2 {
+        font-size: 1.6rem;
+    }
+}
+
+/***************************** CAPTIONS *****************************/
+
+/* The short line under an image or clip. Pages that style their own captions
+   more specifically (the LintelAI Scroll / Click labels) keep theirs. */
+.case-section figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/***************************** PLAY BUTTON *****************************/
+
+/* What a reduced motion visitor gets instead of autoplay, on pages that opt
+   in (main.js adds it). It covers the whole clip, so clicking anywhere on the
+   video plays or pauses it; the round icon shows while paused and fades once
+   playing, coming back on hover or keyboard focus. The clip's own box has to
+   be positioned for this to sit on top of it. */
+.clip-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 0.75rem;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+}
+
+.clip-play svg {
+    width: 3.6rem;
+    height: 3.6rem;
+    padding: 1.05rem;
+    border-radius: 50%;
+    fill: currentColor;
+    background: rgba(12, 14, 18, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.4);
+    transition: opacity 0.25s ease;
+}
+
+.clip-play .clip-pause-icon,
+.clip-play.is-playing .clip-play-icon {
+    display: none;
+}
+
+.clip-play.is-playing .clip-pause-icon {
+    display: block;
+    opacity: 0;
+}
+
+.clip-play.is-playing:hover .clip-pause-icon,
+.clip-play.is-playing:focus-visible .clip-pause-icon {
+    opacity: 1;
+}
+
+.clip-play:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: -4px;
+}

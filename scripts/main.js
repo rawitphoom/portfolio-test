@@ -192,7 +192,46 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: 0.25 });
 
-  videos.forEach(video => observer.observe(video));
+  // Reduced motion. On a page that opts in (data-reduced-motion="play-button"
+  // on a wrapper), these videos never start by themselves: they show their
+  // poster with a play button over it, and the visitor decides. Opt in, so
+  // the home page cards and the older case studies keep what they do now.
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const addPlayButton = (video) => {
+    const label = video.getAttribute('aria-label') || 'video';
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'clip-play';
+    button.innerHTML =
+      '<svg class="clip-play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l10.5-6.5z"/></svg>' +
+      '<svg class="clip-pause-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+
+    const sync = () => {
+      const playing = !video.paused;
+      button.classList.toggle('is-playing', playing);
+      button.setAttribute('aria-label', (playing ? 'Pause: ' : 'Play: ') + label);
+    };
+
+    button.addEventListener('click', () => {
+      if (video.paused) video.play().catch(() => {});
+      else video.pause();
+    });
+    video.addEventListener('play', sync);
+    video.addEventListener('pause', sync);
+    sync();
+
+    // the button covers the video, so it sits in the same positioned box
+    video.after(button);
+  };
+
+  videos.forEach(video => {
+    if (still && video.closest('[data-reduced-motion="play-button"]')) {
+      addPlayButton(video);
+    } else {
+      observer.observe(video);
+    }
+  });
 });
 
 // Fade the header's border in once the page scrolls away from the top
