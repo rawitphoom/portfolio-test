@@ -228,8 +228,22 @@
 
             <div class="case-float-wrap">
                 <a class="case-float-cta" href="https://cloud.protopie.io/p/90d77d3f2f4c177e9902abce" target="_blank"
-                    rel="noopener noreferrer">View the prototype <span aria-hidden="true">&rarr;</span></a>
+                    rel="noopener noreferrer"><span class="glass-pill__ring" aria-hidden="true"><i></i></span>View the prototype</a>
             </div>
+
+            <!-- NEXT PROJECT -->
+            <nav class="case-next" aria-label="Next project">
+                <a class="case-next-link" href="project5.html">
+                    <span class="case-next-text">
+                        <span class="case-next-label">Next project</span>
+                        <span class="case-next-title">Whimsy Bites</span>
+                        <span class="case-next-sub">IAT339 &middot; Web Design and Development</span>
+                    </span>
+                    <img class="case-next-thumb" src="assets/images/contents/project5/IAT339-cover.webp" alt=""
+                        loading="lazy" decoding="async">
+                    <span class="case-next-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+            </nav>
         </div>
     </section>
 
@@ -240,11 +254,88 @@
                 Let's collaborate on creating unique designs and functional websites. Reach out
                 to discuss how I can contribute to your team and help bring your ideas to life.
             </p>
-            <a href="mailto:rawitphoom1@gmail.com" class="connect-button">Let's Connect</a>
+            <!-- the chrome ring and the ripples are both drawn around the label, so
+                 the label carries its own stacking order to stay on top -->
+            <a href="mailto:rawitphoom1@gmail.com" class="connect-button glass-pill" data-glass>
+                <span class="glass-pill__ring" aria-hidden="true"><i></i></span>
+                <span class="glass-pill__label">Let's Connect</span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin"><i></i><i></i><i></i></span>
+                </span>
+            </a>
         </div>
     </section>
 
     <!----------------------------------------------------------------------------------->
+    <!--------------------------------- FOOTER ------------------------------------------>
+    <footer class="site-footer">
+        <div class="footer-bar-wrap">
+            <div class="footer-bar">
+                <nav class="footer-col" aria-label="Footer">
+                    <p class="footer-label">Index</p>
+                    <a class="footer-link" href="about.html">About me</a>
+                    <a class="footer-link" href="resume.html">Experience &amp; Education</a>
+                    <a class="footer-link" href="assets/Rawitphoom_Kiatthitinan_Resume.pdf" target="_blank"
+                        rel="noopener noreferrer">Resume</a>
+                </nav>
+
+                <div class="footer-col">
+                    <p class="footer-label">Connect</p>
+                    <a class="footer-link" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a class="footer-link" href="mailto:rawitphoom1@gmail.com">Email</a>
+                    <!-- PLACEHOLDER NUMBER - swap in the real one. 000-0000 is not a
+                         dialable NANP subscriber number, so it cannot reach anybody. -->
+                    <a class="footer-link" href="tel:+16040000000">Phone</a>
+                </div>
+
+                <div class="footer-col">
+                    <p class="footer-label">Based in</p>
+                    <p class="footer-place"><span class="footer-flag" aria-hidden="true">&#127464;&#127462;</span>
+                        Vancouver, Canada</p>
+                    <p class="footer-clock">
+                        <span class="footer-dot" aria-hidden="true"></span>
+                        <!-- filled in by main.js; the dashes are what shows with JS off -->
+                        <span id="footer-time">--:--</span>
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <p class="footer-label">&copy; 2026</p>
+                    <p class="footer-name">Rawitphoom Kiatthitinan</p>
+                    <p class="footer-rights">All rights reserved</p>
+                    <!-- "#top" with no matching element is the document top by spec, and
+                         global.css already sets scroll-behavior: smooth -->
+                    <a class="footer-top" href="#top">Back to top <span aria-hidden="true">&#8593;</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-mark-wrap">
+            <div class="glass-mark" id="glass-mark" data-glass>
+                <!-- Two sizes, and the browser picks: phones and ordinary screens get
+                     the 1600, retina desktops the 4400. The big one is deliberately
+                     much larger than the ~2950px a retina footer needs - a file that
+                     close to its display size gets resized with a softer filter, and
+                     the chrome's fine red and blue lines were the first thing to go.
+                     "sizes" includes the 1.06 scale the footer applies to the mark. -->
+                <img class="footer-mark" src="assets/images/footer-rawi-4400.png"
+                    srcset="assets/images/footer-rawi-1600.png 1600w, assets/images/footer-rawi-4400.png 4400w"
+                    sizes="(min-width: 1440px) 1476px, 100vw"
+                    alt="rawi" loading="lazy" decoding="async">
+                <!-- The live version: the same wordmark drawn as moving liquid chrome
+                     by main.js. The image above stays as the base layer: it shows
+                     until the metal has drawn, and for good without WebGL or with
+                     reduced motion turned on. -->
+                <span class="footer-metal" aria-hidden="true"></span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin" id="glass-ripple"><i></i><i></i><i></i></span>
+                </span>
+            </div>
+        </div>
+    </footer>
+    <!----------------------------------------------------------------------------------->
+
     <script src="scripts/main.js"></script>
 </body>
 

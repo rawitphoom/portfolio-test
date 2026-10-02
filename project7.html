@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | LintelAI</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/projects/case-study.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/projects/project7.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <nav class="hamburger">
+        <div class="mobile-logo">
+            <a href="index.html">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm; codecs=&quot;vp9&quot;">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4; codecs=&quot;hvc1&quot;">
+                </video>
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                </div>
+            </a>
+            <div class="social-badges">
+                <a class="social-badge" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                </a>
+                <a class="social-badge" href="mailto:rawitphoom1@gmail.com" aria-label="Email" title="Email">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+                <a class="social-badge" href="https://www.instagram.com/pp.rwp/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.41.68.81.9 1.38.16.42.36 1.06.41 2.22.06 1.27.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.59.07-4.86c.05-1.16.25-1.8.41-2.22.22-.57.48-.97.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14c-.3.77-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+                </a>
+            </div>
+        </div>
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+
+            <!-- who you're looking at -->
+            <div class="sidebar-head">
+                <img class="sidebar-avatar" src="assets/images/profile_photo.jpg"
+                    alt="Rawitphoom Kiatthitinan">
+                <div class="sidebar-identity">
+                    <p class="sidebar-name">Rawitphoom Kiatthitinan</p>
+                    <p class="sidebar-role">UX/UI Designer &amp; Frontend Developer</p>
+                </div>
+                <label for="sidebar-active" class="close-sidebar-button" aria-label="Close menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+                </label>
+            </div>
+
+            <p class="sidebar-label">Navigate</p>
+            <a href="about.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5Z"/></svg><span>About Me</span></a>
+            <a href="resume.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a2 2 0 0 0-2 2v1H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3V6a2 2 0 0 0-2-2H9Zm0 2h6v1H9V6Z"/></svg><span>Experience &amp; Education</span></a>
+
+            <p class="sidebar-label">Contact</p>
+            <a href="mailto:rawitphoom1@gmail.com"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg><span>rawitphoom1@gmail.com</span></a>
+            <a href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg><span>LinkedIn</span></a>
+            <a href="https://www.instagram.com/pp.rwp/" target="_blank" rel="noopener noreferrer"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.41.68.81.9 1.38.16.42.36 1.06.41 2.22.06 1.27.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.59.07-4.86c.05-1.16.25-1.8.41-2.22.22-.57.48-.97.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14c-.3.77-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg><span>Instagram</span></a>
+            <a href="resume.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 7V3.5L19.5 9H14Z"/></svg><span>Resume</span></a>
+        </div>
+    </nav>
+
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm; codecs=&quot;vp9&quot;">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4; codecs=&quot;hvc1&quot;">
+                </video>
+                <div class="logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                </div>
+            </a>
+            <div class="social-badges">
+                <a class="social-badge" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                </a>
+                <a class="social-badge" href="mailto:rawitphoom1@gmail.com" aria-label="Email" title="Email">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+                <a class="social-badge" href="https://www.instagram.com/pp.rwp/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.41.68.81.9 1.38.16.42.36 1.06.41 2.22.06 1.27.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.59.07-4.86c.05-1.16.25-1.8.41-2.22.22-.57.48-.97.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14c-.3.77-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <nav>
+            <!-- <a href="projects.html">Portfolio</a> -->
+            <a href="resume.html">Resume</a>
+            <a href="about.html">About</a>
+            <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
+        </nav>
+    </header>
+
+    <section class="case-study lintel">
+
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Work Project &middot; LintelAI</p>
+            <h1 class="case-title">LintelAI: Marketing Website</h1>
+
+            <figure class="case-cover">
+                <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-hero-poster.webp"
+                            aria-label="Screen recording of the LintelAI homepage hero, where the headline types itself out and the page fades in">
+                            <source src="assets/lintel/lintel-hero-web.mp4" type="video/mp4">
+                        </video>
+            </figure>
+
+            <div class="case-meta">
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Role</p>
+                    <p class="case-meta-value">UX/UI Designer and Frontend Developer at LintelAI</p>
+                </div>
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Timeline</p>
+                    <p class="case-meta-value">January to April 2026 (first version in 7 days)</p>
+                </div>
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Tools</p>
+                    <p class="case-meta-value">Figma, HTML, CSS, JavaScript, Lottie</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#overview">Overview</a>
+                <a href="#challenge">Challenge</a>
+                <a href="#research">Research</a>
+                <a href="#components">Components</a>
+                <a href="#iterations">Iterations</a>
+                <a href="#final-design">Final Design</a>
+                <a href="#interactions">Interactions</a>
+                <a href="#technical">Technical</a>
+                <a href="#outcome">Outcome</a>
+                <a href="#learned">What I Learned</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <!-- OVERVIEW -->
+            <section class="case-section" id="overview">
+                <h2>Overview</h2>
+                <p>
+                    LintelAI is a Vancouver startup building an AI platform for property management. The founders
+                    needed a marketing website to introduce what LintelAI is and what it offers. As the company's
+                    designer and frontend developer, I designed it from scratch in Figma and built it myself.
+                </p>
+            </section>
+
+            <!-- THE CHALLENGE -->
+            <section class="case-section" id="challenge">
+                <h2>The Challenge</h2>
+                <p>
+                    LintelAI's product runs on complex AI, but its users are landlords and tenants who aren't
+                    technical. The site needed to feel simple, trustworthy, and premium, and the startup needed it
+                    fast.
+                </p>
+            </section>
+
+            <!-- RESEARCH AND MOODBOARD -->
+            <section class="case-section" id="research">
+                <h2>Research and Moodboard</h2>
+                <figure class="zoom-figure">
+                    <a class="zoom-trigger" href="assets/lintel/lintel-moodboard-large.webp" data-zoom
+                        data-zoom-original="assets/lintel/lintel-moodboard.png"
+                        aria-label="Open the moodboard full size">
+                        <img src="assets/lintel/lintel-moodboard.webp" width="2400" height="1909" loading="lazy"
+                            decoding="async"
+                            alt="Moodboard of reference websites: dark and light product pages with bold imagery, generous spacing and large type">
+                        <span class="zoom-hint" aria-hidden="true">Click to zoom</span>
+                    </a>
+                </figure>
+                <p>
+                    I pulled references from brands like Ferrari and Apple for their bold imagery, generous spacing,
+                    and motion that guides you through the story.
+                </p>
+            </section>
+
+            <!-- COMPONENTS -->
+            <section class="case-section" id="components">
+                <h2>Components</h2>
+                <figure class="zoom-figure">
+                    <a class="zoom-trigger" href="assets/lintel/lintel-components.png" data-zoom
+                        data-zoom-original="assets/lintel/lintel-components.png"
+                        aria-label="Open the component board full size">
+                        <img src="assets/lintel/lintel-components.webp" width="2400" height="1498" loading="lazy"
+                            decoding="async"
+                            alt="Figma component board: audience tabs for Landlords, Tenants and Vendors, card variants, and dashboard frames wired together with prototype connections">
+                        <span class="zoom-hint" aria-hidden="true">Click to zoom</span>
+                    </a>
+                </figure>
+                <p>
+                    I built reusable components to keep the design consistent across every section.
+                </p>
+            </section>
+
+            <!-- ITERATIONS: the section the case study turns on, so it gets its own panel -->
+            <section class="case-section lintel-feature" id="iterations">
+                <h2>Iterations</h2>
+                <figure class="zoom-figure zoom-figure--tall">
+                    <a class="zoom-trigger" href="assets/lintel/lintel-iterations-large.webp" data-zoom
+                        data-zoom-original="assets/lintel/lintel-iterations.png"
+                        aria-label="Open the iterations board full size">
+                        <img src="assets/lintel/lintel-iterations.webp" width="2400" height="3237" loading="lazy"
+                            decoding="async"
+                            alt="Full page designs for the LintelAI site side by side: versions V0, V1, V2 and V3, then the initial design and the final design">
+                        <span class="zoom-hint" aria-hidden="true">Click to zoom</span>
+                    </a>
+                </figure>
+                <p>
+                    I explored several directions from V0 to V3 before delivering the first version.
+                </p>
+
+                <ol class="lintel-steps">
+                    <li class="lintel-step">
+                        <div class="lintel-step-media">
+                            <video class="auto-video" muted loop playsinline preload="none" width="1782" height="1080"
+                                poster="assets/lintel/lintel-initial-figma-poster.webp"
+                                aria-label="Screen recording of the first LintelAI design as a clickable Figma prototype">
+                                <source src="assets/lintel/lintel-initial-figma-web.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <p class="lintel-step-label">Figma Prototype</p>
+                    </li>
+                    <li class="lintel-step">
+                        <div class="lintel-step-media">
+                            <span class="lintel-arrow" aria-hidden="true">&rarr;</span>
+                            <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                                poster="assets/lintel/lintel-initial-desktop-poster.webp"
+                                aria-label="Screen recording of the first release of the LintelAI site, built in 7 days">
+                                <source src="assets/lintel/lintel-initial-desktop-web.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <p class="lintel-step-label">First Release (7 days)</p>
+                    </li>
+                    <li class="lintel-step">
+                        <div class="lintel-step-media">
+                            <span class="lintel-arrow" aria-hidden="true">&rarr;</span>
+                            <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                                poster="assets/lintel/lintel-final-desktop-poster.webp"
+                                aria-label="Screen recording of the final LintelAI site after founder feedback">
+                                <source src="assets/lintel/lintel-final-desktop-web.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <p class="lintel-step-label">Final (after feedback)</p>
+                    </li>
+                </ol>
+                <p class="lintel-caption">
+                    I designed the first version in Figma, built it in 7 days, then refined it over the following
+                    months through founder feedback.
+                </p>
+            </section>
+
+            <!-- FINAL DESIGN -->
+            <section class="case-section" id="final-design">
+                <h2>Final Design</h2>
+                <div class="lintel-pair">
+                    <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-final-desktop-poster.webp"
+                            aria-label="Screen recording scrolling through the final LintelAI site on desktop">
+                            <source src="assets/lintel/lintel-final-desktop-web.mp4" type="video/mp4">
+                        </video>
+                    <video class="auto-video is-portrait" muted loop playsinline preload="none" width="1080" height="2330"
+                            poster="assets/lintel/lintel-final-mobile-poster.webp"
+                            aria-label="Screen recording scrolling through the final LintelAI site on a phone">
+                            <source src="assets/lintel/lintel-final-mobile-web.mp4" type="video/mp4">
+                        </video>
+                </div>
+                <p>
+                    The final design is clean and confident, with clear sections that explain the product step by
+                    step.
+                </p>
+            </section>
+
+            <!-- INTERACTIONS -->
+            <section class="case-section" id="interactions">
+                <h2>Interactions</h2>
+                <p>
+                    I built the site with plain CSS and vanilla JavaScript, using Lottie for a few vector animations.
+                    JavaScript decides when things happen, and CSS handles the movement.
+                </p>
+
+                <div class="lintel-ix">
+                    <div class="lintel-ix-media">
+                        <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-hero-poster.webp"
+                            aria-label="Screen recording of the hero: the headline types out, a blue gradient moves through it, dashboard columns scroll and a cursor spotlight reveals the image beneath">
+                            <source src="assets/lintel/lintel-hero-web.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="lintel-ix-text">
+                        <p class="lintel-ix-num">01</p>
+                        <h3>Hero</h3>
+                        <p>
+                            The headline types out letter by letter, then the content fades in. A blue gradient moves
+                            inside the headline text, two columns of dashboard screens scroll in opposite directions,
+                            and a cursor spotlight reveals the image underneath.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lintel-ix lintel-ix--flip">
+                    <div class="lintel-ix-media">
+                        <video class="auto-video is-portrait" muted loop playsinline preload="none" width="1080" height="2330"
+                            poster="assets/lintel/lintel-navbar-poster.webp"
+                            aria-label="Screen recording of the navigation hiding on scroll down, returning on scroll up, and opening the full screen menu on mobile">
+                            <source src="assets/lintel/lintel-navbar-web.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="lintel-ix-text">
+                        <p class="lintel-ix-num">02</p>
+                        <h3>Navigation</h3>
+                        <p>
+                            The nav hides when you scroll down and returns when you scroll up. It changes style once
+                            you pass the hero, and on mobile it opens a full screen menu.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lintel-ix">
+                    <div class="lintel-ix-media">
+                        <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-detail-1-poster.webp"
+                            aria-label="Screen recording of the pinned stepper moving through four steps as the page scrolls, and the dropdown switching between Landlords, Tenants and Vendors">
+                            <source src="assets/lintel/lintel-detail-1-web.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="lintel-ix-text">
+                        <p class="lintel-ix-num">03</p>
+                        <h3>Scroll Driven Stepper</h3>
+                        <p>
+                            The section stays in place while scrolling moves through four steps, swapping the text and
+                            images. A dropdown switches between Landlords, Tenants, and Vendors.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lintel-ix lintel-ix--flip">
+                    <div class="lintel-ix-media">
+                        <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-detail-2-poster.webp"
+                            aria-label="Screen recording of cards fading up on scroll, and a dark fill growing from the point where the cursor enters each card">
+                            <source src="assets/lintel/lintel-detail-2-web.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="lintel-ix-text">
+                        <p class="lintel-ix-num">04</p>
+                        <h3>Cursor Origin Hover</h3>
+                        <p>
+                            Cards fade up as you scroll. On hover, a dark fill grows out from the exact spot where your
+                            cursor entered.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- two clips side by side need the full width, so this one row sits
+                     outside the left/right alternation -->
+                <div class="lintel-ix lintel-ix--wide">
+                    <div class="lintel-ix-media lintel-duo">
+                        <figure>
+                            <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-detail-3-scroll-poster.webp"
+                            aria-label="Screen recording of the tabs advancing through Overview, Rent, Inbox, Maintenance and Legal as the page scrolls">
+                            <source src="assets/lintel/lintel-detail-3-scroll-web.mp4" type="video/mp4">
+                        </video>
+                            <figcaption>Scroll</figcaption>
+                        </figure>
+                        <figure>
+                            <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-detail-3-click-poster.webp"
+                            aria-label="Screen recording of clicking a tab to jump straight to its panel">
+                            <source src="assets/lintel/lintel-detail-3-click-web.mp4" type="video/mp4">
+                        </video>
+                            <figcaption>Click</figcaption>
+                        </figure>
+                    </div>
+                    <div class="lintel-ix-text">
+                        <p class="lintel-ix-num">05</p>
+                        <h3>Scroll and Click Tabs</h3>
+                        <p>
+                            Scrolling moves through the Overview, Rent, Inbox, Maintenance, and Legal tabs, with each
+                            panel fading in one piece at a time. You can also click any tab to jump straight to it.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="lintel-ix">
+                    <div class="lintel-ix-media">
+                        <video class="auto-video" muted loop playsinline preload="none" width="1920" height="1080"
+                            poster="assets/lintel/lintel-detail-4-poster.webp"
+                            aria-label="Screen recording of more interactions: a sliding tab indicator, expanding cards, the founding story with wipe transitions and progress bars, the FAQ accordion, the footer reveal and the floating Book a Demo button">
+                            <source src="assets/lintel/lintel-detail-4-web.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="lintel-ix-text">
+                        <p class="lintel-ix-num">06</p>
+                        <h3>More Interactions</h3>
+                        <p>
+                            A sliding tab indicator, expanding cards, a story style founding section with wipe
+                            transitions and auto progress bars, an FAQ accordion, a sticky footer reveal, and a
+                            floating Book a Demo button that moves aside so it never covers content.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TECHNICAL CHALLENGE -->
+            <section class="case-section" id="technical">
+                <h2>Technical Challenge</h2>
+                <p>
+                    I kept animations in CSS and used JavaScript only to trigger them, which kept the site smooth and
+                    lightweight. I also fixed iOS Safari layout and input issues so it worked on every device.
+                </p>
+            </section>
+
+            <!-- OUTCOME -->
+            <section class="case-section" id="outcome">
+                <h2>Outcome</h2>
+                <p>
+                    The founders loved the site and used it as they launched LintelAI. After launch I kept improving
+                    performance and mobile behavior. The live site has since been updated by the team, so this shows
+                    my original work.
+                </p>
+
+                <!-- FOUNDER QUOTE: hidden until there is one. Replace the text and name,
+                     then delete the word `hidden` to show it. -->
+                <blockquote class="lintel-quote" hidden>
+                    <p>Founder quote goes here.</p>
+                    <footer>Name, Title at LintelAI</footer>
+                </blockquote>
+            </section>
+
+            <!-- WHAT I LEARNED -->
+            <section class="case-section" id="learned">
+                <h2>What I Learned</h2>
+                <p>
+                    A short timeline taught me to lock the structure early and spend iteration time on what matters
+                    most. Designing and building it myself meant I designed with the build in mind from the start.
+                </p>
+            </section>
+
+            <!-- NEXT PROJECT -->
+            <nav class="case-next" aria-label="Next project">
+                <a class="case-next-link" href="project2.html">
+                    <span class="case-next-text">
+                        <span class="case-next-label">Next project</span>
+                        <span class="case-next-title">NextStep</span>
+                        <span class="case-next-sub">IAT334 &middot; Interface Design</span>
+                    </span>
+                    <img class="case-next-thumb" src="assets/images/contents/project2/IAT334_Cover.webp" alt=""
+                        loading="lazy" decoding="async">
+                    <span class="case-next-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+            </nav>
+        </div>
+    </section>
+
+    <section class="connect-section">
+        <div class="connect-border-wrap">
+            <h2>Let's Build Together!</h2>
+            <p>
+                Let's collaborate on creating unique designs and functional websites. Reach out
+                to discuss how I can contribute to your team and help bring your ideas to life.
+            </p>
+            <!-- the chrome ring and the ripples are both drawn around the label, so
+                 the label carries its own stacking order to stay on top -->
+            <a href="mailto:rawitphoom1@gmail.com" class="connect-button glass-pill" data-glass>
+                <span class="glass-pill__ring" aria-hidden="true"><i></i></span>
+                <span class="glass-pill__label">Let's Connect</span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin"><i></i><i></i><i></i></span>
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <!--------------------------------- FOOTER ------------------------------------------>
+    <footer class="site-footer">
+        <div class="footer-bar-wrap">
+            <div class="footer-bar">
+                <nav class="footer-col" aria-label="Footer">
+                    <p class="footer-label">Index</p>
+                    <a class="footer-link" href="about.html">About me</a>
+                    <a class="footer-link" href="resume.html">Experience &amp; Education</a>
+                    <a class="footer-link" href="assets/Rawitphoom_Kiatthitinan_Resume.pdf" target="_blank"
+                        rel="noopener noreferrer">Resume</a>
+                </nav>
+
+                <div class="footer-col">
+                    <p class="footer-label">Connect</p>
+                    <a class="footer-link" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a class="footer-link" href="mailto:rawitphoom1@gmail.com">Email</a>
+                    <!-- PLACEHOLDER NUMBER - swap in the real one. 000-0000 is not a
+                         dialable NANP subscriber number, so it cannot reach anybody. -->
+                    <a class="footer-link" href="tel:+16040000000">Phone</a>
+                </div>
+
+                <div class="footer-col">
+                    <p class="footer-label">Based in</p>
+                    <p class="footer-place"><span class="footer-flag" aria-hidden="true">&#127464;&#127462;</span>
+                        Vancouver, Canada</p>
+                    <p class="footer-clock">
+                        <span class="footer-dot" aria-hidden="true"></span>
+                        <!-- filled in by main.js; the dashes are what shows with JS off -->
+                        <span id="footer-time">--:--</span>
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <p class="footer-label">&copy; 2026</p>
+                    <p class="footer-name">Rawitphoom Kiatthitinan</p>
+                    <p class="footer-rights">All rights reserved</p>
+                    <!-- "#top" with no matching element is the document top by spec, and
+                         global.css already sets scroll-behavior: smooth -->
+                    <a class="footer-top" href="#top">Back to top <span aria-hidden="true">&#8593;</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-mark-wrap">
+            <div class="glass-mark" id="glass-mark" data-glass>
+                <!-- Two sizes, and the browser picks: phones and ordinary screens get
+                     the 1600, retina desktops the 4400. The big one is deliberately
+                     much larger than the ~2950px a retina footer needs - a file that
+                     close to its display size gets resized with a softer filter, and
+                     the chrome's fine red and blue lines were the first thing to go.
+                     "sizes" includes the 1.06 scale the footer applies to the mark. -->
+                <img class="footer-mark" src="assets/images/footer-rawi-4400.png"
+                    srcset="assets/images/footer-rawi-1600.png 1600w, assets/images/footer-rawi-4400.png 4400w"
+                    sizes="(min-width: 1440px) 1476px, 100vw"
+                    alt="rawi" loading="lazy" decoding="async">
+                <!-- The live version: the same wordmark drawn as moving liquid chrome
+                     by main.js. The image above stays as the base layer: it shows
+                     until the metal has drawn, and for good without WebGL or with
+                     reduced motion turned on. -->
+                <span class="footer-metal" aria-hidden="true"></span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin" id="glass-ripple"><i></i><i></i><i></i></span>
+                </span>
+            </div>
+        </div>
+    </footer>
+    <!----------------------------------------------------------------------------------->
+
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>
