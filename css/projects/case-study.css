@@ -334,6 +334,14 @@
         padding-right: 1.5rem;
     }
 
+    /* over the moving gradient it is clear glass like the nav above it,
+       rather than a near black band across the page */
+    .page-gradient ~ * .case-contents {
+        background: rgba(0, 0, 0, 0.18);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+    }
+
     .case-contents-label {
         display: none;
     }

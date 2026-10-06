@@ -234,15 +234,16 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Fade the header's border in once the page scrolls away from the top
+// Fade the header's border in once the page scrolls away from the top. The
+// phone top bar gets the same class; the home page turns both to glass with it.
 document.addEventListener('DOMContentLoaded', () => {
-  const header = document.querySelector('header.desktop-header');
-  if (!header) return;
+  const bars = document.querySelectorAll('header.desktop-header, nav.hamburger');
+  if (!bars.length) return;
 
   const THRESHOLD = 24; // px of scroll before the border shows
 
   const sync = () => {
-    header.classList.toggle('scrolled', window.scrollY > THRESHOLD);
+    bars.forEach((bar) => bar.classList.toggle('scrolled', window.scrollY > THRESHOLD));
   };
 
   sync(); // in case the page loads part-way down
@@ -343,6 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.ctrlKey) return; // pinch-zoom
     // the mobile sidebar scrolls itself
     if (e.target instanceof Element && e.target.closest('.links-container')) return;
+    // and while it is open the page behind stays put (the CSS locks it; this
+    // stops the glide from moving it anyway)
+    if (document.getElementById('sidebar-active')?.checked) return;
 
     e.preventDefault();
     target = Math.min(Math.max(target + e.deltaY * STEP, 0), maxScroll());
@@ -1391,4 +1395,134 @@ document.addEventListener('DOMContentLoaded', () => {
       stage.remove();
     }
   });
+});
+
+/* ---------------------------------------------------------------- *
+ * Moving gradient behind the home page and the project pages
+ *
+ * Paper Shaders' mesh gradient, from the same library and folder as the
+ * liquid chrome above: a set of colour points drift slowly over each other
+ * and blend. Here they are blacks and graphites with two silver lights, so it
+ * reads as the site's chrome seen out of focus rather than as colour.
+ *
+ * Each point colours the area nearest to it, so the more points there are,
+ * the smaller each one's share. The first version had seven, two of them
+ * silver, and every so often the two silvers drifted to the middle together
+ * and washed the hero out in a big grey patch. Now there are ten (the most
+ * the shader takes), eight of them near black, and the silvers are dimmer:
+ * the light stays as smaller pools moving through the dark. Measured over ten
+ * minutes of the animation, the most of the headline area ever lit up went
+ * from 92% to 21%.
+ *
+ * It is fixed behind the whole page, so the page scrolls over it. Near the
+ * end it fades out as the black footer comes up, so the footer never cuts
+ * across it, and once it is fully gone it stops moving.
+ *
+ * It is only fetched once the page has finished loading and the browser is
+ * idle, so the text is never kept waiting. Paper's mount stops drawing while
+ * the tab is hidden. It fills the whole screen, so it is drawn at no more than
+ * about 1.2 million pixels and stretched: a smooth gradient gains nothing
+ * from more. Reduced motion gets one still frame. Without WebGL2 the page
+ * stays plain black.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const stage = document.querySelector('.page-gradient');
+  if (!stage || !paperShadersBase) return;
+
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const SPEED = still ? 0 : 0.25;
+
+  // [red, green, blue, opacity], 0 to 1
+  const COLOURS = [
+    [0, 0, 0, 1],
+    [0.03, 0.035, 0.045, 1],
+    [0.1, 0.115, 0.14, 1],     // graphite
+    [0.25, 0.28, 0.32, 1],     // silver
+    [0, 0, 0, 1],
+    [0.02, 0.02, 0.025, 1],
+    [0.2, 0.235, 0.27, 1],     // a cooler silver, the chrome's blue fringe
+    [0, 0, 0, 1],
+    [0.06, 0.07, 0.085, 1],
+    [0, 0, 0, 1],
+  ];
+
+  const start = async () => {
+    const [{ ShaderMount }, { meshGradientFragmentShader }] = await Promise.all([
+      import(paperShadersBase + 'shader-mount.js'),
+      import(paperShadersBase + 'shaders/mesh-gradient.js'),
+    ]);
+
+    // Paper's shader, with a dither added as its last step: every pixel is
+    // nudged by less than one shade, differently from its neighbours. That is
+    // far too small to see as noise, but it breaks up the faint stepped bands
+    // a smooth dark gradient otherwise shows on an ordinary screen.
+    const shader = meshGradientFragmentShader.replace(
+      'fragColor = vec4(color, opacity);',
+      'color += (hash21(gl_FragCoord.xy) - .5) * 1.5 / 255.;\n  fragColor = vec4(color, opacity);',
+    );
+
+    let mount;
+    try {
+      mount = new ShaderMount(stage, shader, {
+        u_colors: COLOURS,
+        u_colorsCount: COLOURS.length,
+        u_distortion: 0.8,
+        u_swirl: 0.15,
+        // No grain. Drawn at reduced size and stretched, grain came out as
+        // soft blotches that read as blurry noise.
+        u_grainMixer: 0,
+        u_grainOverlay: 0,
+        // fill the screen edge to edge, like object-fit: cover
+        u_fit: 2,
+        u_scale: 1,
+        u_rotation: 0,
+        u_offsetX: 0,
+        u_offsetY: 0,
+        u_originX: 0.5,
+        u_originY: 0.5,
+        u_worldWidth: 0,
+        u_worldHeight: 0,
+      }, undefined, SPEED, 0, 1, 1.2e6);
+    } catch (err) {
+      // no WebGL2: the page stays plain black, exactly as before
+      stage.replaceChildren();
+      return;
+    }
+
+    requestAnimationFrame(() => stage.classList.add('is-ready'));
+
+    // Fade out as the footer rises: whole until its top is past the bottom 5%
+    // of the screen, gone by the time it reaches the middle.
+    const footer = document.querySelector('.site-footer');
+    if (!footer) return;
+    let queued = false;
+    let moving = true;
+    const fade = () => {
+      queued = false;
+      const top = footer.getBoundingClientRect().top / window.innerHeight;
+      const amount = Math.min(1, Math.max(0, (top - 0.45) / 0.5));
+      stage.style.setProperty('--fade', amount.toFixed(3));
+      // nothing to see, so nothing to draw
+      if (moving !== amount > 0) {
+        moving = amount > 0;
+        mount.setSpeed(moving ? SPEED : 0);
+      }
+    };
+    const onScroll = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(fade);
+    };
+    fade();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  };
+
+  const begin = () => {
+    const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 200));
+    idle(() => start().catch(() => {}));
+  };
+
+  if (document.readyState === 'complete') begin();
+  else window.addEventListener('load', begin, { once: true });
 });

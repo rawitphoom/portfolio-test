@@ -43,6 +43,93 @@ body {
     }
 }
 
+/***************************** PAGE GRADIENT *****************************/
+
+/* The moving gradient (drawn by main.js with Paper Shaders' mesh gradient):
+   black and graphite with slow silver light moving through, like the site's
+   chrome seen out of focus.
+
+   Used on the home page and the project pages: any page with an empty
+   <div class="page-gradient"> straight after <body> gets it, and main.js
+   draws into it. It sits behind the whole page and stays put while the page
+   scrolls over it, like light in the room rather than a picture in one
+   section. Kept to the home hero, it ended in a hard line at the hero's
+   edges. Darkened towards the
+   edges of the screen so it meets the nav and the sides in black, and faded
+   out by main.js as the footer comes up, so the black footer never cuts it
+   off either.
+
+   It fades in once it has drawn; until then, or without WebGL, the page is
+   plain black as before. */
+.page-gradient {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    -webkit-mask-image: radial-gradient(ellipse 80% 75% at 50% 42%, #000 30%, transparent 100%);
+    mask-image: radial-gradient(ellipse 80% 75% at 50% 42%, #000 30%, transparent 100%);
+    opacity: 0;
+    transition: opacity 1.6s ease;
+}
+
+.page-gradient.is-ready {
+    opacity: 1;
+}
+
+/* The footer fade, on the canvas inside, so it follows the scroll directly
+   while the layer itself keeps its slow fade for appearing. */
+.page-gradient canvas {
+    opacity: var(--fade, 1);
+}
+
+/* The nav over it has no bar of its own: at the top of the page it is fully
+   see through, just the links over the gradient. Once the page scrolls
+   (main.js adds .scrolled), it turns into clear glass, a light blur with the
+   hairline border, so the links stay readable over whatever passes under
+   them without a dark band coming back. Written against the gradient layer
+   so it only applies here. */
+.page-gradient ~ header {
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    transition: border-color 0.4s ease, background-color 0.4s ease,
+        -webkit-backdrop-filter 0.4s ease, backdrop-filter 0.4s ease;
+}
+
+.page-gradient ~ header.scrolled {
+    background: rgba(0, 0, 0, 0.18);
+    -webkit-backdrop-filter: blur(18px);
+    backdrop-filter: blur(18px);
+}
+
+/* The phone top bar, the same way. Its glass is on a layer behind the bar's
+   contents rather than on the bar: a blur on the bar itself would trap the
+   slide out menu inside it, since the menu is fixed in place and lives
+   inside the bar. */
+@media (max-width: 768px) {
+    .page-gradient ~ .hamburger {
+        background-color: transparent;
+    }
+
+    .page-gradient ~ .hamburger::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: rgba(0, 0, 0, 0.18);
+        -webkit-backdrop-filter: blur(18px);
+        backdrop-filter: blur(18px);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .page-gradient ~ .hamburger.scrolled::before {
+        opacity: 1;
+    }
+}
+
+/*************************************************************************/
+
 /***************************** NAVIGATION BAR *****************************/
 
 /* HEADER STYLES */
@@ -348,19 +435,27 @@ like a block-level element, so it can:
 
 
 
+    /* The menu panel. Shut, it waits exactly its own width off the right
+       edge, hidden (so the keyboard and screen readers skip it too); open, it
+       slides in. The slide is a transform, which the graphics card moves on
+       its own. It used to animate `right` from -100%, which made the browser
+       redo the whole page's layout on every frame, and started a full screen
+       width away, so part of every opening was spent moving where nothing
+       could be seen. The timing is further down, with the other motion. */
     .links-container {
         flex-direction: column;
         align-items: flex-start;
 
         position: fixed;
         top: 0;
-        right: -100%;
+        right: 0;
         z-index: 10;
         width: 300px;
         height: 100%;
         background-color: var(--color-1);
-        box-shadow: -5px 0 5px rgba(0, 0, 0, 0.25);
-        transition: 0.75s ease-out;
+        box-shadow: -1rem 0 2.5rem rgba(0, 0, 0, 0.5);
+        transform: translateX(100%);
+        visibility: hidden;
 
         border: 1.5px solid rgba(255, 255, 255, 0.2);
         border-radius: 0.5rem 0 0 0.5rem;
@@ -470,12 +565,87 @@ like a block-level element, so it can:
     }
 
     #sidebar-active:checked~.links-container {
-        right: 0;
+        transform: none;
+        visibility: visible;
+    }
+
+    /* The page behind dims while the menu is open, and a tap on it closes the
+       menu. Always full size, but hidden while shut so it never catches taps. */
+    #overlay {
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
     }
 
     #sidebar-active:checked~#overlay {
-        width: 100%;
-        height: 100%;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    /* and the page underneath stays put while the menu is open */
+    html:has(#sidebar-active:checked) {
+        overflow: hidden;
+    }
+
+    /* The motion, left out entirely for reduced motion, where the menu simply
+       appears and goes.
+
+       The panel uses a drawer's curve: it gets going at once and spends most
+       of its time settling, so it feels quick without arriving with a bump.
+       `visibility` waits for the slide out to finish before hiding the panel,
+       and switches on at once when it opens. The rows inside follow the
+       panel in, each a moment after the last, and simply fade on the way
+       out. */
+    @media (prefers-reduced-motion: no-preference) {
+        .links-container {
+            transition:
+                transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+                visibility 0s linear 0.5s;
+        }
+
+        #sidebar-active:checked~.links-container {
+            transition:
+                transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+                visibility 0s;
+        }
+
+        #overlay {
+            transition: opacity 0.4s ease, visibility 0s linear 0.4s;
+        }
+
+        #sidebar-active:checked~#overlay {
+            transition: opacity 0.4s ease, visibility 0s;
+        }
+
+        .links-container > * {
+            opacity: 0;
+            transform: translateX(1rem);
+            transition:
+                opacity 0.2s ease,
+                transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+                background-color 0.2s ease;
+        }
+
+        #sidebar-active:checked~.links-container > * {
+            opacity: 1;
+            transform: none;
+            transition:
+                opacity 0.35s ease var(--row-delay, 0s),
+                transform 0.5s cubic-bezier(0.32, 0.72, 0, 1) var(--row-delay, 0s),
+                background-color 0.2s ease;
+        }
+
+        .links-container > :nth-child(1) { --row-delay: 0.06s; }
+        .links-container > :nth-child(2) { --row-delay: 0.09s; }
+        .links-container > :nth-child(3) { --row-delay: 0.12s; }
+        .links-container > :nth-child(4) { --row-delay: 0.15s; }
+        .links-container > :nth-child(5) { --row-delay: 0.18s; }
+        .links-container > :nth-child(6) { --row-delay: 0.21s; }
+        .links-container > :nth-child(7) { --row-delay: 0.24s; }
+        .links-container > :nth-child(8) { --row-delay: 0.27s; }
+        .links-container > :nth-child(n+9) { --row-delay: 0.3s; }
     }
 
 
