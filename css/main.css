@@ -68,7 +68,7 @@ nav a {
 }
 
 nav a:hover {
-    color: rgb(0, 132, 255);
+    color: white;
 }
 
 /* SAY HELLO BUTTON */
@@ -95,7 +95,7 @@ nav a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
+    background-image: conic-gradient(from var(--angle), #d3dce6, black, black, #d3dce6);
     top: 50%;
     left: 50%;
     translate: -50% -50%;
@@ -1386,10 +1386,37 @@ nav a:hover {
     padding-right: 3rem;
 }
 
+/* The open question lifts a little and gets a chrome edge, in place of the
+   blue fill. The edge is a band cut out with the same mask as the Let's
+   Connect ring (a border cannot carry a gradient round the corners) and fades
+   in, so opening and closing stay smooth. */
+.faq-item label::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: var(--chrome-metal);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
 .faq-item input:checked+label {
-    background: linear-gradient(to left, rgba(40, 126, 255, 0.473), rgb(0, 132, 255));
-    /* background: linear-gradient(to left, rgba(8, 8, 8, 0.473), rgba(0, 132, 255, 0.452)); */
-    /* background: #0084ff96; */
+    background: #191c20;
+    box-shadow: 0 0 1.4rem rgba(170, 210, 255, 0.12);
+}
+
+.faq-item input:checked+label::before {
+    opacity: 1;
 }
 
 

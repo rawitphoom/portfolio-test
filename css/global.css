@@ -152,11 +152,6 @@ header.scrolled {
     fill: currentColor;
 }
 
-.social-badge:hover {
-    color: var(--accent-color);
-    border-color: var(--accent-color);
-}
-
 .social-badge:active {
     transform: scale(0.92);
 }
@@ -176,7 +171,7 @@ nav a {
 }
 
 nav a:hover {
-    color: rgb(0, 132, 255);
+    color: white;
 }
 
 /* SAY HELLO BUTTON */
@@ -203,7 +198,7 @@ nav a:hover {
     position: absolute;
     width: 100%;
     height: 100%;
-    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
+    background-image: conic-gradient(from var(--angle), #d3dce6, black, black, #d3dce6);
     top: 50%;
     left: 50%;
     translate: -50% -50%;
@@ -286,7 +281,11 @@ like a block-level element, so it can:
 :root {
     --color-1: black;
     --text-color: white;
-    --accent-color: rgb(0, 132, 255);
+    /* The site's accent is chrome now, not blue. Anything that can carry a
+       gradient uses --chrome-metal (in the chrome hover section below); this
+       solid silver is for the few things that take one colour only, like a
+       focus outline. */
+    --accent-color: #d3dce6;
 }
 
 
@@ -581,15 +580,60 @@ like a block-level element, so it can:
         height: 2rem;
         border: 1.5px solid rgba(255, 255, 255, 0.6);
         transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease,
-            background-color 0.2s ease, opacity 0.25s ease;
+            background-color 0.2s ease, box-shadow 0.2s ease, opacity 0.25s ease;
     }
 
-    /* opens up over anything clickable */
+    /* opens up over anything clickable, and the outline turns to chrome */
     .cursor-ring.is-hovering {
         width: 3rem;
         height: 3rem;
-        border-color: var(--accent-color);
-        background-color: rgba(0, 132, 255, 0.12);
+        border-color: transparent;
+        background-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 0.9rem rgba(170, 210, 255, 0.22);
+    }
+
+    /* The metal. A conic gradient suits a circle, where it runs evenly all the
+       way round, cut down to a thin band with the same mask as the Let's
+       Connect ring and turned slowly. It fades in over the plain outline on
+       hover. The turn is a rotate, which the compositor does on its own, and it
+       is paused while the ring is plain. */
+    .cursor-ring::before {
+        content: '';
+        position: absolute;
+        inset: -1.5px;
+        padding: 2px;
+        border-radius: 50%;
+        background: conic-gradient(#3c4652, #a9b8c8 10%, #ffffff 15%, #ffe2ec 18%,
+                #7d8a98 27%, #2a323b 40%, #6d7c8c 52%, #d8e6f4 62%, #ffffff 66%,
+                #c6d6ff 69%, #5d6976 80%, #3c4652);
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+        animation: cursor-chrome-spin 3s linear infinite paused;
+    }
+
+    .cursor-ring.is-hovering::before {
+        opacity: 1;
+        animation-play-state: running;
+    }
+
+    @keyframes cursor-chrome-spin {
+        to {
+            rotate: 1turn;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .cursor-ring::before {
+            animation: none;
+        }
     }
 }
 
@@ -646,7 +690,7 @@ like a block-level element, so it can:
     position: absolute;
     height: 100%;
     width: 100%;
-    background-image: conic-gradient(from var(--angle), #00a2ff, black, black, #00a2ff);
+    background-image: conic-gradient(from var(--angle), #d3dce6, black, black, #d3dce6);
     top: 50%;
     left: 50%;
     translate: -50% -50%;
@@ -662,7 +706,7 @@ like a block-level element, so it can:
 }
 
 .connect-button:hover {
-    background-color: #0084ff;
+    background-color: #000;
     transition: 0.75s ease-out;
 }
 
@@ -684,8 +728,8 @@ like a block-level element, so it can:
    onto an over-sized square and that square is spun with `rotate`, which the
    compositor handles on its own. Same movement, no repainting.
 
-   Only .glass-pill gets any of this, so the button on the other pages keeps
-   the blue until this one is settled. */
+   Every Let's Connect button on the site is a .glass-pill, so these rules are
+   the ones that show; the plain .connect-button rules above sit underneath. */
 .connect-button.glass-pill {
     background: #000;
 }
@@ -862,6 +906,77 @@ like a block-level element, so it can:
 
 @media (prefers-reduced-motion: reduce) {
     .glass-pill__ring i {
+        animation: none;
+    }
+}
+
+/* ---------------- chrome hover ----------------
+
+   Everything that used to be blue is metal instead: the hovers on the header
+   links, the social badges and the cursor ring here, and elsewhere the resume
+   page, the home page FAQ, the About page highlights and chat, and the contact
+   form. The palette is the Let's Connect ring's, bright silver with one white
+   highlight carrying a cool and a pink fringe, only lighter overall so it
+   still reads as text. */
+:root {
+    --chrome-metal: linear-gradient(100deg,
+            #8a96a4 0%, #b4c0cc 12%, #e4edf6 20%, #ffffff 24%, #ffe6ef 26.5%,
+            #a9b5c2 32%, #6f7b88 42%, #8f9baa 52%, #c5d1dd 64%,
+            #f4f9ff 72%, #d0dbe6 78%, #9aa6b4 88%, #8a96a4 100%);
+}
+
+/* The metal is laid out twice the element's width and slid along by exactly
+   that much, so the loop has no seam. This one does repaint as it moves, but
+   only ever a few letters, and only while the pointer is on them. */
+@keyframes chrome-sweep {
+    to {
+        background-position: -200% 0;
+    }
+}
+
+/* The header links. The metal sits behind the letters all the time, hidden by
+   the link's own colour, and hover fades that colour out to show it. The
+   colour has to be solid to hide it, so the old 65% white is written as the
+   grey it came out as on black. Fading the colour is what makes it smooth both
+   ways: swapping the metal in and out made the letters blink as the pointer
+   left. The sweep pauses rather than stops, so it never jumps back to its
+   start while the grey fades in over it. */
+.desktop-header nav a {
+    color: #a6a6a6;
+    background-image: var(--chrome-metal);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: chrome-sweep 3s linear infinite paused;
+}
+
+.desktop-header nav a:hover,
+.desktop-header nav a:focus-visible {
+    color: transparent;
+    animation-play-state: running;
+    filter: drop-shadow(0 0 0.45rem rgba(170, 210, 255, 0.35));
+}
+
+/* The badges get a metal edge. A black fill clipped to the inside of the
+   border sits over the metal clipped to the whole badge, so the metal only
+   shows where the border is; a plain border cannot carry a gradient round the
+   rounded corners. */
+.social-badges a.social-badge:hover,
+.social-badges a.social-badge:focus-visible {
+    border-color: transparent;
+    background:
+        linear-gradient(#000, #000) padding-box,
+        var(--chrome-metal) border-box;
+    background-size: auto, 200% 100%;
+    animation: chrome-sweep 3s linear infinite;
+    box-shadow: 0 0 0.7rem rgba(170, 210, 255, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .desktop-header nav a,
+    .social-badges a.social-badge:hover,
+    .social-badges a.social-badge:focus-visible {
         animation: none;
     }
 }

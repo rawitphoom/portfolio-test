@@ -39,12 +39,16 @@
     color: black;
     font-weight: 600;
     text-decoration: none;
-    transition: background-color 0.25s ease;
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
-.resume-download:hover {
-    background: var(--accent-color);
-    color: white;
+/* turns to polished metal with the label staying black; the metal and its
+   sweep are shared with the header links, in global.css */
+.resume-download:hover,
+.resume-download:focus-visible {
+    background: var(--chrome-metal) 0 0 / 200% 100%;
+    animation: chrome-sweep 3s linear infinite;
+    box-shadow: 0 0 1rem rgba(170, 210, 255, 0.3);
 }
 
 /* ---------- Sections ---------- */
@@ -102,9 +106,21 @@
     min-width: 0;
 }
 
+/* The title turns to metal on hover, the same way the header links do: the
+   metal is behind the letters all along and the white fades out to show it.
+   Only as wide as its words, so the sweep runs across the title rather than
+   across the empty row beside it. */
 .resume-entry-head h3 {
+    width: fit-content;
     font-size: 1rem;
     font-weight: 600;
+    color: white;
+    background-image: var(--chrome-metal);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: chrome-sweep 3s linear infinite paused;
+    transition: color 0.3s ease;
 }
 
 .resume-entry-meta {
@@ -137,7 +153,18 @@
 }
 
 .resume-entry summary:hover h3 {
-    color: var(--accent-color);
+    color: transparent;
+    animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .resume-download:hover,
+    .resume-download:focus-visible,
+    .resume-entry-head h3,
+    .resume-bullets a:hover {
+        animation: none;
+    }
 }
 
 .resume-bullets {
@@ -158,13 +185,22 @@
     color: rgba(255, 255, 255, 0.3);
 }
 
+/* links in the bullets are written in metal so they stand out from the grey
+   text around them; on hover the underline comes in and the highlight runs */
 .resume-bullets a {
-    color: var(--accent-color);
+    color: transparent;
+    background-image: var(--chrome-metal);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
     text-decoration: none;
 }
 
 .resume-bullets a:hover {
     text-decoration: underline;
+    /* the text is see through, so the line needs its own colour */
+    text-decoration-color: rgba(211, 220, 230, 0.7);
+    animation: chrome-sweep 3s linear infinite;
 }
 
 /* ---------- Skill chips ---------- */

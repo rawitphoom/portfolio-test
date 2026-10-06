@@ -567,11 +567,10 @@
     }
 }
 
-/***************************** CLICK TO ZOOM *****************************/
+/***************************** OPEN FULL SIZE *****************************/
 
-/* A figure whose image opens full size. It is a plain link to the big file, so
-   with no JavaScript it still works by opening the image on its own; main.js
-   takes the click over and shows it in the lightbox below instead. */
+/* An image that links to its own file, opened full size in a new tab. Used for
+   the Mixtape sitemap, whose text is too small to read in the column. */
 .zoom-trigger {
     position: relative;
     display: block;
@@ -604,104 +603,6 @@
 .zoom-trigger:hover .zoom-hint,
 .zoom-trigger:focus-visible .zoom-hint {
     opacity: 1;
-}
-
-/* The lightbox. A <dialog> opened with showModal(), so the browser handles
-   Escape, focus and keeping the page underneath inert. The image fits the
-   width and scrolls; clicking it switches to its real size and back, which is
-   what the very tall iterations board needs. */
-.zoom-box {
-    width: 100vw;
-    height: 100dvh;
-    max-width: none;
-    max-height: none;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    color: white;
-    background: rgba(0, 0, 0, 0.94);
-    overflow: hidden;
-}
-
-.zoom-box::backdrop {
-    background: rgba(0, 0, 0, 0.6);
-}
-
-.zoom-scroll {
-    position: absolute;
-    inset: 0;
-    overflow: auto;
-    overscroll-behavior: contain;
-    padding: 4.75rem 1.5rem 2rem;
-}
-
-.zoom-img {
-    display: block;
-    width: 100%;
-    max-width: 1400px;
-    height: auto;
-    margin: 0 auto;
-    border-radius: 0.5rem;
-    cursor: zoom-in;
-}
-
-.zoom-box.is-actual .zoom-img {
-    width: auto;
-    max-width: none;
-    cursor: zoom-out;
-}
-
-.zoom-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 2;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 1rem 1.25rem;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75), transparent);
-}
-
-.zoom-original,
-.zoom-close {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 2.5rem;
-    padding: 0 1rem;
-    border-radius: 2rem;
-    font: inherit;
-    font-size: 0.85rem;
-    color: white;
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    cursor: pointer;
-    transition: background-color 0.25s ease, border-color 0.25s ease;
-}
-
-.zoom-close {
-    width: 2.5rem;
-    padding: 0;
-    font-size: 1.25rem;
-    line-height: 1;
-}
-
-.zoom-original:hover,
-.zoom-close:hover,
-.zoom-original:focus-visible,
-.zoom-close:focus-visible {
-    background: rgba(255, 255, 255, 0.22);
-    border-color: rgba(255, 255, 255, 0.55);
-}
-
-@media (max-width: 768px) {
-    .zoom-scroll {
-        padding: 4.25rem 0.75rem 1.5rem;
-    }
 }
 
 /***************************** NEXT PROJECT *****************************/
@@ -839,6 +740,8 @@
     background: linear-gradient(to bottom, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012));
 }
 
+/* the bar is chrome like the contents marker: the same 56px tile, run
+   sideways, sliding along so the highlight travels across it */
 .case-feature::before {
     content: '';
     position: absolute;
@@ -847,7 +750,20 @@
     width: 3.5rem;
     height: 2px;
     border-radius: 2px;
-    background: var(--accent-color);
+    background-image: linear-gradient(to right,
+            #8b97a8 0%, #ffffff 16%, #c8d4e4 30%, #3a4452 50%,
+            #dce6f3 70%, #ffffff 84%, #8b97a8 100%);
+    background-size: 56px 100%;
+    box-shadow:
+        0 0 5px rgba(210, 230, 255, 0.55),
+        0 0 14px rgba(150, 190, 255, 0.25);
+    animation: marker-sheen-x 2.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .case-feature::before {
+        animation: none;
+    }
 }
 
 .case-feature h2 {

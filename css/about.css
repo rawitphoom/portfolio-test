@@ -281,7 +281,10 @@
   .highlight-box h3 {
     font-size: 2rem;
     font-weight: 700;
-    color: #6ec1ff;
+    color: transparent;
+    background-image: var(--chrome-metal);
+    -webkit-background-clip: text;
+    background-clip: text;
     font-variant-numeric: tabular-nums;
   }
   
@@ -802,9 +805,11 @@
     overflow-wrap: anywhere;
 }
 
+/* the visitor's own messages are polished metal with dark text, in place of
+   the blue */
 .is-me .chat-bubble {
-    background: #0b84ff;
-    color: #fff;
+    background: var(--chrome-metal);
+    color: #0b0f14;
 }
 
 .chat-bubble a {
@@ -883,7 +888,8 @@
 }
 
 .chat-input:focus-visible {
-    outline: 2px solid #0b84ff;
+    /* steel rather than silver, so it still shows on the light field */
+    outline: 2px solid #6f7b88;
     outline-offset: 1px;
 }
 
@@ -897,8 +903,8 @@
     flex: none;
     border: 0;
     border-radius: 50%;
-    background: #0b84ff;
-    color: #fff;
+    background: var(--chrome-metal);
+    color: #0b0f14;
     cursor: pointer;
     display: grid;
     place-items: center;
@@ -1041,9 +1047,10 @@
 /* --- the phrases that matter --- */
 
 /* Every highlight lands harder than the words around it. What differs is HOW:
-   each phrase gets one effect and no effect is used twice, because six blue
+   each phrase gets one effect and no effect is used twice, because six
    underlines down a paragraph stop being an emphasis and become a texture.
-   The shared part is only the weight and the fact that something happens. */
+   The shared part is only the weight and the fact that something happens.
+   Where an effect has a colour, it is the site's chrome. */
 .reveal-key {
     position: relative;
     color: #fff;
@@ -1073,7 +1080,7 @@
 /* 1. a line drawn under it, left to right. A background image rather than a
       border, because a border has no direction to grow from. */
 .reveal-key--underline {
-    background-image: linear-gradient(var(--accent-color), var(--accent-color));
+    background-image: var(--chrome-metal);
     background-repeat: no-repeat;
     background-position: 0 100%;
     background-size: 0 0.09em;
@@ -1092,13 +1099,13 @@
     }
 }
 
-/* 2. a highlighter pulled across it, and the text goes dark as the ink
-      arrives under it */
+/* 2. a strip of polished metal pulled across it, and the text goes dark as
+      the metal arrives under it */
 .reveal-key--marker {
     padding: 0.04em 0.18em;
     margin: 0 -0.08em;
     border-radius: 0.2em;
-    background-image: linear-gradient(var(--accent-color), var(--accent-color));
+    background-image: var(--chrome-metal);
     background-repeat: no-repeat;
     background-position: 0 0;
     background-size: 0 100%;
@@ -1122,7 +1129,7 @@
 
     to {
         background-size: 100% 100%;
-        color: #04182c;
+        color: #0b0f14;
     }
 }
 
@@ -1217,18 +1224,33 @@
     }
 }
 
-/* 6. a ring snaps around it, the way you would circle a word by hand */
+/* 6. a ring snaps around it, the way you would circle a word by hand. The
+      words and the ring are both chrome. */
 .reveal-key--pill {
     padding: 0.06em 0.42em;
     margin: 0 -0.12em;
-    color: var(--accent-color);
+    color: transparent;
+    background-image: var(--chrome-metal);
+    -webkit-background-clip: text;
+    background-clip: text;
 }
 
+/* The ring is a band of metal cut out with the same mask as the Let's Connect
+   button, since a border cannot carry a gradient round a curve. */
 .reveal-key--pill::before {
     content: '';
     position: absolute;
     inset: -0.04em 0;
-    border: 0.085em solid var(--accent-color);
+    padding: 0.085em;
+    background: var(--chrome-metal);
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
     /* the two radii differ so the ring is an ellipse, not a stadium - closer
        to a circle drawn round a word than to a button */
     border-radius: 50% / 46%;
@@ -1376,7 +1398,7 @@
 
     .reveal-key--marker {
         background-size: 100% 100%;
-        color: #04182c;
+        color: #0b0f14;
     }
 
     .reveal-key--glow {
