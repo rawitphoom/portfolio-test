@@ -1,0 +1,346 @@
+/***************************** TEMPO (PROJECT 8) *****************************/
+
+/* Everything here is specific to the Tempo case study. The layout, contents
+   rail, meta cards, captions, the highlighted My Part panel, the full size
+   links, the reduced motion play button and the Next project block all come
+   from case-study.css, like every other project page.
+
+   Most of this page is tall material: phone screens, phone recordings and
+   Figma boards two or three times taller than they are wide. None of it is
+   allowed to run the full column width, which would make one screen taller
+   than the whole window. Each piece is held to a height instead and centred,
+   or sits beside its text. */
+
+/* A few rules below restyle things case-study.css already sizes, so they are
+   written as .tempo .x to outrank it. */
+
+/* ---------- Hero ---------- */
+
+/* the name of the project, sized like the LintelAI title, with one line under it */
+.case-title {
+    font-size: clamp(2rem, 4.2vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: -0.5rem 0 0.75rem;
+}
+
+.tempo-subtitle {
+    max-width: 36rem;
+    margin-bottom: 2rem;
+    font-size: 1.15rem;
+    line-height: 1.55;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.case-cover figcaption {
+    margin-top: 0.7rem;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+/* ---------- The problem ---------- */
+
+/* The question the project answers, set as a pull quote with the chrome bar
+   from the contents rail down its side */
+.tempo-quote {
+    position: relative;
+    margin: 2.5rem 0 0;
+    padding: 0.35rem 0 0.35rem 1.5rem;
+}
+
+.tempo-quote::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    border-radius: 2px;
+    background-image: linear-gradient(to bottom,
+            #8b97a8 0%, #ffffff 16%, #c8d4e4 30%, #3a4452 50%,
+            #dce6f3 70%, #ffffff 84%, #8b97a8 100%);
+    background-size: 100% 56px;
+    box-shadow:
+        0 0 5px rgba(210, 230, 255, 0.55),
+        0 0 14px rgba(150, 190, 255, 0.25);
+    animation: marker-sheen 2.8s linear infinite;
+}
+
+.case-section .tempo-quote p {
+    font-size: clamp(1.3rem, 2.4vw, 1.7rem);
+    font-weight: 500;
+    line-height: 1.4;
+    color: white;
+}
+
+/* ---------- Who it's for ---------- */
+
+.tempo-users {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+    margin-top: 2rem;
+}
+
+.case-section .tempo-users figure {
+    margin: 0;
+}
+
+/* ---------- Tall images, centred ---------- */
+
+/* The concept sketch is taller than it is wide: held to the height of the
+   window, centred, with its caption under it */
+.tempo .tempo-tall img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: min(44rem, 80vh);
+    margin-inline: auto;
+}
+
+.tempo .tempo-tall figcaption {
+    text-align: center;
+}
+
+/* ---------- Research and direction ---------- */
+
+/* The research board and the moodboard side by side. The board is twice as
+   wide as it is tall and the moodboard nearly twice as tall as it is wide, so
+   the moodboard shows as a crop from its top, the same height as the board
+   beside it, and opens full size in a new tab. */
+.tempo-pair {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+    margin-top: 2rem;
+}
+
+.case-section .tempo-pair figure {
+    margin: 0;
+}
+
+.tempo .tempo-moodboard img {
+    display: block;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    object-position: top;
+}
+
+.case-section .tempo-pair + p,
+.case-section .tempo-demo + .tempo-screens {
+    margin-top: 2rem;
+}
+
+/* ---------- My part ---------- */
+
+/* Picture on one side, its explanation on the other, swapping sides down the
+   panel. The pictures are tall Figma boards and a phone screen, held to the
+   height of the window. */
+.tempo-step {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 2.5rem;
+    align-items: center;
+    margin-top: 3.25rem;
+}
+
+.tempo-step--flip .tempo-step-media {
+    order: 2;
+}
+
+.case-section .tempo-step-media {
+    margin: 0;
+}
+
+.tempo .tempo-step-media img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    max-height: min(36rem, 75vh);
+    margin-inline: auto;
+}
+
+/* the full size link hugs its picture, so the label sits on the picture's
+   corner rather than out at the edge of the column */
+.tempo .tempo-step-media .zoom-trigger {
+    width: fit-content;
+    max-width: 100%;
+    margin-inline: auto;
+}
+
+.tempo .tempo-step-media figcaption {
+    text-align: center;
+}
+
+.case-section .tempo-step-num {
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.tempo-step-text h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.6rem;
+}
+
+/* ---------- Phone recordings ---------- */
+
+/* A phone recording beside its text. The clip is sized by height: no taller
+   than 36rem or 80% of the window, whichever is less. Its column is set to the
+   width that height gives a 600 by 1080 clip (20rem, or 44.4% of the window
+   height), and the clip fills its column, so the two always match. Leaving
+   the column to size itself made it as wide as the recording's own 600px,
+   with the clip drawn at a third less and a gap beside it. */
+.tempo-demo {
+    --phone-w: min(20rem, 44.4vh);
+    display: grid;
+    grid-template-columns: var(--phone-w) minmax(0, 1fr);
+    gap: 3rem;
+    align-items: center;
+    margin-top: 2rem;
+}
+
+/* the clip moves to the right, and its column goes with it */
+.tempo-demo--flip {
+    grid-template-columns: minmax(0, 1fr) var(--phone-w);
+}
+
+.tempo-demo--flip .tempo-phone {
+    order: 2;
+}
+
+.case-section .tempo-phone {
+    margin: 0;
+}
+
+/* positioned, so the reduced motion play button can cover the clip */
+.tempo-phone-media {
+    position: relative;
+}
+
+/* width set, height following from the width and height in the markup, so a
+   narrow screen can only ever make the clip smaller, never squash it */
+.tempo .tempo-phone video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.tempo .tempo-phone figcaption {
+    text-align: center;
+}
+
+.case-section .tempo-list {
+    margin: 0;
+}
+
+.case-section .tempo-list li {
+    margin-bottom: 1rem;
+}
+
+.case-section .tempo-list strong {
+    color: white;
+    font-weight: 600;
+}
+
+/* ---------- Final screens ---------- */
+
+/* The four final screens in a row, each at its own height. The row is held to
+   52rem and centred: on a wide tablet the column runs nearly the full width,
+   and the tallest screen (Insights) came out taller than the window. */
+.tempo-screens {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+    max-width: 52rem;
+    margin-inline: auto;
+}
+
+.case-section .tempo-screens figure {
+    margin: 0;
+}
+
+.tempo .tempo-screens figcaption {
+    text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .tempo-quote::before {
+        animation: none;
+    }
+}
+
+/* ===================TEMPO RESPONSIVE========================= */
+
+/* Phones and small tablets: everything stacks, picture first */
+@media (max-width: 768px) {
+
+    .tempo-pair {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.75rem;
+    }
+
+    /* stacked, the moodboard has the full width: a taller crop shows more of
+       it, held to a height so it never fills the screen */
+    .tempo .tempo-moodboard img {
+        aspect-ratio: auto;
+        width: 100%;
+        height: min(28rem, 60vh);
+    }
+
+    .tempo-step,
+    .tempo-step--flip {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.25rem;
+        margin-top: 2.75rem;
+    }
+
+    .tempo-step--flip .tempo-step-media {
+        order: 0;
+    }
+
+    .tempo .tempo-step-media img {
+        max-height: min(32rem, 70vh);
+    }
+
+    .tempo-demo,
+    .tempo-demo--flip {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.5rem;
+    }
+
+    .tempo-demo--flip .tempo-phone {
+        order: 0;
+    }
+
+    /* stacked, the clip is centred and held to 70% of the window height */
+    .case-section .tempo-phone {
+        width: min(100%, 18rem, 38.9vh);
+        margin-inline: auto;
+    }
+}
+
+/* Phones. Below this the three user slides and the four screens get too
+   narrow side by side; above it (tablets) they keep one row, since two
+   screens across a tablet's width came out taller than the window. */
+@media (max-width: 600px) {
+
+    .tempo-users {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.75rem;
+    }
+
+    .tempo-screens {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.5rem 0.9rem;
+    }
+}

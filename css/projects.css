@@ -179,6 +179,13 @@ like a block-level element, so it can:
 }
 
 
+/* A card with nothing to reveal on hover (Tempo has phone recordings only, no
+   landscape clip) keeps its cover rather than fading to an empty black card.
+   Written to outrank the hover rules here and in the responsive block below. */
+.project-card.is-still:hover .preview-image {
+    opacity: 1;
+}
+
 /* ===================PROJECT SECTION RESPONSIVE========================= */
 
 /*Large Desktop (Ultra-Wide Screens) / TV */

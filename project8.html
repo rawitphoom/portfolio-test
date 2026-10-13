@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Tempo</title>
+    <meta name="description"
+        content="Tempo is a wearable patch and app that helps people control how fast time feels. A FigBuild 2026 case study by Rawitphoom Kiatthitinan, UX/UI Designer.">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+    <link rel="stylesheet" href="css/projects/case-study.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/projects/project8.css">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- a slow moving gradient behind the whole page, drawn in here by main.js once the page has loaded -->
+    <div class="page-gradient" aria-hidden="true"></div>
+    <nav class="hamburger">
+        <div class="mobile-logo">
+            <a href="index.html">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm; codecs=&quot;vp9&quot;">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4; codecs=&quot;hvc1&quot;">
+                </video>
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                </div>
+            </a>
+            <div class="social-badges">
+                <a class="social-badge" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                </a>
+                <a class="social-badge" href="mailto:rawitphoom1@gmail.com" aria-label="Email" title="Email">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+                <a class="social-badge" href="https://www.instagram.com/pp.rwp/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.41.68.81.9 1.38.16.42.36 1.06.41 2.22.06 1.27.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.59.07-4.86c.05-1.16.25-1.8.41-2.22.22-.57.48-.97.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14c-.3.77-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+                </a>
+            </div>
+        </div>
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+
+            <!-- who you're looking at -->
+            <div class="sidebar-head">
+                <img class="sidebar-avatar" src="assets/images/profile_photo.jpg"
+                    alt="Rawitphoom Kiatthitinan">
+                <div class="sidebar-identity">
+                    <p class="sidebar-name">Rawitphoom Kiatthitinan</p>
+                    <p class="sidebar-role">UX/UI Designer &amp; Frontend Developer</p>
+                </div>
+                <label for="sidebar-active" class="close-sidebar-button" aria-label="Close menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+                </label>
+            </div>
+
+            <p class="sidebar-label">Navigate</p>
+            <a href="about.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5Z"/></svg><span>About Me</span></a>
+            <a href="resume.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a2 2 0 0 0-2 2v1H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3V6a2 2 0 0 0-2-2H9Zm0 2h6v1H9V6Z"/></svg><span>Experience &amp; Education</span></a>
+
+            <p class="sidebar-label">Contact</p>
+            <a href="mailto:rawitphoom1@gmail.com"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg><span>rawitphoom1@gmail.com</span></a>
+            <a href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg><span>LinkedIn</span></a>
+            <a href="https://www.instagram.com/pp.rwp/" target="_blank" rel="noopener noreferrer"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.41.68.81.9 1.38.16.42.36 1.06.41 2.22.06 1.27.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.59.07-4.86c.05-1.16.25-1.8.41-2.22.22-.57.48-.97.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14c-.3.77-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg><span>Instagram</span></a>
+            <a href="resume.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 7V3.5L19.5 9H14Z"/></svg><span>Resume</span></a>
+        </div>
+    </nav>
+
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="index.html" id="logo-link">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="assets/images/profile_pic_animated.webm" type="video/webm; codecs=&quot;vp9&quot;">
+                    <source src="assets/images/profile_pic_animated.mp4" type="video/mp4; codecs=&quot;hvc1&quot;">
+                </video>
+                <div class="logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                </div>
+            </a>
+            <div class="social-badges">
+                <a class="social-badge" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                </a>
+                <a class="social-badge" href="mailto:rawitphoom1@gmail.com" aria-label="Email" title="Email">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+                <a class="social-badge" href="https://www.instagram.com/pp.rwp/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.41.68.81.9 1.38.16.42.36 1.06.41 2.22.06 1.27.07 1.65.07 4.86s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.43-.36-1.06-.41-2.23-.06-1.27-.07-1.65-.07-4.85s.01-3.59.07-4.86c.05-1.16.25-1.8.41-2.22.22-.57.48-.97.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.3-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14c-.3.77-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.08 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56.79-.3 1.46-.72 2.13-1.38.66-.67 1.08-1.34 1.38-2.13.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91-.3-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <nav>
+            <!-- <a href="projects.html">Portfolio</a> -->
+            <a href="resume.html">Resume</a>
+            <a href="about.html">About</a>
+            <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
+        </nav>
+    </header>
+
+
+    <!-- data-reduced-motion: with reduced motion on, the phone clips wait for a play button instead of starting -->
+    <section class="case-study tempo" data-reduced-motion="play-button">
+
+        <!-- HERO -->
+        <div class="case-hero">
+            <p class="case-eyebrow">Design Hackathon &middot; FigBuild 2026</p>
+            <h1 class="case-title">Tempo</h1>
+            <p class="tempo-subtitle">A wearable patch and app that helps people take control of how fast time feels.</p>
+
+            <figure class="case-cover">
+                <img src="assets/figbuild/figbuild-cover.webp" width="1440" height="1024" fetchpriority="high"
+                    alt="Tempo app cover. A phone shows the Phasing screen with Expand, Objective and Compress modes, an intensity slider and a session length, next to the title Tempo App.">
+                <figcaption>The Tempo app, with a phasing session being set up.</figcaption>
+            </figure>
+
+            <div class="case-meta">
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Role</p>
+                    <p class="case-meta-value">UX/UI Designer</p>
+                </div>
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Team</p>
+                    <p class="case-meta-value">4 people</p>
+                </div>
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Timeline</p>
+                    <p class="case-meta-value">3 days, FigBuild 2026</p>
+                </div>
+                <div class="case-meta-card">
+                    <p class="case-meta-label">Tools</p>
+                    <p class="case-meta-value">Figma</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SCROLL TRACKER -->
+        <aside class="case-contents">
+            <p class="case-contents-label">Contents</p>
+            <nav class="case-contents-nav">
+                <span class="case-contents-marker" aria-hidden="true"></span>
+                <a href="#overview">Overview</a>
+                <a href="#problem">The Problem</a>
+                <a href="#users">Who It's For</a>
+                <a href="#concept">The Concept</a>
+                <a href="#research">Research</a>
+                <a href="#my-part">My Part</a>
+                <a href="#final-screens">Final Screens</a>
+                <a href="#full-flow">The Full Flow</a>
+                <a href="#risk">Designing for Risk</a>
+                <a href="#learned">What I Learned</a>
+            </nav>
+        </aside>
+
+        <div class="case-main">
+
+            <!-- OVERVIEW -->
+            <section class="case-section" id="overview">
+                <h2>Overview</h2>
+                <p>
+                    Tempo is a concept we designed in 3 days at FigBuild 2026. It pairs a small patch you wear with a
+                    companion app. The patch reads signals from your body. The app lets you slow time down when you
+                    want to enjoy a moment, or speed it up when you are stuck in something boring. I designed the core
+                    app experience: the Home, Session and Insights screens.
+                </p>
+            </section>
+
+            <!-- THE PROBLEM -->
+            <section class="case-section" id="problem">
+                <h2>The Problem</h2>
+                <figure>
+                    <img src="assets/figbuild/figbuild-slide-chronoception.webp" width="1600" height="900"
+                        loading="lazy" decoding="async"
+                        alt="Slide titled What is chronoception. Key insights about how time perception is flexible, speeds up with age and is linked to parts of the brain, next to a labelled brain diagram.">
+                    <figcaption>What we learned about chronoception, and the parts of the brain tied to it.</figcaption>
+                </figure>
+                <figure>
+                    <img src="assets/figbuild/figbuild-slide-pain-points.webp" width="1600" height="900"
+                        loading="lazy" decoding="async"
+                        alt="Slide titled Chronoception, the pain points. Time passing too fast takes value out of life. Time passing too slow stretches every second and leads to burnout.">
+                    <figcaption>Time that moves too fast and time that moves too slow both hurt.</figcaption>
+                </figure>
+                <p>
+                    Chronoception is how fast or slow time feels to you. It changes with age, attention and mood, and
+                    most people have no control over it. When time moves too fast, life feels like it is slipping
+                    away. When it moves too slow, boring tasks feel endless and lead to burnout.
+                </p>
+                <blockquote class="tempo-quote">
+                    <p>How might we give people personal control over how they experience time, and turn something you
+                        cannot measure into a tool for wellbeing?</p>
+                </blockquote>
+            </section>
+
+            <!-- WHO IT'S FOR -->
+            <section class="case-section" id="users">
+                <h2>Who It's For</h2>
+                <div class="tempo-users">
+                    <figure>
+                        <img src="assets/figbuild/figbuild-user-seniors.webp" width="1600" height="900"
+                            loading="lazy" decoding="async"
+                            alt="Target user 1, seniors and older adults. An older woman rests her head on her hand and looks into the distance.">
+                        <figcaption>Seniors and older adults. Time speeds up as new experiences become rare.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/figbuild/figbuild-user-working-adults.webp" width="1600" height="900"
+                            loading="lazy" decoding="async"
+                            alt="Target user 2, full time working adults. A woman in headphones sits on a train with her eyes closed.">
+                        <figcaption>Full time working adults. Commutes and repetitive work drag, while free time flies
+                            by.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/figbuild/figbuild-user-neurodivergent.webp" width="1600" height="900"
+                            loading="lazy" decoding="async"
+                            alt="Target user 3, neurodivergent people. A stressed woman holds her head in a messy room full of boxes and clothes.">
+                        <figcaption>Neurodivergent people. Time blindness from ADHD and other conditions makes planning
+                            and deadlines hard.</figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <!-- THE CONCEPT -->
+            <section class="case-section" id="concept">
+                <h2>The Concept</h2>
+                <figure class="tempo-tall">
+                    <img src="assets/figbuild/figbuild-sketch.webp" width="1800" height="2033" loading="lazy"
+                        decoding="async"
+                        alt="Early sketch of the Tempo journey. A patch on the temple leads to onboarding, a speed up or slow down choice and a data screen, with photos for get the patch, wear the patch, select options and view data.">
+                    <figcaption>The first rough sketch of the whole journey.</figcaption>
+                </figure>
+                <figure>
+                    <img src="assets/figbuild/figbuild-slide-intro.webp" width="1600" height="900" loading="lazy"
+                        decoding="async"
+                        alt="Slide titled Introducing Tempo. An attachable node and a companion app, with three features: personalized calibration, manual and auto control options, and an AI powered assistant.">
+                    <figcaption>The concept: a patch you wear and an app that goes with it.</figcaption>
+                </figure>
+                <p>
+                    We started with a rough sketch of the full journey: get the patch, wear it, choose how you want
+                    time to feel, then look back at your data. The final concept has three parts: personal
+                    calibration, manual and automatic controls, and an AI assistant that explains what is happening.
+                </p>
+            </section>
+
+            <!-- RESEARCH AND DIRECTION -->
+            <section class="case-section" id="research">
+                <h2>Research and Direction</h2>
+                <div class="tempo-pair">
+                    <figure>
+                        <img src="assets/figbuild/figbuild-research.webp" width="2400" height="1168" loading="lazy"
+                            decoding="async"
+                            alt="Research board with notes and summaries from papers on how the brain perceives time.">
+                        <figcaption>Notes from papers on how the brain perceives time.</figcaption>
+                    </figure>
+                    <!-- the moodboard is much taller than it is wide, so it shows cropped and opens full size -->
+                    <figure class="tempo-moodboard">
+                        <a class="zoom-trigger" href="assets/figbuild/figbuild-moodboard.webp" target="_blank"
+                            rel="noopener noreferrer" aria-label="Open the moodboard full size in a new tab">
+                            <img src="assets/figbuild/figbuild-moodboard.webp" width="1800" height="2993"
+                                loading="lazy" decoding="async"
+                                alt="Moodboard of references: glassy interfaces, soft blue gradients, calm interiors and health tracking apps.">
+                            <span class="zoom-hint" aria-hidden="true">Open full size</span>
+                        </a>
+                        <figcaption>The moodboard. Open it to see the whole board.</figcaption>
+                    </figure>
+                </div>
+                <p>
+                    We researched how the brain perceives time and collected references for a calm, clinical but
+                    friendly look. That led to the soft blue palette and rounded, glassy surfaces.
+                </p>
+            </section>
+
+            <!-- MY PART: the centre of the case study, so it gets the highlighted panel -->
+            <section class="case-section case-feature" id="my-part">
+                <h2>My Part: Designing the Core App</h2>
+                <p>
+                    My job was to make an invisible feeling easy to read and easy to control. The hardest part was the
+                    number. Tempo measures time distortion in TD, which means nothing to most people. So every screen
+                    translates it into plain words, like &ldquo;You perceive 1 hour as 44 minutes.&rdquo;
+                </p>
+
+                <div class="tempo-step">
+                    <figure class="tempo-step-media">
+                        <a class="zoom-trigger" href="assets/figbuild/figbuild-home-iterations.webp" target="_blank"
+                            rel="noopener noreferrer" aria-label="Open the Home iterations full size in a new tab">
+                            <img src="assets/figbuild/figbuild-home-iterations.webp" width="1400" height="2496"
+                                loading="lazy" decoding="async"
+                                alt="Iterations of the Home screen on a Figma board. A paper sketch, a plain white layout, then blue versions with a time distortion ring of minus 2.61 TD, a Start Phasing button and active sessions.">
+                            <span class="zoom-hint" aria-hidden="true">Open full size</span>
+                        </a>
+                        <figcaption>Home, from a paper sketch to the final layout.</figcaption>
+                    </figure>
+                    <div class="tempo-step-text">
+                        <p class="tempo-step-num">01</p>
+                        <h3>Home</h3>
+                        <p>
+                            Home went from a paper sketch to several layouts. The final version puts your current time
+                            distortion in one big ring, with a single button to start or stop phasing and your saved
+                            sessions underneath.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tempo-step tempo-step--flip">
+                    <figure class="tempo-step-media">
+                        <a class="zoom-trigger" href="assets/figbuild/figbuild-phasing-iterations.webp"
+                            target="_blank" rel="noopener noreferrer"
+                            aria-label="Open the phasing iterations full size in a new tab">
+                            <img src="assets/figbuild/figbuild-phasing-iterations.webp" width="1200" height="2818"
+                                loading="lazy" decoding="async"
+                                alt="Iterations of the phasing screen on a Figma board. Early versions with many controls, then versions with mode tabs, an intensity slider, a session length bar and Phase Now and Set Routine buttons.">
+                            <span class="zoom-hint" aria-hidden="true">Open full size</span>
+                        </a>
+                        <figcaption>The rounds of the phasing screen.</figcaption>
+                    </figure>
+                    <div class="tempo-step-text">
+                        <p class="tempo-step-num">02</p>
+                        <h3>Session</h3>
+                        <p>
+                            The phasing screen took the most rounds. Users pick a mode (Expand, Objective or Compress),
+                            drag a slider to set the intensity and choose how long the session lasts. Early versions had
+                            too many controls on one screen, so I grouped them into one clear path that ends in Phase
+                            Now or Set Routine.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="tempo-step">
+                    <figure class="tempo-step-media">
+                        <img src="assets/figbuild/figbuild-screen-insight.webp" width="800" height="2392"
+                            loading="lazy" decoding="async"
+                            alt="The Insights screen. A weekly distortion trend line, 4 focus sessions today, and cards for boredom, stress, flow and focus.">
+                        <figcaption>The final Insights screen.</figcaption>
+                    </figure>
+                    <div class="tempo-step-text">
+                        <p class="tempo-step-num">03</p>
+                        <h3>Insights</h3>
+                        <p>
+                            Insights shows how your sense of time changed over the week, how many focus sessions you
+                            finished, and how boredom, stress, flow and focus moved together.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FINAL SCREENS -->
+            <section class="case-section" id="final-screens">
+                <h2>Final Screens</h2>
+                <div class="tempo-demo">
+                    <figure class="tempo-phone">
+                        <div class="tempo-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="600"
+                                height="1080" poster="assets/figbuild/figbuild-home-session-insight-poster.webp"
+                                aria-label="Screen recording of the Tempo app on a phone. Starting phasing from Home, setting up a session and scrolling through Insights.">
+                                <source src="assets/figbuild/figbuild-home-session-insight.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>Home, Session and Insights in use.</figcaption>
+                    </figure>
+                    <ul class="tempo-list">
+                        <li><strong>Home:</strong> see your current time distortion and start phasing in one tap.</li>
+                        <li><strong>Session:</strong> choose a mode, set the intensity and session length, or save it
+                            as a routine.</li>
+                        <li><strong>Insights:</strong> weekly trends and a breakdown of your mental states.</li>
+                    </ul>
+                </div>
+
+                <div class="tempo-screens">
+                    <figure>
+                        <img src="assets/figbuild/figbuild-screen-home.webp" width="800" height="2016" loading="lazy"
+                            decoding="async"
+                            alt="Home screen while idle. A ring showing minus 2.61 TD, the line You perceive 1 hour as 44 minutes, a Start Phasing button and two active sessions.">
+                        <figcaption>Home, idle</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/figbuild/figbuild-screen-home-phasing.webp" width="800" height="2016"
+                            loading="lazy" decoding="async"
+                            alt="Home screen while phasing. The ring is marked Active and the button now reads Stop Phasing.">
+                        <figcaption>Home, phasing</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/figbuild/figbuild-screen-session.webp" width="800" height="2155"
+                            loading="lazy" decoding="async"
+                            alt="Session screen. Compress mode is selected, the intensity slider is at 5, 2 TD goes to 5 TD, the session length is 2 hours 15 minutes, with Phase Now and Set Routine buttons.">
+                        <figcaption>Session</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/figbuild/figbuild-screen-insight.webp" width="800" height="2392"
+                            loading="lazy" decoding="async"
+                            alt="Insights screen with the weekly distortion trend, today's focus sessions and a breakdown of boredom, stress, flow and focus.">
+                        <figcaption>Insights</figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <!-- THE FULL FLOW: the team's part, so the credit stays clear -->
+            <section class="case-section" id="full-flow">
+                <h2>The Full Flow</h2>
+                <div class="tempo-demo tempo-demo--flip">
+                    <figure class="tempo-phone">
+                        <div class="tempo-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="600"
+                                height="1080" poster="assets/figbuild/figbuild-onboarding-poster.webp"
+                                aria-label="Screen recording of the Tempo onboarding on a phone, moving from log in to sign up and on through setup.">
+                                <source src="assets/figbuild/figbuild-onboarding.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>The onboarding flow.</figcaption>
+                    </figure>
+                    <p class="tempo-demo-note">
+                        Onboarding and calibration, designed by my teammates. New users sign up, pair the patch and
+                        calibrate it so Tempo learns their baseline.
+                    </p>
+                </div>
+            </section>
+
+            <!-- DESIGNING FOR RISK -->
+            <section class="case-section" id="risk">
+                <h2>Designing for Risk</h2>
+                <figure>
+                    <img src="assets/figbuild/figbuild-slide-risks.webp" width="1600" height="900" loading="lazy"
+                        decoding="async"
+                        alt="Slide listing four risks, cognitive overdependence, mental fatigue, data privacy and misinterpretation, beside their mitigations: user control and objective mode, session limits, encrypted local data and AI explanations.">
+                    <figcaption>Four risks, and what we planned for each.</figcaption>
+                </figure>
+                <p>
+                    A product that changes how you feel time needs guardrails. We planned for four risks: relying on it
+                    too much, mental fatigue, data privacy and misreading the numbers. The answers were an Objective
+                    mode that keeps time normal, session limits, data stored and encrypted on the device, and AI
+                    explanations in plain language.
+                </p>
+            </section>
+
+            <!-- WHAT I LEARNED -->
+            <section class="case-section" id="learned">
+                <h2>What I Learned</h2>
+                <p>
+                    Designing for something you cannot see taught me that the job is mostly translation. Turning a
+                    number like TD into a sentence people understand did more than any visual polish. Working in a
+                    team of 4 for 3 days also taught me to split the work early, agree on one visual system fast, and
+                    keep checking each other's screens so the app felt like one product.
+                </p>
+            </section>
+
+            <!-- NEXT PROJECT: Tempo sits between LintelAI and NextStep -->
+            <nav class="case-next" aria-label="Next project">
+                <a class="case-next-link" href="project2.html">
+                    <span class="case-next-text">
+                        <span class="case-next-label">Next project</span>
+                        <span class="case-next-title">NextStep</span>
+                        <span class="case-next-sub">IAT334 &middot; Interface Design</span>
+                    </span>
+                    <img class="case-next-thumb" src="assets/images/contents/project2/IAT334_Cover.webp" alt=""
+                        loading="lazy" decoding="async">
+                    <span class="case-next-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+            </nav>
+        </div>
+    </section>
+
+    <section class="connect-section">
+        <div class="connect-border-wrap">
+            <h2>Let's Build Together!</h2>
+            <p>
+                Let's collaborate on creating unique designs and functional websites. Reach out
+                to discuss how I can contribute to your team and help bring your ideas to life.
+            </p>
+            <!-- the chrome ring and the ripples are both drawn around the label, so
+                 the label carries its own stacking order to stay on top -->
+            <a href="mailto:rawitphoom1@gmail.com" class="connect-button glass-pill" data-glass>
+                <span class="glass-pill__ring" aria-hidden="true"><i></i></span>
+                <span class="glass-pill__label">Let's Connect</span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin"><i></i><i></i><i></i></span>
+                </span>
+            </a>
+        </div>
+    </section>
+
+    <!--------------------------------- FOOTER ------------------------------------------>
+    <footer class="site-footer">
+        <div class="footer-bar-wrap">
+            <div class="footer-bar">
+                <nav class="footer-col" aria-label="Footer">
+                    <p class="footer-label">Index</p>
+                    <a class="footer-link" href="about.html">About me</a>
+                    <a class="footer-link" href="resume.html">Experience &amp; Education</a>
+                    <a class="footer-link" href="assets/Rawitphoom_Kiatthitinan_Resume.pdf" target="_blank"
+                        rel="noopener noreferrer">Resume</a>
+                </nav>
+
+                <div class="footer-col">
+                    <p class="footer-label">Connect</p>
+                    <a class="footer-link" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank"
+                        rel="noopener noreferrer">LinkedIn</a>
+                    <a class="footer-link" href="mailto:rawitphoom1@gmail.com">Email</a>
+                    <!-- PLACEHOLDER NUMBER - swap in the real one. 000-0000 is not a
+                         dialable NANP subscriber number, so it cannot reach anybody. -->
+                    <a class="footer-link" href="tel:+16040000000">Phone</a>
+                </div>
+
+                <div class="footer-col">
+                    <p class="footer-label">Based in</p>
+                    <p class="footer-place"><span class="footer-flag" aria-hidden="true">&#127464;&#127462;</span>
+                        Vancouver, Canada</p>
+                    <p class="footer-clock">
+                        <span class="footer-dot" aria-hidden="true"></span>
+                        <!-- filled in by main.js; the dashes are what shows with JS off -->
+                        <span id="footer-time">--:--</span>
+                    </p>
+                </div>
+
+                <div class="footer-col">
+                    <p class="footer-label">&copy; 2026</p>
+                    <p class="footer-name">Rawitphoom Kiatthitinan</p>
+                    <p class="footer-rights">All rights reserved</p>
+                    <!-- "#top" with no matching element is the document top by spec, and
+                         global.css already sets scroll-behavior: smooth -->
+                    <a class="footer-top" href="#top">Back to top <span aria-hidden="true">&#8593;</span></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-mark-wrap">
+            <div class="glass-mark" id="glass-mark" data-glass>
+                <!-- Two sizes, and the browser picks: phones and ordinary screens get
+                     the 1600, retina desktops the 4400. The big one is deliberately
+                     much larger than the ~2950px a retina footer needs - a file that
+                     close to its display size gets resized with a softer filter, and
+                     the chrome's fine red and blue lines were the first thing to go.
+                     "sizes" includes the 1.06 scale the footer applies to the mark. -->
+                <img class="footer-mark" src="assets/images/footer-rawi-4400.png"
+                    srcset="assets/images/footer-rawi-1600.png 1600w, assets/images/footer-rawi-4400.png 4400w"
+                    sizes="(min-width: 1440px) 1476px, 100vw"
+                    alt="rawi" loading="lazy" decoding="async">
+                <!-- The live version: the same wordmark drawn as moving liquid chrome
+                     by main.js. The image above stays as the base layer: it shows
+                     until the metal has drawn, and for good without WebGL or with
+                     reduced motion turned on. -->
+                <span class="footer-metal" aria-hidden="true"></span>
+                <span class="glass-ripple" aria-hidden="true">
+                    <span class="ripple-origin" id="glass-ripple"><i></i><i></i><i></i></span>
+                </span>
+            </div>
+        </div>
+    </footer>
+    <!----------------------------------------------------------------------------------->
+
+    <script src="scripts/main.js"></script>
+</body>
+
+</html>
