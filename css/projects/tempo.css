@@ -160,8 +160,8 @@
     margin-inline: auto;
 }
 
-/* the zoom link hugs its picture, so the hover lift grows the picture itself
-   rather than a box the width of the column */
+/* the zoom link hugs its picture, so its focus ring sits on the picture
+   rather than round a box the width of the column */
 .tempo .tempo-step-media .zoom-trigger {
     width: fit-content;
     max-width: 100%;

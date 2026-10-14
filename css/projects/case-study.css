@@ -587,53 +587,61 @@
 
 /***************************** CLICK TO VIEW LARGER *****************************/
 
-/* Every picture in a case study's content. Pointing at it lifts it a little,
-   which says it can be opened; clicking shows it large over the page, in the
-   viewer below, and the page stays where it was. A few (the Mixtape sitemap,
-   the Tempo boards) are links to their own file, so they open even without
-   JavaScript; the rest main.js marks .zoom-pic. */
+/* Every picture in a case study's content. Pointing at it zooms the picture
+   in a little inside its own frame, which says it can be opened; clicking
+   shows it large over the page, in the viewer below, and the page stays where
+   it was. A few (the Mixtape sitemap, the Tempo boards) are links to their own
+   file, so they open even without JavaScript; the rest main.js marks
+   .zoom-pic. */
 .zoom-trigger {
     position: relative;
     display: block;
     border-radius: 0.75rem;
-    transition:
-        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-/* every other picture in the content, picked up by main.js: the same lift */
+/* The zoom stays inside the frame: the picture grows by --zoom and a clip,
+   drawn in the picture's own (growing) space, trims it back to exactly the
+   size and rounded corners it had. Both move together, so the edges never
+   shift. */
+.zoom-trigger img,
 .zoom-pic {
+    --zoom: 1.05;
+    clip-path: inset(0 round 0.75rem);
     transition:
-        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+        transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+        clip-path 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.zoom-trigger:hover,
-.zoom-trigger:focus-visible,
-.zoom-pic:hover,
-.zoom-pic:focus-visible {
-    transform: scale(1.03);
-    box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.55);
+.zoom-trigger:hover img,
+.zoom-pic:hover {
+    transform: scale(var(--zoom));
+    clip-path: inset(calc((1 - 1 / var(--zoom)) * 50%) round calc(0.75rem / var(--zoom)));
 }
 
+/* Keyboard focus shows a ring around the picture instead. The clip would cut
+   the ring off, so a focused picture drops it and stays still. */
 .zoom-trigger:focus-visible,
 .zoom-pic:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: 4px;
 }
 
+.zoom-pic:focus-visible {
+    transform: none;
+    clip-path: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
 
-    .zoom-trigger,
+    .zoom-trigger img,
     .zoom-pic {
         transition: none;
     }
 
-    .zoom-trigger:hover,
-    .zoom-trigger:focus-visible,
-    .zoom-pic:hover,
-    .zoom-pic:focus-visible {
+    .zoom-trigger:hover img,
+    .zoom-pic:hover {
         transform: none;
+        clip-path: inset(0 round 0.75rem);
     }
 }
 
