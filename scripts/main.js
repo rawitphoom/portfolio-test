@@ -175,6 +175,29 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// The animated avatar in the header comes in two copies, both with a see
+// through background: a WebM (VP9) for most browsers and an HEVC MP4 for
+// Apple's. Safari, and every iPhone browser since they all run on Apple's
+// engine, now plays the WebM, which is listed first, but cannot show its see
+// through layer and fills it with white, so the avatar sat in a white box.
+// There, swap to the MP4, which it does show see through. Picked by engine
+// rather than left to the browser: Chrome on a Mac can play that MP4 too, but
+// it would drop the see through layer and give Chrome the white box instead.
+document.addEventListener('DOMContentLoaded', () => {
+  const ua = navigator.userAgent;
+  const appleEngine = (/AppleWebKit/.test(ua) && !/Chrome\/|Chromium|Edg\//.test(ua)) ||
+    /CriOS|FxiOS|EdgiOS/.test(ua);
+  if (!appleEngine) return;
+
+  document.querySelectorAll('video.logo-avatar').forEach((video) => {
+    const webm = video.querySelector('source[type^="video/webm"]');
+    if (!webm) return;
+    webm.remove();
+    video.load();
+    video.play().catch(() => {});
+  });
+});
+
 // Project cards: loop their video automatically, but only while the card is on screen,
 // so a visitor never downloads six videos at once.
 document.addEventListener('DOMContentLoaded', () => {

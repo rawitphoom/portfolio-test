@@ -368,6 +368,14 @@
     display: block;
 }
 
+/* a logo that is its own shape (SFU's round badge) shows on its own, without
+   the tile and border round it */
+.path-node--icon {
+    border-radius: 50%;
+    background: none;
+    border: 0;
+}
+
 .path-item:not(:last-child) .path-node::after {
     content: '';
     position: absolute;
@@ -1490,4 +1498,14 @@
 .reveal-glue {
     display: inline;
     white-space: nowrap;
+}
+
+/***************************** GSAP TEXT TEST *****************************/
+
+/* The intro waits hidden until scripts/gsap-text.js has split it and set the
+   first frame of its animation, so it does not show in full and then jump. The
+   class comes off when the animation starts, or after 3s whatever happens. */
+html.gsap-text .about-heading,
+html.gsap-text .about-bio p {
+    visibility: hidden;
 }
