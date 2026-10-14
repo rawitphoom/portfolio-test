@@ -455,6 +455,13 @@
        stage offset needs it too - pushing the ring out by its own radius is
        what puts its left edge at a known place on screen. */
     --radius: calc(var(--cell) * 0.5 / 0.15838 * var(--spread));
+
+    /* How far each photo curves in round the ring, in degrees (no unit; keep
+       it above 0). 18 is the ring's own 360 / 20 and would make the photos
+       one smooth band; 9 bends them about half as much. --slices is how many
+       strips each photo is cut into to make the curve (see .ring-slice). */
+    --bend: 9;
+    --slices: 4;
 }
 
 .ring-title,
@@ -530,6 +537,49 @@
     height: 100%;
     aspect-ratio: 1 / 1;
     object-fit: cover;
+}
+
+/* The bend. CSS cannot curve a flat box, so main.js cuts each photo into
+   --slices upright strips and turns each one a little further round than the
+   one before. Together they follow an arc, so the photo's left and right edges
+   curve back in towards the middle of the ring.
+
+   Each strip is pushed back to the arc's centre, turned, and brought forward
+   again. The arc's radius is the one whose length is the photo's width:
+   r = w / bend, with the bend in radians (57.29578 degrees to one). Each strip
+   shows its own part of the photo and is a pixel wider than its share, so no
+   hairline opens between neighbours.
+
+   The photo itself stays in the card, hidden, for the browser to load (the
+   strips paint the same file). Without JavaScript nothing is cut and the
+   photos stay flat. */
+.ring.is-bent .ring-cell {
+    overflow: visible;
+    transform-style: preserve-3d;
+    /* a flat card's shadow, which no longer matches the curved photo */
+    box-shadow: none;
+}
+
+.ring.is-bent .ring-cell img {
+    visibility: hidden;
+}
+
+.ring-slice {
+    --strip: calc(var(--cell) / var(--slices));
+    --arc: calc(var(--cell) * 57.29578 / var(--bend));
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: calc(var(--strip) + 1px);
+    height: 100%;
+    margin-left: calc(var(--strip) / -2 - 0.5px);
+    background-image: var(--photo);
+    background-size: var(--cell) var(--cell);
+    background-position: calc(var(--k) * var(--strip) * -1 + 0.5px) 0;
+    transform:
+        translateZ(calc(var(--arc) * -1))
+        rotateY(calc((var(--k) + 0.5 - var(--slices) / 2) * var(--bend) / var(--slices) * 1deg))
+        translateZ(var(--arc));
 }
 
 /* Below this the words stack above and below the ring rather than sitting

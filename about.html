@@ -251,126 +251,90 @@
                 weekends end up.</h3>
 
             <div class="ring-stage">
+                <!-- Square crops, 400px, about 520KB for all 20. They load straight away at
+                     low priority rather than lazily: Safari on iPhone only starts a lazy
+                     image when it is nearly on screen, so the whole ring used to begin
+                     downloading the moment it appeared. -->
                 <div class="ring" id="photo-ring" style="--count: 20">
                     <figure class="ring-cell" style="--i: 0">
-                        <img src="assets/images/about-photos/web/IMG_7309.jpg"
-                            srcset="assets/images/about-photos/web/IMG_7309.jpg 480w, assets/images/about-photos/IMG_7309.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_7309.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 1">
-                        <img src="assets/images/about-photos/web/IMG_9685.jpg"
-                            srcset="assets/images/about-photos/web/IMG_9685.jpg 360w, assets/images/about-photos/IMG_9685.jpg 675w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_9685.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 2">
-                        <img src="assets/images/about-photos/web/IMG_7609.jpg"
-                            srcset="assets/images/about-photos/web/IMG_7609.jpg 270w, assets/images/about-photos/IMG_7609.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_7609.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 3">
-                        <img src="assets/images/about-photos/web/image.jpg"
-                            srcset="assets/images/about-photos/web/image.jpg 480w, assets/images/about-photos/image.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/image.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 4">
-                        <img src="assets/images/about-photos/web/IMG_8668.jpg"
-                            srcset="assets/images/about-photos/web/IMG_8668.jpg 480w, assets/images/about-photos/IMG_8668.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_8668.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 5">
-                        <img src="assets/images/about-photos/web/IMG_4765.jpg"
-                            srcset="assets/images/about-photos/web/IMG_4765.jpg 270w, assets/images/about-photos/IMG_4765.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_4765.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 6">
-                        <img src="assets/images/about-photos/web/IMG_4410.jpg"
-                            srcset="assets/images/about-photos/web/IMG_4410.jpg 270w, assets/images/about-photos/IMG_4410.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_4410.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 7">
-                        <img src="assets/images/about-photos/web/IMG_7710.jpg"
-                            srcset="assets/images/about-photos/web/IMG_7710.jpg 270w, assets/images/about-photos/IMG_7710.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_7710.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 8">
-                        <img src="assets/images/about-photos/web/IMG_6085.jpg"
-                            srcset="assets/images/about-photos/web/IMG_6085.jpg 270w, assets/images/about-photos/IMG_6085.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_6085.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 9">
-                        <img src="assets/images/about-photos/web/IMG_5665.jpg"
-                            srcset="assets/images/about-photos/web/IMG_5665.jpg 270w, assets/images/about-photos/IMG_5665.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_5665.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 10">
-                        <img src="assets/images/about-photos/web/IMG_6742.jpg"
-                            srcset="assets/images/about-photos/web/IMG_6742.jpg 480w, assets/images/about-photos/IMG_6742.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_6742.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 11">
-                        <img src="assets/images/about-photos/web/IMG_0168.jpg"
-                            srcset="assets/images/about-photos/web/IMG_0168.jpg 480w, assets/images/about-photos/IMG_0168.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_0168.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 12">
-                        <img src="assets/images/about-photos/web/9F767437-E906-4341-8BD5-8BE545F860AC.jpg"
-                            srcset="assets/images/about-photos/web/9F767437-E906-4341-8BD5-8BE545F860AC.jpg 360w, assets/images/about-photos/9F767437-E906-4341-8BD5-8BE545F860AC.jpg 675w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/9F767437-E906-4341-8BD5-8BE545F860AC.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 13">
-                        <img src="assets/images/about-photos/web/IMG_4970.jpg"
-                            srcset="assets/images/about-photos/web/IMG_4970.jpg 270w, assets/images/about-photos/IMG_4970.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_4970.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 14">
-                        <img src="assets/images/about-photos/web/IMG_1478.jpg"
-                            srcset="assets/images/about-photos/web/IMG_1478.jpg 480w, assets/images/about-photos/IMG_1478.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_1478.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 15">
-                        <img src="assets/images/about-photos/web/IMG_0014.jpg"
-                            srcset="assets/images/about-photos/web/IMG_0014.jpg 480w, assets/images/about-photos/IMG_0014.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_0014.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 16">
-                        <img src="assets/images/about-photos/web/2972325F-EE4B-478F-821E-8E6BBAE6D647.jpg"
-                            srcset="assets/images/about-photos/web/2972325F-EE4B-478F-821E-8E6BBAE6D647.jpg 270w, assets/images/about-photos/2972325F-EE4B-478F-821E-8E6BBAE6D647.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/2972325F-EE4B-478F-821E-8E6BBAE6D647.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 17">
-                        <img src="assets/images/about-photos/web/IMG_5102.jpg"
-                            srcset="assets/images/about-photos/web/IMG_5102.jpg 270w, assets/images/about-photos/IMG_5102.jpg 506w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_5102.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 18">
-                        <img src="assets/images/about-photos/web/IMG_8558.jpg"
-                            srcset="assets/images/about-photos/web/IMG_8558.jpg 360w, assets/images/about-photos/IMG_8558.jpg 675w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/IMG_8558.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                     <figure class="ring-cell" style="--i: 19">
-                        <img src="assets/images/about-photos/web/0E03502E-37E9-4223-B9CB-5309438BBD38.jpg"
-                            srcset="assets/images/about-photos/web/0E03502E-37E9-4223-B9CB-5309438BBD38.jpg 480w, assets/images/about-photos/0E03502E-37E9-4223-B9CB-5309438BBD38.jpg 900w"
-                            sizes="(max-width: 600px) 140px, (max-width: 900px) 200px, 270px"
-                            alt="" loading="lazy" draggable="false">
+                        <img src="assets/images/about-photos/ring/0E03502E-37E9-4223-B9CB-5309438BBD38.webp" width="400" height="400"
+                            alt="" decoding="async" fetchpriority="low" draggable="false">
                     </figure>
                 </div>
             </div>

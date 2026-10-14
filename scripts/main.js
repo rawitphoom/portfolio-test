@@ -518,6 +518,32 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Photo ring bend: cut each photo into upright strips that about.css turns
+// along an arc, so the photo curves in round the ring rather than sitting
+// flat. Runs with reduced motion too: the bend is shape, not movement.
+document.addEventListener('DOMContentLoaded', () => {
+  const ring = document.querySelector('#photo-ring');
+  if (!ring) return;
+
+  const slices = parseInt(
+    getComputedStyle(ring).getPropertyValue('--slices'), 10) || 4;
+
+  ring.querySelectorAll('.ring-cell').forEach((cell) => {
+    const img = cell.querySelector('img');
+    if (!img) return;
+    // the strips paint the same file the photo already loads
+    cell.style.setProperty('--photo', `url("${img.src}")`);
+    for (let k = 0; k < slices; k++) {
+      const strip = document.createElement('span');
+      strip.className = 'ring-slice';
+      strip.style.setProperty('--k', k);
+      cell.append(strip);
+    }
+  });
+
+  ring.classList.add('is-bent');
+});
+
 // Photo ring: turns by itself, slowly, and takes its cue from the scroll -
 // scrolling down spins it one way, scrolling up the other, and it eases back
 // to its idle drift once you stop.
