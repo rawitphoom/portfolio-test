@@ -1591,7 +1591,7 @@ document.addEventListener('DOMContentLoaded', () => {
  *
  * A small live overview of the whole page down the right hand side, with a
  * frame showing where the visitor is (styles in case-study.css). A page turns
- * it on with data-minimap on its case study; for now that is LintelAI only.
+ * it on with data-minimap on its case study; every case study has it.
  *
  * It is drawn from the page itself rather than from a screenshot, so it is
  * always up to date: every picture and video poster becomes a tiny thumbnail
@@ -1672,13 +1672,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // as they come into view. Anything without a thumbnail falls back to its
   // poster, or to its own picture once that has loaded on the page.
   const thumbUrl = (el) => {
+    // a clip names its file on a <source>, or on the <video> itself
     const src = el.tagName === 'VIDEO'
-      ? el.querySelector('source')?.getAttribute('src')
+      ? el.querySelector('source')?.getAttribute('src') || el.getAttribute('src')
       : el.getAttribute('src');
-    if (!src) return null;
+    // vector drawings are small already and have no thumbnail; use them as they are
+    if (!src || /\.svg($|[?#])/i.test(src)) return null;
     const url = new URL(src, location.href);
-    const name = url.pathname.split('/').pop().replace(/\.[^.]+$/, '');
-    return new URL('thumbs/' + name + '.jpg', url).href;
+    // decoded, so a name with spaces ("IAT343 - Image1") finds its file
+    const name = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.[^.]+$/, '');
+    return new URL('thumbs/' + encodeURIComponent(name) + '.jpg', url).href;
   };
 
   const thumb = (el, block) => {
@@ -1832,7 +1835,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if ('ResizeObserver' in window) new ResizeObserver(rebuild).observe(document.body);
   document.fonts?.ready.then(rebuild);
   window.addEventListener('load', rebuild);
-  // the content rises into place as the page opens (data-reveal): redraw once
+  // the content rises into place as the page opens (data-rise): redraw once
   // it has landed, since it was measured part way up
   page.addEventListener('animationend', rebuild);
   build();

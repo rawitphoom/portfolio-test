@@ -1022,7 +1022,7 @@
 
 /***************************** SLIDE UP ON OPEN *****************************/
 
-/* Pages that opt in (data-reveal on the case study) open with the content
+/* Pages that opt in (data-rise on the case study) open with the content
    rising from the bottom of the window into place, in step with the
    Contents rail and the minimap following it: the content first, then, once
    it has mostly landed, the rail from the left and the map from the right.
@@ -1034,8 +1034,8 @@
    reduced motion. */
 @media (prefers-reduced-motion: no-preference) {
 
-    [data-reveal] .case-hero,
-    [data-reveal] .case-main {
+    [data-rise] .case-hero,
+    [data-rise] .case-main {
         animation: rise-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
     }
 }
