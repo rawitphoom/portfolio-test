@@ -876,7 +876,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const send = form.querySelector('button');
 
   const ME = 'rawitphoom1@gmail.com';
-  const AVATAR = 'assets/images/profile_photo.jpg';
+  const AVATAR = '/assets/images/profile_photo.jpg';
   const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
   let asked = false;        // has the email been asked for yet
@@ -1185,7 +1185,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const stickers = [...document.querySelectorAll('[data-lottie]')];
   if (!stickers.length || !('IntersectionObserver' in window)) return;
 
-  const PLAYER = 'scripts/vendor/lottie_light.min.js';
+  const PLAYER = '/scripts/vendor/lottie_light.min.js';
   const still = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   let loading = null;
@@ -1379,7 +1379,7 @@ document.addEventListener('DOMContentLoaded', () => {
   whenNear(arrows, '400px', async () => {
     const [{ ShaderMount, fragmentShader }, shape] = await Promise.all([
       loadLiquidMetal(),
-      loadImage('assets/images/chrome-arrow-metal.png'),
+      loadImage('/assets/images/chrome-arrow-metal.png'),
     ]);
 
     arrows.forEach((arrow) => {
@@ -1435,7 +1435,7 @@ document.addEventListener('DOMContentLoaded', () => {
   whenNear([mark], '600px', async () => {
     const [{ ShaderMount, fragmentShader }, shape] = await Promise.all([
       loadLiquidMetal(),
-      loadImage('assets/images/footer-rawi-metal.png'),
+      loadImage('/assets/images/footer-rawi-metal.png'),
     ]);
 
     try {
