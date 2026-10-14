@@ -175,6 +175,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Safari, and every browser on an iPhone (they all run on Apple's engine).
+// Two things below need to know: the avatar file, and the ring's bend.
+const appleEngine = (() => {
+  const ua = navigator.userAgent;
+  return (/AppleWebKit/.test(ua) && !/Chrome\/|Chromium|Edg\//.test(ua)) ||
+    /CriOS|FxiOS|EdgiOS/.test(ua);
+})();
+
 // The animated avatar in the header comes in two copies, both with a see
 // through background: a WebM (VP9) for most browsers and an HEVC MP4 for
 // Apple's. Safari, and every iPhone browser since they all run on Apple's
@@ -184,9 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
 // rather than left to the browser: Chrome on a Mac can play that MP4 too, but
 // it would drop the see through layer and give Chrome the white box instead.
 document.addEventListener('DOMContentLoaded', () => {
-  const ua = navigator.userAgent;
-  const appleEngine = (/AppleWebKit/.test(ua) && !/Chrome\/|Chromium|Edg\//.test(ua)) ||
-    /CriOS|FxiOS|EdgiOS/.test(ua);
   if (!appleEngine) return;
 
   document.querySelectorAll('video.logo-avatar').forEach((video) => {
@@ -544,9 +549,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // Photo ring bend: cut each photo into upright strips that about.css turns
 // along an arc, so the photo curves in round the ring rather than sitting
 // flat. Runs with reduced motion too: the bend is shape, not movement.
+//
+// Not on Apple's engine. The bend turns 20 photos into 80 separately drawn 3D
+// strips, and on iPhone the ring came up black once it had them; an iPhone
+// draws 3D layers black when it runs short of graphics memory for them. There
+// the photos stay flat, as they were when the ring worked.
 document.addEventListener('DOMContentLoaded', () => {
   const ring = document.querySelector('#photo-ring');
-  if (!ring) return;
+  if (!ring || appleEngine) return;
 
   const slices = parseInt(
     getComputedStyle(ring).getPropertyValue('--slices'), 10) || 4;
