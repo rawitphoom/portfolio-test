@@ -1585,3 +1585,265 @@ document.addEventListener('DOMContentLoaded', () => {
   if (document.readyState === 'complete') begin();
   else window.addEventListener('load', begin, { once: true });
 });
+
+/* ---------------------------------------------------------------- *
+ * Page minimap
+ *
+ * A small live overview of the whole page down the right hand side, with a
+ * frame showing where the visitor is (styles in case-study.css). A page turns
+ * it on with data-minimap on its case study; for now that is LintelAI only.
+ *
+ * It is drawn from the page itself rather than from a screenshot, so it is
+ * always up to date: every picture and video poster becomes a tiny thumbnail
+ * at its own place, every heading and paragraph a grey bar, every panel an
+ * outline. Across, it covers only the article column (the content), not the
+ * whole window, so the content fills the map and the "you are here" frame
+ * sits squarely on it rather than off to one side. Down, it runs from the top
+ * of the page to the bottom of the Next project card; the contact section and
+ * footer are not drawn. Pictures come from small ready made thumbnails (see
+ * thumb below), about 100KB for a whole page.
+ *
+ * The map is a short window onto that drawing rather than the whole of it: the
+ * drawing is longer than the map, and slides through it as the page scrolls,
+ * at the same rate the page moves through its own length, so the top of the
+ * page shows at the top and the end at the end, and the frame is always in
+ * view.
+ *
+ * It slides in from the right as the page opens, while the Contents rail
+ * slides in from the left (case-study.css), and back out once the
+ * visitor has scrolled past the Next project card, so the contact section and
+ * the footer have the page to themselves. Clicking it jumps
+ * there; dragging scrubs through the page. It is sized to the room in
+ * the right margin and left out when there is none (tablets, phones). It is
+ * hidden from screen readers: the Contents rail is the way around for them.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const page = document.querySelector('[data-minimap]');
+  if (!page) return;
+
+  const MAX_W = 48;         // px, the widest the map gets
+  const MAX_H = 0.5;        // of the window's height, the tallest the map's window gets
+  const GAP = 20;           // px kept clear of the content and of the window edge
+  const content = page.querySelector('.case-main') || page;
+  // where the map stops, and bows out: the Next project card, once its bottom
+  // edge is this far up the window (the card has been seen)
+  const end = page.querySelector('.case-next');
+  const END_AT = 0.5;       // of the window's height from the top
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  const map = document.createElement('div');
+  map.className = 'minimap';
+  map.setAttribute('aria-hidden', 'true');
+  // the card crops the drawing; the frame sits outside it so it can overhang
+  const clip = document.createElement('div');
+  clip.className = 'minimap-clip';
+  const layer = document.createElement('div');
+  layer.className = 'minimap-page';
+  clip.append(layer);
+  const view = document.createElement('div');
+  view.className = 'minimap-view';
+  map.append(clip, view);
+  document.body.append(map);
+
+  // what gets drawn, and as what
+  const KINDS = [
+    ['minimap-panel', '.case-feature, .case-next-link, .connect-border-wrap, .case-meta-card'],
+    ['minimap-text', 'p, li, figcaption, .case-next-label, .case-next-title, .case-next-sub'],
+    ['minimap-heading', 'h1, h2, h3, h4'],
+    ['minimap-media', 'img, video'],
+  ];
+  // the fixed bars and menus are not part of the page's length
+  const SKIP = 'header, .hamburger, .minimap, .page-gradient, .case-contents';
+  // the type settings each line of text is drawn with, copied from the page
+  const TYPE = ['fontFamily', 'fontSize', 'fontWeight', 'fontStyle', 'lineHeight', 'letterSpacing',
+    'textTransform', 'textAlign', 'whiteSpace', 'color', 'fontVariantNumeric'];
+
+  let scale = 0;
+  let enabled = false;
+  let ready = false;  // held off until the map has been drawn once off screen
+  let endY = 0;       // where the drawing stops, in page pixels
+  let slide = 0;      // how much longer the drawing is than the map, in map pixels
+
+  // Each picture and clip has a tiny thumbnail (160px wide, a few KB) of the
+  // same name in a thumbs/ folder beside it: for a clip, a frame from 40% of
+  // the way through, since several recordings open on a blank screen. They
+  // load straight away, so the map shows real pictures from the start rather
+  // than grey, while the page itself still loads its full size pictures only
+  // as they come into view. Anything without a thumbnail falls back to its
+  // poster, or to its own picture once that has loaded on the page.
+  const thumbUrl = (el) => {
+    const src = el.tagName === 'VIDEO'
+      ? el.querySelector('source')?.getAttribute('src')
+      : el.getAttribute('src');
+    if (!src) return null;
+    const url = new URL(src, location.href);
+    const name = url.pathname.split('/').pop().replace(/\.[^.]+$/, '');
+    return new URL('thumbs/' + name + '.jpg', url).href;
+  };
+
+  const thumb = (el, block) => {
+    const fallback = () => {
+      if (el.tagName === 'VIDEO') {
+        const poster = el.getAttribute('poster');
+        if (poster) block.style.backgroundImage = `url("${new URL(poster, location.href)}")`;
+        return;
+      }
+      const fill = () => { block.style.backgroundImage = `url("${el.currentSrc || el.src}")`; };
+      if (el.complete && el.naturalWidth) fill();
+      else el.addEventListener('load', fill, { once: true });
+    };
+    const small = thumbUrl(el);
+    if (!small) return fallback();
+    const probe = new Image();
+    probe.onload = () => { block.style.backgroundImage = `url("${small}")`; };
+    probe.onerror = fallback;
+    probe.src = small;
+  };
+
+  // Text is drawn as itself: the same words at the same width in the same
+  // type, then shrunk to the map's scale, so it wraps line for line as it
+  // does on the page. Far too small to read, but the map shows real lines and
+  // paragraph shapes rather than solid bars.
+  const setText = (el, block, r) => {
+    const cs = getComputedStyle(el);
+    const words = document.createElement('span');
+    words.className = 'minimap-words';
+    for (const prop of TYPE) words.style[prop] = cs[prop];
+    words.style.width = r.width + 'px';
+    words.style.transform = `scale(${scale})`;
+    words.textContent = el.textContent.replace(/\s+/g, ' ').trim();
+    block.append(words);
+  };
+
+  const build = () => {
+    // the rail's height, and how far the title sits below the top of the
+    // hero, for the CSS that starts the title level with the rail
+    const rail = page.querySelector('.case-contents');
+    if (rail) page.style.setProperty('--rail-h', rail.offsetHeight + 'px');
+    const hero = page.querySelector('.case-hero');
+    const title = hero && hero.querySelector('.case-title');
+    if (title) {
+      // measured on screen, title against hero: they move together, so the
+      // gap between them stays the same whatever the padding above them is
+      const drop = title.getBoundingClientRect().top - hero.getBoundingClientRect().top;
+      page.style.setProperty('--title-drop', Math.round(drop) + 'px');
+    }
+
+    const column = content.getBoundingClientRect();
+    const left = column.left + window.scrollX;   // the map starts at the column's left edge
+    const docW = column.width;
+    endY = end
+      ? end.getBoundingClientRect().bottom + window.scrollY + 24
+      : document.documentElement.scrollHeight;
+    // room for the map plus the frame's overhang on each side, between the
+    // content (with a gap) and the map's own distance from the window edge
+    const edge = parseFloat(getComputedStyle(map).right) || GAP;
+    const room = window.innerWidth - column.right - GAP - edge - 16;
+    const maxW = Math.min(MAX_W, room);
+    enabled = maxW >= 32;
+    map.hidden = !enabled;
+    if (!enabled) return;
+
+    // the drawing's size is set by the width; the map is a window onto it
+    scale = maxW / docW;
+    const drawH = endY * scale;
+    const mapH = Math.min(drawH, window.innerHeight * MAX_H);
+    slide = drawH - mapH;
+    map.style.width = docW * scale + 'px';
+    map.style.height = mapH + 'px';
+    layer.style.height = drawH + 'px';
+    view.style.height = Math.max(window.innerHeight * scale, 6) + 'px';
+
+    const frag = document.createDocumentFragment();
+    for (const [kind, selector] of KINDS) {
+      document.querySelectorAll(selector).forEach((el) => {
+        if (el.closest(SKIP) || el.closest('[hidden]')) return;
+        const r = el.getBoundingClientRect();
+        if (r.width < 2 || r.height < 2) return;
+        if (r.top + window.scrollY > endY) return;   // below the end of the map
+        const block = document.createElement('span');
+        block.className = 'minimap-block ' + kind;
+        block.style.left = (r.left + window.scrollX - left) * scale + 'px';
+        block.style.top = (r.top + window.scrollY) * scale + 'px';
+        block.style.width = Math.max(r.width * scale, 1) + 'px';
+        block.style.height = Math.max(r.height * scale, 1) + 'px';
+        if (kind === 'minimap-media') thumb(el, block);
+        else if (kind !== 'minimap-panel') setText(el, block, r);
+        frag.append(block);
+      });
+    }
+    layer.replaceChildren(frag);
+    sync();
+  };
+
+  // how far through the drawing to slide: 0 at the top of the page, all the
+  // way once the end of the drawing reaches the bottom of the window
+  const offset = () => {
+    const travel = Math.max(1, endY - window.innerHeight);
+    return Math.min(1, Math.max(0, window.scrollY / travel)) * slide;
+  };
+
+  const sync = () => {
+    if (!enabled) return;
+    const shift = offset();
+    layer.style.transform = `translateY(${-shift}px)`;
+    // held inside the map: near the end the window also shows the contact
+    // section, which the map does not draw, so the frame rests at the bottom
+    const room = map.clientHeight - view.offsetHeight;
+    const top = Math.min(room, Math.max(0, window.scrollY * scale - shift));
+    view.style.transform = `translateY(${top}px)`;
+    const past = end && end.getBoundingClientRect().bottom < window.innerHeight * END_AT;
+    map.classList.toggle('is-shown', ready && !past);
+  };
+
+  // redrawn whenever the page changes size, but not more than every 200ms
+  let timer = 0;
+  const rebuild = () => {
+    clearTimeout(timer);
+    timer = setTimeout(build, 200);
+  };
+
+  // jump to a point on the map, centring the window on it
+  const jump = (clientY, smooth) => {
+    const y = (clientY - map.getBoundingClientRect().top + offset()) / scale - window.innerHeight / 2;
+    window.scrollTo({ top: Math.max(0, y), behavior: smooth && !reduce.matches ? 'smooth' : 'instant' });
+  };
+
+  let pressed = false;
+  let dragged = false;
+  map.addEventListener('pointerdown', (e) => {
+    pressed = true;
+    dragged = false;
+    map.setPointerCapture(e.pointerId);
+  });
+  map.addEventListener('pointermove', (e) => {
+    if (!pressed) return;
+    dragged = true;
+    jump(e.clientY, false);
+  });
+  map.addEventListener('pointerup', (e) => {
+    if (pressed && !dragged) jump(e.clientY, true);
+    pressed = false;
+  });
+  map.addEventListener('pointercancel', () => { pressed = false; });
+
+  window.addEventListener('scroll', sync, { passive: true });
+  window.addEventListener('resize', rebuild, { passive: true });
+  if ('ResizeObserver' in window) new ResizeObserver(rebuild).observe(document.body);
+  document.fonts?.ready.then(rebuild);
+  window.addEventListener('load', rebuild);
+  // the content rises into place as the page opens (data-reveal): redraw once
+  // it has landed, since it was measured part way up
+  page.addEventListener('animationend', rebuild);
+  build();
+  // Let go once the page's content has mostly risen into place, so the map
+  // follows it in; the Contents rail slides in from the left at the same
+  // moment (case-study.css, the same 0.9s). Only this first entrance waits: if
+  // the map fades out at the end of the page, it comes back straight away.
+  // (a little under 0.9s: this timer starts a moment later than the CSS one)
+  const ENTER_AFTER = reduce.matches ? 0 : 780;   // ms
+  setTimeout(() => requestAnimationFrame(() => {
+    ready = true;
+    sync();
+  }), ENTER_AFTER);
+});

@@ -856,3 +856,198 @@
     outline: 2px solid var(--accent-color);
     outline-offset: -4px;
 }
+
+/***************************** PAGE MINIMAP *****************************/
+
+/* On a page with the minimap, the Contents rail is the map's partner on the
+   left: both sit centred on the window, level with each other, and slide in
+   as the page opens, the rail from the left and the map from the right. The
+   rail starts beside the hero rather than below it. Only as the side rail on
+   wider screens; below 1024px it is a strip under the header and stays put.
+
+   The rail's slide is a CSS animation rather than a class main.js removes:
+   an animation holds its starting position from the very first frame, where
+   a class added by script came a frame late and the rail flickered on, off,
+   then slid in. */
+@media (min-width: 1025px) {
+    /* The page's title lines up with "Contents" at the top of the rail. The
+       rail is centred on the window, so its top is half the window's height
+       less half its own height; the page's top padding is that distance less
+       the height of what sits above the title (the eyebrow), so the title
+       lands level with the rail. main.js measures both into --rail-h and
+       --title-drop. Never closer to the top than the fixed header allows. */
+    [data-minimap].case-study {
+        padding-top: max(7.5rem, calc(50vh - var(--rail-h, 20rem) / 2 - var(--title-drop, 0px)));
+    }
+
+    [data-minimap] .case-contents {
+        grid-row: 1 / span 2;
+        /* stuck at the middle of the window, then pulled up by half its own
+           height, so its middle is on the window's middle */
+        top: 50%;
+        translate: 0 -50%;
+    }
+}
+
+@media (min-width: 1025px) and (prefers-reduced-motion: no-preference) {
+    [data-minimap] .case-contents {
+        /* the same long, soft landing as the map */
+        /* in after the content has mostly risen into place (0.9s), in step with
+           the minimap on the right */
+        animation: rail-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.9s both;
+    }
+}
+
+/* both ends spelled out: with only a starting keyframe, Safari's engine
+   left these stuck part way, finished but faded */
+@keyframes rail-in {
+    from {
+        translate: -2.5rem -50%;
+        opacity: 0;
+    }
+
+    to {
+        translate: 0 -50%;
+        opacity: 1;
+    }
+}
+
+/* A small live overview of the page down the right hand side, with a frame
+   showing where the visitor is. main.js draws it from the page's own layout
+   on pages that opt in (data-minimap on the case study): pictures and video
+   posters as tiny thumbnails, text as soft grey blocks. Clicking or dragging
+   on it moves the page.
+
+   Only where the right margin has room for it; main.js sizes it to that
+   margin and leaves it out entirely when there is none (tablets, phones). */
+.minimap {
+    position: fixed;
+    /* centred on the window, like the Contents rail on the left */
+    top: 50%;
+    /* in from the window's edge; main.js reads this to size the map */
+    right: 3rem;
+    z-index: 900;
+    /* width and height are set by main.js */
+    cursor: pointer;
+    touch-action: none;
+    user-select: none;
+    /* parked off the right edge until the page has opened */
+    translate: calc(100% + 3.5rem) -50%;
+    opacity: 0;
+    /* a long, soft landing: it travels most of the way at once and spends the
+       rest of the time settling, so it glides in rather than arriving */
+    transition:
+        translate 1.6s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 1.2s cubic-bezier(0.33, 1, 0.68, 1);
+}
+
+.minimap.is-shown {
+    translate: 0 -50%;
+    opacity: 1;
+}
+
+/* The map itself: a small dark card that crops the drawing to its height.
+   The frame sits outside it (below), so the frame can be wider than the card. */
+.minimap-clip {
+    position: absolute;
+    inset: 0;
+    border-radius: 0.25rem;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08), 0 1rem 2.5rem rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+}
+
+/* the drawing: longer than the map, and slid through it by main.js as the
+   page scrolls, so it follows the page slowly rather than all at once */
+.minimap-page {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    pointer-events: none;
+    will-change: transform;
+}
+
+.minimap-block {
+    position: absolute;
+    border-radius: 1px;
+}
+
+/* Text: the real words, set at full size and shrunk into place by main.js
+   (the scale is on .minimap-words), in the page's own type and colour. */
+.minimap-words {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    transform-origin: 0 0;
+    pointer-events: none;
+}
+
+/* a picture or a clip: grey until its picture is loaded on the page, then
+   the picture itself */
+.minimap-media {
+    background: rgba(255, 255, 255, 0.1) center / cover no-repeat;
+}
+
+/* panels (the highlighted section, the Next project card): just an outline */
+.minimap-panel {
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 2px;
+}
+
+/* Where the visitor is: a frame the shape of the window, in the site's
+   silver. It reaches past the card on both sides, like a lens laid over the
+   map, so it reads at a glance even this small. */
+.minimap-view {
+    position: absolute;
+    left: -0.45rem;
+    right: -0.45rem;
+    top: 0;
+    border-radius: 0.3rem;
+    border: 1.5px solid rgba(211, 220, 230, 0.9);
+    background: rgba(255, 255, 255, 0.04);
+    box-shadow:
+        0 0 0.7rem rgba(170, 210, 255, 0.35),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    pointer-events: none;
+    will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .minimap {
+        transition: opacity 0.2s ease;
+    }
+}
+
+/***************************** SLIDE UP ON OPEN *****************************/
+
+/* Pages that opt in (data-reveal on the case study) open with the content
+   rising from the bottom of the window into place, in step with the
+   Contents rail and the minimap following it: the content first, then, once
+   it has mostly landed, the rail from the left and the map from the right.
+   All three use the same 1.6s and the same long, soft landing. It plays once as the page opens and has nothing to
+   do with scrolling.
+
+   A CSS animation, which holds its starting position from the very first
+   frame, so nothing shows in place first and then jumps. Nothing moves for
+   reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+
+    [data-reveal] .case-hero,
+    [data-reveal] .case-main {
+        animation: rise-in 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+    }
+}
+
+@keyframes rise-in {
+    from {
+        translate: 0 25vh;
+        opacity: 0;
+    }
+
+    to {
+        translate: 0 0;
+        opacity: 1;
+    }
+}
