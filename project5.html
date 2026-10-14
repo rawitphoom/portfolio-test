@@ -114,7 +114,7 @@
             <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
         </nav>
     </header>
-    <section class="case-study" data-minimap data-rise>
+    <section class="case-study" data-reduced-motion="play-button" data-minimap data-rise>
 
         <!-- HERO -->
         <div class="case-hero">
@@ -186,12 +186,17 @@
 
             <section class="case-section" id="final-product">
                 <h2>Final Product</h2>
-                <div class="case-video">
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project5/IAT339-Video.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
+                <!-- auto-video: plays muted on a loop while on screen, pauses off it (main.js) -->
+                <figure class="case-video">
+                    <div class="case-phone-media">
+                        <video class="auto-video" muted loop playsinline preload="metadata" width="1280" height="720"
+                            poster="assets/images/contents/project5/IAT339-Video-poster.jpg"
+                            aria-label="Screen recording of the Whimsy Bites website: the menu of burgers, nuggets and fries, the Whimsy Jelly product page, checkout, the support ticket form and the about page">
+                            <source src="assets/images/contents/project5/IAT339-Video.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <figcaption>A walk through the site: the menu, a product page, checkout, support and about.</figcaption>
+                </figure>
                 <figure>
                     <img src="assets/images/contents/project5/IAT339-Image2.webp" alt="Final website">
                 </figure>

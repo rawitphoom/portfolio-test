@@ -329,10 +329,12 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   requestAnimationFrame(follow);
 
-  // grow the ring over anything clickable
-  const CLICKABLE = 'a, button, label, input, textarea, .project-card, .faq-item label';
+  // grow the ring over anything clickable: the case study pictures and the
+  // picture viewer too, where a click anywhere closes it. Set on every
+  // mouseover, not only added, so it never stays open after the viewer closes.
+  const CLICKABLE = 'a, button, label, input, textarea, .project-card, .faq-item label, .zoom-pic, .zoom-box';
   document.addEventListener('mouseover', e => {
-    if (e.target.closest(CLICKABLE)) ring.classList.add('is-hovering');
+    ring.classList.toggle('is-hovering', !!e.target.closest(CLICKABLE));
   });
   document.addEventListener('mouseout', e => {
     if (e.target.closest(CLICKABLE)) ring.classList.remove('is-hovering');
@@ -375,6 +377,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // and while it is open the page behind stays put (the CSS locks it; this
     // stops the glide from moving it anyway)
     if (document.getElementById('sidebar-active')?.checked) return;
+    // while the picture viewer is open, the page behind it stays put
+    if (document.querySelector('.zoom-box[open]')) return;
 
     e.preventDefault();
     target = Math.min(Math.max(target + e.deltaY * STEP, 0), maxScroll());
@@ -1849,4 +1853,88 @@ document.addEventListener('DOMContentLoaded', () => {
     ready = true;
     sync();
   }), ENTER_AFTER);
+});
+
+/* ---------------------------------------------------------------- *
+ * Click to view larger
+ *
+ * Every picture in a case study's content lifts a little when pointed at
+ * (case-study.css) and, clicked, opens over the page, fitted whole inside the
+ * window so there is nothing to scroll. A click anywhere in the viewer, the
+ * close button or Escape goes back; the page underneath never moved.
+ *
+ * Two kinds of trigger. Links marked [data-zoom] point at the picture's own
+ * file (and without JavaScript simply open it). Every other picture in the
+ * content is picked up here, so a new one needs nothing in its markup; the Next
+ * project thumbnail is left alone (the whole card is already a link), as is
+ * anything else inside a link. Keyboard users reach the pictures with Tab and
+ * open them with Enter or Space.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const links = [...document.querySelectorAll('a[data-zoom]')];
+  const pictures = [...document.querySelectorAll('.case-main figure img')]
+    .filter((img) => !img.closest('a, .case-next'));
+  if ((!links.length && !pictures.length) || typeof HTMLDialogElement !== 'function') return;
+
+  const box = document.createElement('dialog');
+  box.className = 'zoom-box';
+  box.setAttribute('aria-label', 'Picture viewer');
+  box.innerHTML =
+    '<button class="zoom-close" type="button" aria-label="Close">&times;</button>' +
+    '<div class="zoom-scroll"><img class="zoom-img" alt=""></div>';
+  document.body.append(box);
+
+  const img = box.querySelector('.zoom-img');
+
+  const open = (src, alt) => {
+    img.src = src;
+    img.alt = alt || '';
+    box.showModal();
+    // the viewer sits above everything else on the page, the ring-and-dot
+    // cursor included, so the cursor moves inside it while it is open
+    box.append(...document.querySelectorAll('.cursor-dot, .cursor-ring'));
+    document.documentElement.style.overflow = 'hidden';
+    // a frame later, so the fade and the settle actually play
+    requestAnimationFrame(() => box.classList.add('is-in'));
+  };
+
+  // hand the page its scroll back; safe to run twice
+  const release = () => {
+    box.classList.remove('is-in');
+    document.body.append(...box.querySelectorAll('.cursor-dot, .cursor-ring'));
+    document.documentElement.style.overflow = '';
+  };
+
+  const shut = () => {
+    if (box.open) box.close();
+    release();
+  };
+
+  links.forEach((link) => {
+    link.addEventListener('click', (e) => {
+      e.preventDefault();
+      open(link.getAttribute('href'), link.querySelector('img')?.alt);
+    });
+  });
+
+  pictures.forEach((pic) => {
+    pic.classList.add('zoom-pic');
+    pic.tabIndex = 0;
+    pic.setAttribute('role', 'button');
+    pic.setAttribute('aria-label', 'View larger: ' + (pic.alt || 'picture'));
+    const show = () => open(pic.currentSrc || pic.src, pic.alt);
+    pic.addEventListener('click', show);
+    pic.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        show();
+      }
+    });
+  });
+
+  box.querySelector('.zoom-close').addEventListener('click', shut);
+  // a click anywhere in the viewer, the picture included, closes it
+  box.addEventListener('click', shut);
+  // Escape closes the dialog by itself; this catches that path
+  box.addEventListener('close', release);
 });

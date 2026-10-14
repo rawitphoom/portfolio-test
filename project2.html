@@ -121,14 +121,16 @@
         </nav>
     </header>
 
-    <section class="case-study" data-minimap data-rise>
+    <section class="case-study" data-reduced-motion="play-button" data-minimap data-rise>
 
         <!-- HERO -->
         <div class="case-hero">
             <p class="case-eyebrow">Academic Project &middot; NextStep</p>
+            <h1 class="case-title">NextStep: Jobs for International Students</h1>
 
             <figure class="case-cover">
-                <img src="assets/images/contents/project2/IAT334_Cover.webp" alt="NextStep cover">
+                <img src="assets/images/contents/project2/IAT334_Cover.webp" width="1430" height="1044"
+                    alt="NextStep cover">
             </figure>
 
             <div class="case-meta">
@@ -156,8 +158,11 @@
             <p class="case-contents-label">Contents</p>
             <nav class="case-contents-nav">
                 <span class="case-contents-marker" aria-hidden="true"></span>
-                <a href="#context">Context</a>
-                <a href="#process">Process</a>
+                <a href="#overview">Overview</a>
+                <a href="#problem">The Problem</a>
+                <a href="#sketches">Sketches</a>
+                <a href="#design">Design and Prototyping</a>
+                <a href="#challenge">Challenge</a>
                 <a href="#final-product">Final Product</a>
                 <a href="#reflection">Reflection</a>
             </nav>
@@ -165,62 +170,125 @@
 
         <div class="case-main">
 
-            <section class="case-section" id="context">
-                <h2>Context</h2>
+            <!-- OVERVIEW -->
+            <section class="case-section" id="overview">
+                <h2>Overview</h2>
                 <p>
                     NextStep is an app designed to empower international students seeking part-time employment. The app combines job searching, AI-driven interview preparation, and work-hour tracking into one platform, this app simplifies the challenges students face when balancing work and academics.
                 </p>
                 <figure>
-                    <img src="assets/images/contents/project2/IAT334_Mockup1.webp" alt="NextStep mockup cover">
+                    <img src="assets/images/contents/project2/IAT334_Mockup1.webp" width="2000" height="1500"
+                        loading="lazy" decoding="async"
+                        alt="Three phones showing the Account screen: the inbox, the profile with a ring of 18 out of 20 hours worked this week, and a date picker">
+                    <figcaption>The Account screen, with the work hours tracker in the middle.</figcaption>
                 </figure>
             </section>
 
-            <section class="case-section" id="process">
-                <h2>Process</h2>
+            <!-- THE PROBLEM -->
+            <section class="case-section" id="problem">
+                <h2>The Problem</h2>
                 <p>
-                    The project began by identifying key pain points for international students, including limited work-hour regulations and interview preparation barriers. My role focused on designing and prototyping the user interface and interaction flows. I created interactive elements such as the work-hour tracker, job application buttons, and navigation for key pages like Home, Saved Jobs, and Account. Using Figma and ProtoPie, I developed features such as a dynamic timer for tracking hours, login/sign-up conditions, and a search function. To ensure the app met user expectations, we conducted usability tests and refined the design based on feedback.
+                    The project began by identifying key pain points for international students, including limited work-hour regulations and interview preparation barriers.
                 </p>
+            </section>
+
+            <!-- SKETCHES -->
+            <section class="case-section" id="sketches">
+                <h2>Sketches</h2>
                 <figure>
-                    <img src="assets/images/contents/project2/IAT334_Sketch1.webp" alt="Early sketches">
+                    <img src="assets/images/contents/project2/IAT334_Sketch1.webp" width="2400" height="1624"
+                        loading="lazy" decoding="async"
+                        alt="Three phone sketches: the home screen with a job search, an interview practice screen with numbered questions, and the work hours tracker">
+                    <figcaption>The first sketches of home, interview practice and the hours tracker.</figcaption>
                 </figure>
+                <div class="case-pair">
+                    <figure>
+                        <img src="assets/images/contents/project2/IAT334_Sketch2.webp" width="2400" height="2013"
+                            loading="lazy" decoding="async"
+                            alt="Notebook pages sketching the home and application pages and the login and register flow">
+                        <figcaption>Home, applying for a job, and signing up.</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="assets/images/contents/project2/IAT334_Sketch3.webp" width="2400" height="2037"
+                            loading="lazy" decoding="async"
+                            alt="Notebook pages sketching the saved jobs page, the profile and hours tracking, and notes on each tab in the navigation bar">
+                        <figcaption>Saved jobs, the profile, and what each tab is for.</figcaption>
+                    </figure>
+                </div>
+            </section>
+
+            <!-- DESIGN AND PROTOTYPING: the centre of the case study, so it gets the highlighted panel -->
+            <section class="case-section case-feature" id="design">
+                <h2>Design and Prototyping</h2>
                 <figure>
-                    <img src="assets/images/contents/project2/IAT334_Sketch2.webp" alt="Interface sketches">
+                    <img src="assets/images/contents/project2/IAT334_FigmaDesignProcess1.webp" width="2400" height="1956"
+                        loading="lazy" decoding="async"
+                        alt="The Figma board: the app's design identity, early layouts, and the prototyped flows for login, home, saved jobs, account and interviews">
+                    <figcaption>The Figma board, from early layouts to the finished, prototyped flows.</figcaption>
                 </figure>
-                <figure>
-                    <img src="assets/images/contents/project2/IAT334_Sketch3.webp" alt="Flow sketches">
-                </figure>
-                <figure>
-                    <img src="assets/images/contents/project2/IAT334_FigmaDesignProcess1.webp" alt="Figma design process">
-                </figure>
+                <p>
+                    My role focused on designing and prototyping the user interface and interaction flows. I created interactive elements such as the work-hour tracker, job application buttons, and navigation for key pages like Home, Saved Jobs, and Account. Using Figma and ProtoPie, I developed features such as a dynamic timer for tracking hours, login/sign-up conditions, and a search function. To ensure the app met user expectations, we conducted usability tests and refined the design based on feedback.
+                </p>
+            </section>
+
+            <!-- PROTOTYPING CHALLENGE -->
+            <section class="case-section" id="challenge">
+                <h2>Prototyping Challenge</h2>
                 <p>
                     One of the biggest challenges was prototyping the AI interview practice feature in ProtoPie. I had to make the counting timer that started when users pressed &ldquo;Record,&rdquo; which required adding simple code to simulate the countdown. Another challenge was creating how the AI responds to specific keywords. I set up keyword-triggered replies to make it feel interactive without real AI. Since this was just a prototype, the AI couldn&rsquo;t truly listen, so I had to carefully plan how the interactions would feel real.
                 </p>
                 <figure>
-                    <img src="assets/images/contents/project2/IAT334_Mockup2.webp" alt="UI layout challenge mockup">
+                    <img src="assets/images/contents/project2/IAT334_Mockup2.webp" width="1430" height="1044"
+                        loading="lazy" decoding="async"
+                        alt="Three phones showing the Practice tab: a question being answered, setting up practice from a real job posting, and the history of past sessions">
+                    <figcaption>Interview practice: answering, setting up from a real job posting, and past sessions.</figcaption>
                 </figure>
             </section>
 
+            <!-- FINAL PRODUCT: three recordings of the prototype, side by side -->
             <section class="case-section" id="final-product">
                 <h2>Final Product</h2>
-                <div class="case-video-row">
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project2/IAT334_First.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project2/IAT334_Second.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project2/IAT334_Third.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                <div class="case-phones">
+                    <figure>
+                        <div class="case-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="780" height="1688"
+                                poster="assets/images/contents/project2/IAT334_First-poster.jpg"
+                                aria-label="Screen recording of a tour of the prototype: job listings on Home, interview practice, and the work hours tracker on Account">
+                                <source src="assets/images/contents/project2/IAT334_First.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>A tour: jobs, interview practice and the hours tracker.</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="case-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="780" height="1688"
+                                poster="assets/images/contents/project2/IAT334_Second-poster.jpg"
+                                aria-label="Screen recording of a practice interview with Stef, the AI helper, answering a question and reading the feedback">
+                                <source src="assets/images/contents/project2/IAT334_Second.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>A practice interview with Stef, the AI helper.</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="case-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="780" height="1688"
+                                poster="assets/images/contents/project2/IAT334_Third-poster.jpg"
+                                aria-label="Screen recording of the practice history: past recordings, their feedback, and retaking an interview">
+                                <source src="assets/images/contents/project2/IAT334_Third.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>Past sessions, their feedback, and a retake.</figcaption>
+                    </figure>
                 </div>
                 <figure>
-                    <img src="assets/images/contents/project2/IAT334_Mockup3.webp" alt="Final mockup result">
+                    <img src="assets/images/contents/project2/IAT334_Mockup3.webp" width="2040" height="1530"
+                        loading="lazy" decoding="async"
+                        alt="A phone lying flat, showing a practice interview question">
+                    <figcaption>A practice question, ready to record.</figcaption>
                 </figure>
             </section>
 
+            <!-- REFLECTION -->
             <section class="case-section" id="reflection">
                 <h2>Reflection</h2>
                 <p>

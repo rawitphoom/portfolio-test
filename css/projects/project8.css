@@ -16,13 +16,10 @@
 
 /* ---------- Hero ---------- */
 
-/* the name of the project, sized like the LintelAI title, with one line under it */
-.case-title {
-    font-size: clamp(2rem, 4.2vw, 3rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin: -0.5rem 0 0.75rem;
+
+/* the shared title (case-study.css), with a tighter gap: a subtitle follows */
+.tempo .case-title {
+    margin-bottom: 0.75rem;
 }
 
 .tempo-subtitle {
@@ -109,7 +106,7 @@
 /* The research board and the moodboard side by side. The board is twice as
    wide as it is tall and the moodboard nearly twice as tall as it is wide, so
    the moodboard shows as a crop from its top, the same height as the board
-   beside it, and opens full size in a new tab. */
+   beside it; a click shows the whole board over the page. */
 .tempo-pair {
     display: grid;
     grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
@@ -163,8 +160,8 @@
     margin-inline: auto;
 }
 
-/* the full size link hugs its picture, so the label sits on the picture's
-   corner rather than out at the edge of the column */
+/* the zoom link hugs its picture, so the hover lift grows the picture itself
+   rather than a box the width of the column */
 .tempo .tempo-step-media .zoom-trigger {
     width: fit-content;
     max-width: 100%;

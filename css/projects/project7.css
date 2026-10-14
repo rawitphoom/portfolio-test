@@ -6,16 +6,6 @@
 
 /* ---------- Hero ---------- */
 
-/* The other case studies open on the eyebrow alone. This one names the project
-   too, sized to sit between the eyebrow and the cover without competing with it. */
-.case-title {
-    font-size: clamp(2rem, 4.2vw, 3rem);
-    font-weight: 700;
-    line-height: 1.1;
-    letter-spacing: -0.02em;
-    margin: -0.5rem 0 2rem;
-}
-
 /* The cover is a recording rather than an image, in the same 16:9 box */
 .case-cover video {
     display: block;

@@ -122,6 +122,16 @@
     margin-bottom: 1.5rem;
 }
 
+/* The project's name under the eyebrow, sized to sit between it and the cover
+   without competing with it. */
+.case-title {
+    font-size: clamp(2rem, 4.2vw, 3rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: -0.5rem 0 2rem;
+}
+
 /* ---------- Meta cards ---------- */
 
 .case-meta {
@@ -575,42 +585,155 @@
     }
 }
 
-/***************************** OPEN FULL SIZE *****************************/
+/***************************** CLICK TO VIEW LARGER *****************************/
 
-/* An image that links to its own file, opened full size in a new tab. Used for
-   the Mixtape sitemap, whose text is too small to read in the column. */
+/* Every picture in a case study's content. Pointing at it lifts it a little,
+   which says it can be opened; clicking shows it large over the page, in the
+   viewer below, and the page stays where it was. A few (the Mixtape sitemap,
+   the Tempo boards) are links to their own file, so they open even without
+   JavaScript; the rest main.js marks .zoom-pic. */
 .zoom-trigger {
     position: relative;
     display: block;
     border-radius: 0.75rem;
-    cursor: zoom-in;
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.zoom-trigger:focus-visible {
+/* every other picture in the content, picked up by main.js: the same lift */
+.zoom-pic {
+    transition:
+        transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.zoom-trigger:hover,
+.zoom-trigger:focus-visible,
+.zoom-pic:hover,
+.zoom-pic:focus-visible {
+    transform: scale(1.03);
+    box-shadow: 0 1.25rem 3rem rgba(0, 0, 0, 0.55);
+}
+
+.zoom-trigger:focus-visible,
+.zoom-pic:focus-visible {
     outline: 2px solid var(--accent-color);
     outline-offset: 4px;
 }
 
-.zoom-hint {
-    position: absolute;
-    right: 0.9rem;
-    bottom: 0.9rem;
-    padding: 0.4rem 0.85rem;
-    border-radius: 2rem;
-    font-size: 0.8rem;
-    color: white;
-    background: rgba(0, 0, 0, 0.62);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    opacity: 0.85;
-    transition: opacity 0.25s ease;
-    pointer-events: none;
+@media (prefers-reduced-motion: reduce) {
+
+    .zoom-trigger,
+    .zoom-pic {
+        transition: none;
+    }
+
+    .zoom-trigger:hover,
+    .zoom-trigger:focus-visible,
+    .zoom-pic:hover,
+    .zoom-pic:focus-visible {
+        transform: none;
+    }
 }
 
-.zoom-trigger:hover .zoom-hint,
-.zoom-trigger:focus-visible .zoom-hint {
+/* The viewer: a dark layer over the page with the whole picture fitted inside
+   the window, as large as it will go without anything to scroll: a tall board
+   fills the height, a wide one the width. A <dialog>, so the browser looks
+   after Escape and keyboard focus. A click anywhere in it, the close button or Escape goes
+   back to exactly where you were. */
+.zoom-box {
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    color: white;
+    background: rgba(0, 0, 0, 0.9);
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.zoom-box[open].is-in {
     opacity: 1;
+}
+
+.zoom-box::backdrop {
+    background: transparent;
+}
+
+.zoom-scroll {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    padding: 4.5rem 1.5rem 2rem;
+}
+
+/* held inside the space the padding leaves, on both axes, keeping its shape */
+.zoom-img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(100%, 1400px);
+    max-height: calc(100dvh - 6.5rem);
+    object-fit: contain;
+    border-radius: 0.6rem;
+    box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.6);
+    transform: scale(0.96);
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.zoom-box.is-in .zoom-img {
+    transform: none;
+}
+
+.zoom-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.25rem;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font: inherit;
+    font-size: 1.3rem;
+    line-height: 1;
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+}
+
+.zoom-close:hover,
+.zoom-close:focus-visible {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.55);
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .zoom-box,
+    .zoom-img {
+        transition: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .zoom-scroll {
+        padding: 4rem 0.75rem 1.5rem;
+    }
+
+    .zoom-img {
+        max-height: calc(100dvh - 5.5rem);
+    }
 }
 
 /***************************** NEXT PROJECT *****************************/
@@ -1049,5 +1172,107 @@
     to {
         translate: 0 0;
         opacity: 1;
+    }
+}
+
+/***************************** SHARED PIECES *****************************/
+
+/* Pieces the newer case studies share (Consistency and NextStep so far). */
+
+/* Phone recordings side by side, each with a caption under it. The clip fills
+   its column and keeps its own shape (the width and height in the markup), so
+   nothing is stretched. On phones they stack, each held to a phone's width. */
+.case-phones {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem 1.25rem;
+    align-items: start;
+    margin-top: 2rem;
+}
+
+.case-section .case-phones figure {
+    margin: 0;
+}
+
+/* positioned, so the reduced motion play button can cover the clip */
+.case-phone-media {
+    position: relative;
+}
+
+.case-section .case-phones video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.case-section .case-phones figcaption {
+    text-align: center;
+}
+
+/* Two pictures side by side (on phones, one under the other) */
+.case-pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-items: start;
+    margin-top: 2rem;
+}
+
+.case-section .case-pair figure {
+    margin: 0;
+}
+
+.case-pair + p {
+    margin-top: 2rem;
+}
+
+/* Numbered points, each with its own small heading: challenges and the like */
+.case-points {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 2rem;
+}
+
+.case-section .case-points li {
+    margin: 0;
+    padding-left: 0;
+}
+
+.case-points-num {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.case-points h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.case-points + figure {
+    margin-top: 2.5rem;
+}
+
+@media (max-width: 600px) {
+    .case-phones {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 2rem;
+    }
+
+    .case-section .case-phones figure {
+        width: min(100%, 16rem);
+        justify-self: center;
+    }
+
+    .case-pair {
+        grid-template-columns: minmax(0, 1fr);
     }
 }

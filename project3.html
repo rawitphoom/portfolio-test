@@ -116,11 +116,12 @@
         </nav>
     </header>
 
-    <section class="case-study" data-minimap data-rise>
+    <section class="case-study" data-reduced-motion="play-button" data-minimap data-rise>
 
         <!-- HERO -->
         <div class="case-hero">
             <p class="case-eyebrow">Academic Project &middot; Consistency</p>
+            <h1 class="case-title">Consistency: Habit Tracking App</h1>
 
             <figure class="case-cover">
             <div class="cover-stage" role="img"
@@ -173,8 +174,10 @@
             <p class="case-contents-label">Contents</p>
             <nav class="case-contents-nav">
                 <span class="case-contents-marker" aria-hidden="true"></span>
-                <a href="#context">Context</a>
-                <a href="#process">Process</a>
+                <a href="#overview">Overview</a>
+                <a href="#sketches">Sketches</a>
+                <a href="#design">Design and Build</a>
+                <a href="#challenges">Challenges</a>
                 <a href="#final-product">Final Product</a>
                 <a href="#reflection">Reflection</a>
             </nav>
@@ -182,62 +185,119 @@
 
         <div class="case-main">
 
-            <section class="case-section" id="context">
-                <h2>Context</h2>
+            <!-- OVERVIEW -->
+            <section class="case-section" id="overview">
+                <h2>Overview</h2>
                 <p>
                     Consistency is a mobile app designed to help people build and maintain healthy habits through structured tracking and motivation tools. By combining traditional habit logging with geolocation features, the app allows users to log activities based on their physical location, creating a visual journey of their progress. The goal was to encourage self-discipline and long-term commitment by merging visual progress, rewards, and spatial interaction into a cohesive experience.
                 </p>
                 <figure>
-                    <img src="assets/images/contents/project3/IAT359_Mockup1.webp" alt="Consistency mockup cover">
+                    <img src="assets/images/contents/project3/IAT359_Mockup1.webp" width="2400" height="1801"
+                        loading="lazy" decoding="async"
+                        alt="Consistency on a phone: the home screen with the day's habits as illustrated cards, Boxing and Work, each with a streak">
+                    <figcaption>The home screen, with each of the day's habits as its own card.</figcaption>
                 </figure>
             </section>
 
-            <section class="case-section" id="process">
-                <h2>Process</h2>
+            <!-- SKETCHES -->
+            <section class="case-section" id="sketches">
+                <h2>Sketches</h2>
                 <p>
                     Initial concepts focused on how to integrate map-based logging with standard habit tracking cards.
                 </p>
                 <figure>
-                    <img src="assets/images/contents/project3/IAT359 - SketchesAll.webp" alt="Concept sketches">
+                    <img src="assets/images/contents/project3/IAT359%20-%20SketchesAll.webp" width="2386" height="2206"
+                        loading="lazy" decoding="async"
+                        alt="Six notebook pages of paper sketches: the home screen, the map, achievements, the monthly overview, settings and the login page">
+                    <figcaption>Paper sketches of the main screens, from the home screen and the map to achievements and settings.</figcaption>
+                </figure>
+            </section>
+
+            <!-- DESIGN AND BUILD: the centre of the case study, so it gets the highlighted panel -->
+            <section class="case-section case-feature" id="design">
+                <h2>Design and Build</h2>
+                <figure>
+                    <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.webp" width="1460" height="1198"
+                        loading="lazy" decoding="async"
+                        alt="The Figma board of final screens, grouped into sign up and survey, rewards, overview, map and logs, settings and home">
+                    <figcaption>The final designs in Figma, grouped by flow.</figcaption>
                 </figure>
                 <p>
                     Built using <strong>React Native</strong> and <strong>Expo</strong>, the project required a robust technical architecture including Firebase for authentication and Async Storage for local data persistence. A key focus was the &ldquo;Map Log&rdquo; feature, which uses <code>react-native-maps</code> to let users attach photos and locations to their habits. We also implemented a gamification system where users unlock achievement cards based on their streaks, adding a layer of visual motivation.
                 </p>
+            </section>
+
+            <!-- TECHNICAL CHALLENGES -->
+            <section class="case-section" id="challenges">
+                <h2>Technical Challenges</h2>
+                <ol class="case-points">
+                    <li>
+                        <span class="case-points-num">01</span>
+                        <h3>Navigation</h3>
+                        <p>
+                            One of the main technical challenges was managing the <strong>complex navigation structure</strong>. We needed a mix of tab-based navigation for main screens and stack-based navigation for flows like &ldquo;Create Habit.&rdquo; This required restructuring the navigation tree to allow specific screens to overlay the bottom tab bar.
+                        </p>
+                    </li>
+                    <li>
+                        <span class="case-points-num">02</span>
+                        <h3>The Stats Screen</h3>
+                        <p>
+                            Another hurdle was <strong>conditional rendering</strong> on the Stats screen, which needed to display data in three drastically different formats (weekly list, monthly grid, yearly heatmap). We solved this by creating modular sub-components and using state variables to conditionally render the correct layout without code duplication.
+                        </p>
+                    </li>
+                </ol>
                 <figure>
-                    <img src="assets/images/contents/project3/IAT359-FigmaFinalDesign.webp" alt="Figma design process">
-                </figure>
-                <p>
-                    One of the main technical challenges was managing the <strong>complex navigation structure</strong>. We needed a mix of tab-based navigation for main screens and stack-based navigation for flows like &ldquo;Create Habit.&rdquo; This required restructuring the navigation tree to allow specific screens to overlay the bottom tab bar.
-                </p>
-                <p>
-                    Another hurdle was <strong>conditional rendering</strong> on the Stats screen, which needed to display data in three drastically different formats (weekly list, monthly grid, yearly heatmap). We solved this by creating modular sub-components and using state variables to conditionally render the correct layout without code duplication.
-                </p>
-                <figure>
-                    <img src="assets/images/contents/project3/IAT359_Mockup2.webp" alt="UI layout challenge mockup">
+                    <img src="assets/images/contents/project3/IAT359_Mockup2.webp" width="2400" height="1801"
+                        loading="lazy" decoding="async"
+                        alt="The Map Log screen on a phone: a dark city map with photos of habits pinned where they happened">
+                    <figcaption>Map Log, with each habit pinned to the place it happened.</figcaption>
                 </figure>
             </section>
 
+            <!-- FINAL PRODUCT: three recordings of the app, side by side -->
             <section class="case-section" id="final-product">
                 <h2>Final Product</h2>
-                <div class="case-video-row">
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project3/IAT359_First.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project3/IAT359_Second.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <video controls muted loop playsinline preload="metadata">
-                        <source src="assets/images/contents/project3/IAT359_Third.mp4" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
+                <div class="case-phones">
+                    <figure>
+                        <div class="case-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="720" height="1558"
+                                poster="assets/images/contents/project3/IAT359_First-poster.jpg"
+                                aria-label="Screen recording of onboarding, the day's habits, and creating and editing a habit with its own background">
+                                <source src="assets/images/contents/project3/IAT359_First.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>Onboarding, the day's habits, and making a new one.</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="case-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="720" height="1558"
+                                poster="assets/images/contents/project3/IAT359_Second-poster.jpg"
+                                aria-label="Screen recording of logging a habit on the map, then the achievements screen and a locked achievement">
+                                <source src="assets/images/contents/project3/IAT359_Second.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>Logging a habit on the map, and the achievements it unlocks.</figcaption>
+                    </figure>
+                    <figure>
+                        <div class="case-phone-media">
+                            <video class="auto-video" muted loop playsinline preload="metadata" width="720" height="1558"
+                                poster="assets/images/contents/project3/IAT359_Third-poster.jpg"
+                                aria-label="Screen recording of the stats: weekly, monthly and yearly views, one habit's calendar, and settings">
+                                <source src="assets/images/contents/project3/IAT359_Third.mp4" type="video/mp4">
+                            </video>
+                        </div>
+                        <figcaption>Stats by week, month and year, down to one habit's calendar.</figcaption>
+                    </figure>
                 </div>
                 <figure>
-                    <img src="assets/images/contents/project3/IAT359_Mockup3.webp" alt="Final mockup result">
+                    <img src="assets/images/contents/project3/IAT359_Mockup3.webp" width="2400" height="1350"
+                        loading="lazy" decoding="async"
+                        alt="Three phones showing the map, the home screen and the yearly overview">
+                    <figcaption>Map, home and overview together.</figcaption>
                 </figure>
             </section>
 
+            <!-- REFLECTION -->
             <section class="case-section" id="reflection">
                 <h2>Reflection</h2>
                 <p>
