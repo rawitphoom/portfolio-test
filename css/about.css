@@ -599,6 +599,9 @@
 .chat-section {
     margin-top: 6rem;
     text-align: left;
+    /* the phone's bezel is measured against this section's width (see the
+       screen below), so the section is the box that cq units refer to */
+    container-type: inline-size;
 }
 
 
@@ -609,16 +612,15 @@
    are genuine CSS corners, so the chat can't poke out past them the way a
    square div behind a bitmap hole did.
 
-   The geometry follows a real handset: a 2.17:1 body in landscape, a bezel
-   1.9% of the width all round, and a corner radius of 14% of the short side.
-   Percentage padding resolves against WIDTH on all four sides, which is what
-   keeps the bezel an even thickness rather than thicker top and bottom. */
+   The geometry follows a real handset: a 2.17:1 body in landscape, an even
+   bezel all round (see the screen), and a corner radius of 14% of the short
+   side. The body has nothing in its flow, so its height is exactly what the
+   aspect ratio gives. */
 .phone-frame {
     position: relative;
     max-width: 52rem;
     margin: 0 auto;
     aspect-ratio: 2.17 / 1;
-    padding: 1.9%;
     /* 6.45% of width and 14% of height are the same number of pixels at this
        aspect, which is what makes the corner circular rather than oval */
     border-radius: 6.45% / 14%;
@@ -654,12 +656,24 @@
     background: #0a0a0a;
 }
 
-/* The screen. Its radius is the body's minus the bezel, expressed against its
-   own box - again split so both axes come out to the same pixel value. */
+/* The screen, pinned inside the body by its four edges, the bezel's width in
+   from each.
+
+   It used to sit in the body's padding with height: 100%. Chrome measured that
+   against the space inside the padding; Safari on iPhone measured it against
+   the body's whole height, so the screen came out one bezel too tall and its
+   white bottom hung out below the phone. Pinned by its edges, its size comes
+   straight from the body and there is nothing left to measure differently.
+
+   The bezel is 1.9% of the section's width (1.9cqw), the same distance the
+   old percentage padding gave, since padding percentages also measure against
+   the parent's width. So nothing moves.
+
+   Its radius is the body's minus the bezel, expressed against its own box -
+   again split so both axes come out to the same pixel value. */
 .phone-frame__screen {
-    position: relative;
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    inset: 1.9cqw;
     border-radius: 4.73% / 10.84%;
     background: #fff;
     display: flex;
