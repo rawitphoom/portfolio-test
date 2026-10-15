@@ -1651,7 +1651,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // what gets drawn, and as what
   const KINDS = [
-    ['minimap-panel', '.case-feature, .case-next-link, .connect-border-wrap, .case-meta-card'],
+    ['minimap-panel', '.case-feature, .case-next-link, .connect-border-wrap'],
     ['minimap-text', 'p, li, figcaption, .case-next-label, .case-next-title, .case-next-sub'],
     ['minimap-heading', 'h1, h2, h3, h4'],
     ['minimap-media', 'img, video'],

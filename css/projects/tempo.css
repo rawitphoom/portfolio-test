@@ -17,26 +17,6 @@
 /* ---------- Hero ---------- */
 
 
-/* the shared title (case-study.css), with a tighter gap: a subtitle follows */
-.tempo .case-title {
-    margin-bottom: 0.75rem;
-}
-
-.tempo-subtitle {
-    max-width: 36rem;
-    margin-bottom: 2rem;
-    font-size: 1.15rem;
-    line-height: 1.55;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.case-cover figcaption {
-    margin-top: 0.7rem;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    color: rgba(255, 255, 255, 0.55);
-}
-
 /* ---------- The problem ---------- */
 
 /* The question the project answers, set as a pull quote with the chrome bar
