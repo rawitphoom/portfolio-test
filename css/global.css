@@ -185,6 +185,88 @@ header.scrolled {
     }
 }
 
+/* At the very top of the page the header shows the picture, the name and the
+   LinkedIn and email badges. Once the page scrolls (main.js adds .scrolled)
+   the name and badges slide left together as one group, the same distance at
+   the same speed, and disappear into the picture; scrolling back to the top
+   slides them out again along the same path.
+
+   Each is moved by --fold (from the picture's right edge to the far end of the
+   badges) and clipped at the picture's edge as it goes: the clip starts
+   --fold-gap to the left of the element, which is exactly where the picture
+   ends, and travels with the slide, so it stays on that edge the whole time.
+   main.js measures all three. The other sides of the clip sit out past the
+   element so the badges' hover glow isn't cut off. Hidden, they can't be
+   tabbed to. */
+.desktop-header .logo-avatar {
+    position: relative;
+    z-index: 1;
+}
+
+.desktop-header .logo-text,
+.desktop-header .social-badges {
+    clip-path: inset(-1rem -1rem -1rem calc(-1 * var(--fold-gap, 0px)));
+    transition:
+        transform 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+        clip-path 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+        visibility 0s linear 0s;
+}
+
+.desktop-header.scrolled .logo-text,
+.desktop-header.scrolled .social-badges {
+    transform: translateX(calc(-1 * var(--fold, 0px)));
+    clip-path: inset(-1rem -1rem -1rem calc(var(--fold, 0px) - var(--fold-gap, 0px)));
+    visibility: hidden;
+    pointer-events: none;
+    /* stay visible while sliding, then drop out of the tab order */
+    transition:
+        transform 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+        clip-path 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+        visibility 0s linear 1.2s;
+}
+
+/* Folded, pointing at the picture brings the group back out along the same
+   slide, and it stays out while the pointer is anywhere on the picture, name
+   or badges, so the badges can be clicked; leaving folds it away again.
+   Tabbing to the picture does the same. While folded only the picture itself
+   answers the pointer, so the empty space where the name was doesn't open it;
+   once open, the whole logo does, gaps included, so crossing from the picture
+   to a badge doesn't close it on the way. */
+.desktop-header.scrolled .logo,
+.desktop-header.scrolled #logo-link {
+    pointer-events: none;
+}
+
+.desktop-header.scrolled #profile-pic,
+.desktop-header.scrolled .logo:is(:hover, :focus-within),
+.desktop-header.scrolled .logo:is(:hover, :focus-within) #logo-link {
+    pointer-events: auto;
+}
+
+.desktop-header.scrolled .logo:is(:hover, :focus-within) .logo-text,
+.desktop-header.scrolled .logo:is(:hover, :focus-within) .social-badges {
+    transform: none;
+    clip-path: inset(-1rem -1rem -1rem calc(-1 * var(--fold-gap, 0px)));
+    visibility: visible;
+    pointer-events: auto;
+    transition:
+        transform 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+        clip-path 1.2s cubic-bezier(0.65, 0, 0.35, 1),
+        visibility 0s linear 0s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .desktop-header .logo-text,
+    .desktop-header .social-badges,
+    .desktop-header.scrolled .logo-text,
+    .desktop-header.scrolled .social-badges,
+    .desktop-header.scrolled .logo:is(:hover, :focus-within) .logo-text,
+    .desktop-header.scrolled .logo:is(:hover, :focus-within) .social-badges {
+        transition: none;
+    }
+}
+
 /* LOGO STYLES */
 .logo {
     display: flex;
@@ -1697,6 +1779,29 @@ like a block-level element, so it can:
     padding: 0 1.5rem;
 }
 
+/* The footer sweep (main.js): every word, and the clock as one piece, rests
+   dim and a little low until the footer comes into view, then lights in
+   turn, each --sweep-delay after the last, landing with the About page's
+   small pop. Words are inline-block so they can move. */
+.footer-bar .sweep-word {
+    display: inline-block;
+}
+
+.footer-bar.sweep-ready .sweep-part {
+    opacity: 0.18;
+    transform: translateY(0.34em) scale(0.94);
+}
+
+.footer-bar.sweep-ready.is-lit .sweep-part {
+    opacity: 1;
+    transform: none;
+    transition:
+        opacity 0.5s ease var(--sweep-delay, 0ms),
+        transform 0.62s cubic-bezier(0.22, 1.55, 0.34, 1) var(--sweep-delay, 0ms),
+        /* kept from the back to top link's own rule, so its hover still rises */
+        translate 0.25s ease;
+}
+
 .footer-bar {
     display: grid;
     /* Columns sized to their own text and then pushed apart, rather than four
@@ -1748,6 +1853,9 @@ like a block-level element, so it can:
     color: rgba(255, 255, 255, 0.75);
     text-decoration: none;
     transition: color 0.25s ease;
+    /* the email address is one long word: let it break rather than push a
+       narrow column wider than the screen */
+    overflow-wrap: anywhere;
 }
 
 /* The index column is a <nav>, which the bare `nav` / `nav a` rules near the
@@ -1841,20 +1949,27 @@ like a block-level element, so it can:
     color: #fff;
 }
 
-.footer-top span {
+/* On hover the words and the arrow rise together. Only the link's own
+   children move (the arrow, and the words' wrapper once the footer sweep has
+   made one), never the words inside the wrapper as well, which moved them
+   twice. The link itself stays still, so the hover can't slip off its edge. */
+.footer-top>span[aria-hidden="true"] {
     line-height: 1;
+}
+
+.footer-top>span {
     transition: translate 0.25s ease;
 }
 
-.footer-top:hover span,
-.footer-top:focus-visible span {
+.footer-top:hover>span,
+.footer-top:focus-visible>span {
     translate: 0 -0.2em;
 }
 
 @media (prefers-reduced-motion: reduce) {
 
-    .footer-top:hover span,
-    .footer-top:focus-visible span {
+    .footer-top:hover>span,
+    .footer-top:focus-visible>span {
         translate: none;
     }
 }

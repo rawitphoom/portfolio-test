@@ -278,6 +278,37 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('scroll', sync, { passive: true });
 });
 
+// The desktop header's name and badges slide into the picture on scroll, as
+// one group (global.css). Measured from the layout, which a slide doesn't
+// change, so it works whether or not the header is folded at the time: how
+// far the group travels (--fold), and how far each piece starts from the
+// picture's edge (--fold-gap), so each is clipped right on that edge.
+document.addEventListener('DOMContentLoaded', () => {
+  const header = document.querySelector('header.desktop-header');
+  const avatar = header && header.querySelector('.logo-avatar');
+  const name = header && header.querySelector('.logo-text');
+  const badges = header && header.querySelector('.social-badges');
+  if (!avatar || !name || !badges) return;
+
+  // left edge within the header, ignoring any slide in progress
+  const leftOf = (el) => {
+    let x = 0;
+    for (let n = el; n && n !== header; n = n.offsetParent) x += n.offsetLeft;
+    return x;
+  };
+
+  const measure = () => {
+    const edge = leftOf(avatar) + avatar.offsetWidth;
+    header.style.setProperty('--fold', leftOf(badges) + badges.offsetWidth - edge + 'px');
+    name.style.setProperty('--fold-gap', leftOf(name) - edge + 'px');
+    badges.style.setProperty('--fold-gap', leftOf(badges) - edge + 'px');
+  };
+
+  measure();
+  if (document.fonts) document.fonts.ready.then(measure);
+  window.addEventListener('resize', measure);
+});
+
 // Ring-and-dot cursor: the dot tracks the pointer exactly, the ring trails behind it
 document.addEventListener('DOMContentLoaded', () => {
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
@@ -1998,4 +2029,80 @@ document.addEventListener('DOMContentLoaded', () => {
   [...document.querySelectorAll('.desktop-header nav a'), ...navigate].forEach((link) => {
     if (matches(link)) link.setAttribute('aria-current', 'page');
   });
+});
+
+/* ---------------------------------------------------------------- *
+ * Footer sweep
+ *
+ * The footer's text lights up the way the About page's does: every word starts
+ * dim and a little low, then pops up to full, one after another, so the light
+ * sweeps across the footer from the first column (Index) to the last
+ * (© 2026), top to bottom within each. The About page ties its sweep to the
+ * scroll, but the footer is the end of the page and can't scroll far enough
+ * up to finish one, so this one plays by itself once the footer is in view.
+ * It resets once the footer is off screen, to play again next time.
+ *
+ * Words are wrapped here, so without JavaScript the footer is plain text. The
+ * clock is kept whole, since its time is rewritten every minute.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const bar = document.querySelector('.footer-bar');
+  if (!bar || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const STEP = 35; // ms between one word and the next
+
+  const parts = [];
+  const wrapWords = (el) => {
+    for (const node of [...el.childNodes]) {
+      if (node.nodeType === Node.ELEMENT_NODE) {
+        // an icon, flag or arrow inside a line lights in its turn
+        node.classList.add('sweep-part');
+        parts.push(node);
+        continue;
+      }
+      if (node.nodeType !== Node.TEXT_NODE || !node.textContent.trim()) continue;
+      // the words of a run of text stay in one wrapper, so a line laid out as a
+      // flex row (back to top, the flag and the city) keeps them as one item
+      // rather than spacing every word apart
+      const frag = document.createElement('span');
+      frag.className = 'sweep-text';
+      for (const chunk of node.textContent.trim().split(/(\s+)/)) {
+        if (!chunk) continue;
+        if (/^\s+$/.test(chunk)) { frag.append(' '); continue; }
+        const word = document.createElement('span');
+        word.className = 'sweep-part sweep-word';
+        word.textContent = chunk;
+        frag.append(word);
+        parts.push(word);
+      }
+      // spaces either side of the text stay where they were, outside the
+      // wrapper: the one before the city is what sets it off from the flag
+      const text = node.textContent;
+      const before = text.match(/^\s*/)[0], after = text.match(/\s*$/)[0];
+      node.replaceWith(...[before && ' ', frag, after && ' '].filter(Boolean));
+    }
+  };
+
+  // column by column, and line by line within each, which is source order
+  bar.querySelectorAll('.footer-col').forEach((col) => {
+    [...col.children].forEach((line) => {
+      if (line.classList.contains('footer-clock')) {
+        line.classList.add('sweep-part');
+        parts.push(line);
+      } else {
+        wrapWords(line);
+      }
+    });
+  });
+
+  parts.forEach((part, i) => part.style.setProperty('--sweep-delay', i * STEP + 'ms'));
+  bar.classList.add('sweep-ready');
+
+  new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.intersectionRatio >= 0.4) bar.classList.add('is-lit');
+      else if (!entry.isIntersecting && entry.boundingClientRect.top > 0) bar.classList.remove('is-lit');
+    });
+  }, { threshold: [0, 0.4] }).observe(bar);
 });

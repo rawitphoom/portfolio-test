@@ -29,6 +29,35 @@
     color: rgba(255, 255, 255, 0.5);
 }
 
+/* The email at the end of the line: the same quiet grey until pointed at, with
+   a faint underline so it reads as a link. On a phone it drops to its own
+   line, without the dot in front. */
+.resume-email {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: rgba(255, 255, 255, 0.25);
+    text-underline-offset: 0.2em;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.resume-email:hover,
+.resume-email:focus-visible {
+    color: white;
+    text-decoration-color: currentColor;
+}
+
+@media (max-width: 600px) {
+    .resume-subtitle-sep {
+        display: none;
+    }
+
+    .resume-email {
+        display: block;
+        width: fit-content;
+        margin-top: 0.3rem;
+    }
+}
+
 .resume-download {
     display: inline-flex;
     align-items: center;
