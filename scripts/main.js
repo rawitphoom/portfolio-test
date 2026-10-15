@@ -1938,3 +1938,64 @@ document.addEventListener('DOMContentLoaded', () => {
   // Escape closes the dialog by itself; this catches that path
   box.addEventListener('close', release);
 });
+
+/* ---------------------------------------------------------------- *
+ * Header links roll on hover
+ *
+ * Each header link's word goes in twice, one copy under the other, so
+ * pointing at it can push the first up and slide the second into its place
+ * (the movement is in global.css). The second copy is hidden from screen
+ * readers, so the link still reads once. Without JavaScript the links are
+ * plain words, metal on hover as before.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('.desktop-header nav a').forEach((link) => {
+    const word = link.textContent.trim();
+    if (!word) return;
+    const roll = document.createElement('span');
+    roll.className = 'nav-roll';
+    const first = document.createElement('span');
+    first.textContent = word;
+    const second = document.createElement('span');
+    second.textContent = word;
+    second.setAttribute('aria-hidden', 'true');
+    roll.append(first, second);
+    link.replaceChildren(roll);
+    link.classList.add('has-roll');
+  });
+});
+
+/* ---------------------------------------------------------------- *
+ * The page you are on, lit up in the menus
+ *
+ * Marks the header link and the phone menu link for the current section
+ * with aria-current, which global.css lights up. The home page, the
+ * projects page and every case study count as Projects; Resume and About
+ * are their own pages. In the phone menu only the Navigate group is marked,
+ * not the Resume link further down under Contact.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const path = location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+  let section = null;
+  if (path === '/' || path === '/projects' || document.querySelector('.case-study')) section = 'projects';
+  else if (path === '/resume') section = 'resume';
+  else if (path === '/about') section = 'about';
+  if (!section) return;
+
+  const matches = (link) => {
+    const href = link.getAttribute('href') || '';
+    if (section === 'projects') return href === '/';
+    return href.replace(/^\//, '') === section + '.html';
+  };
+
+  // the phone menu's Navigate group: the links before the second group label
+  const navigate = [];
+  const labels = document.querySelectorAll('.links-container .sidebar-label');
+  for (let el = labels[0]?.nextElementSibling; el && el !== labels[1]; el = el.nextElementSibling) {
+    if (el.tagName === 'A') navigate.push(el);
+  }
+
+  [...document.querySelectorAll('.desktop-header nav a'), ...navigate].forEach((link) => {
+    if (matches(link)) link.setAttribute('aria-current', 'page');
+  });
+});

@@ -96,10 +96,12 @@ body {
         -webkit-backdrop-filter 0.4s ease, backdrop-filter 0.4s ease;
 }
 
+/* no glass while the header has no bar (it was rgba(0, 0, 0, 0.18) with an
+   18px blur); the shade on header::before does the darkening instead */
 .page-gradient ~ header.scrolled {
-    background: rgba(0, 0, 0, 0.18);
-    -webkit-backdrop-filter: blur(18px);
-    backdrop-filter: blur(18px);
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
 }
 
 /* The phone top bar, the same way. Its glass is on a layer behind the bar's
@@ -142,8 +144,9 @@ header {
     width: 95%;
     top: 1rem;
     left: 50%;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(10px);
+    /* No bar for now: the links float over the page, and the shade below
+       keeps them readable. The bar was rgba(0, 0, 0, 0.8) with a 10px blur. */
+    background: transparent;
     /* transparent from the start so the border can fade in on scroll
        without the bar changing size */
     border: 2px solid transparent;
@@ -154,9 +157,32 @@ header {
     z-index: 1000;
 }
 
-/* JS adds .scrolled once the page moves off the top */
+/* JS adds .scrolled once the page moves off the top. The outline it faded in
+   is off while there is no bar; it was rgba(255, 255, 255, 0.2). */
 header.scrolled {
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: transparent;
+}
+
+/* The shade: a faint black fade fixed across the very top of the window, just
+   under the header, so the links stay readable over whatever scrolls under
+   them. Pinned to the window itself rather than drawn from the header, so it
+   always reaches the top edge and both sides. It never takes a click. Desktop
+   only: the phone bar has its own glass. */
+@media (min-width: 769px) {
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 7rem;
+        z-index: 999;
+        pointer-events: none;
+        background: linear-gradient(to bottom,
+                rgba(0, 0, 0, 0.35) 0%,
+                rgba(0, 0, 0, 0.15) 50%,
+                rgba(0, 0, 0, 0) 100%);
+    }
 }
 
 /* LOGO STYLES */
@@ -551,6 +577,15 @@ like a block-level element, so it can:
     }
 
     .hamburger a:hover .sidebar-icon {
+        fill: var(--text-color);
+    }
+
+    /* the page you are on (main.js marks it): a lit row and a white icon */
+    .hamburger a[aria-current="page"] {
+        background-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .hamburger a[aria-current="page"] .sidebar-icon {
         fill: var(--text-color);
     }
 
@@ -1127,6 +1162,63 @@ like a block-level element, so it can:
     filter: drop-shadow(0 0 0.45rem rgba(170, 210, 255, 0.35));
 }
 
+/* The roll on hover. main.js puts each header link's word in twice, one copy
+   stacked under the other in a window one line tall; pointing at the link
+   pushes the first copy up and out as the second slides up into its place.
+   The metal moves onto each copy, so it travels with the letters. The roll
+   only animates on the way in: on the way out both copies jump back at once,
+   which can't be seen because they are the same word. */
+.desktop-header nav a.has-roll {
+    background-image: none;
+    animation: none;
+}
+
+.nav-roll {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: top;
+}
+
+.nav-roll>span {
+    display: block;
+    background-image: var(--chrome-metal);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    animation: chrome-sweep 3s linear infinite paused;
+}
+
+.nav-roll>span:last-child {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    transform: translateY(102%);
+}
+
+.desktop-header nav a:hover .nav-roll>span,
+.desktop-header nav a:focus-visible .nav-roll>span {
+    transition: transform 0.8s cubic-bezier(0.14, 1, 0.34, 1);
+    animation-play-state: running;
+}
+
+.desktop-header nav a:hover .nav-roll>span:first-child,
+.desktop-header nav a:focus-visible .nav-roll>span:first-child {
+    transform: translateY(-102%);
+}
+
+.desktop-header nav a:hover .nav-roll>span:last-child,
+.desktop-header nav a:focus-visible .nav-roll>span:last-child {
+    transform: none;
+}
+
+/* the page you are on (main.js marks it) is lit in full white; hover still
+   turns it to metal */
+.desktop-header nav a[aria-current="page"]:not(:hover):not(:focus-visible) {
+    color: white;
+}
+
 /* The badges get a metal edge. A black fill clipped to the inside of the
    border sits over the metal clipped to the whole badge, so the metal only
    shows where the border is; a plain border cannot carry a gradient round the
@@ -1145,9 +1237,21 @@ like a block-level element, so it can:
 @media (prefers-reduced-motion: reduce) {
 
     .desktop-header nav a,
+    .nav-roll>span,
     .social-badges a.social-badge:hover,
     .social-badges a.social-badge:focus-visible {
         animation: none;
+    }
+
+    /* no roll: the word stays put and just turns to metal */
+    .desktop-header nav a:hover .nav-roll>span:first-child,
+    .desktop-header nav a:focus-visible .nav-roll>span:first-child {
+        transform: none;
+    }
+
+    .desktop-header nav a:hover .nav-roll>span:last-child,
+    .desktop-header nav a:focus-visible .nav-roll>span:last-child {
+        transform: translateY(102%);
     }
 }
 
