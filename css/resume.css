@@ -39,16 +39,50 @@
     color: black;
     font-weight: 600;
     text-decoration: none;
-    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    /* keeps the metal layer below behind the label but above the white */
+    isolation: isolate;
+    overflow: hidden;
+    transition: box-shadow 0.45s ease;
 }
 
-/* turns to polished metal with the label staying black; the metal and its
-   sweep are shared with the header links, in global.css */
+/* Turns to polished metal with the label staying black; the metal and its
+   sweep are shared with the header links, in global.css. A gradient can't
+   fade, so the metal is its own layer over the white and fades in and out.
+   The sweep pauses rather than stops while it fades out, so it never jumps. */
+.resume-download::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: var(--chrome-metal) 0 0 / 200% 100%;
+    opacity: 0;
+    transition: opacity 0.45s ease;
+    animation: chrome-sweep 3s linear infinite paused;
+}
+
 .resume-download:hover,
 .resume-download:focus-visible {
-    background: var(--chrome-metal) 0 0 / 200% 100%;
-    animation: chrome-sweep 3s linear infinite;
     box-shadow: 0 0 1rem rgba(170, 210, 255, 0.3);
+}
+
+/* a small arrow with a short tail, drawn rather than typed so the tail stays
+   short whatever the font */
+.resume-download-arrow {
+    width: 0.8em;
+    height: 0.8em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.resume-download:hover::before,
+.resume-download:focus-visible::before {
+    opacity: 1;
+    animation-play-state: running;
 }
 
 /* ---------- Sections ---------- */
@@ -159,8 +193,7 @@
 
 @media (prefers-reduced-motion: reduce) {
 
-    .resume-download:hover,
-    .resume-download:focus-visible,
+    .resume-download::before,
     .resume-entry-head h3,
     .resume-bullets a:hover {
         animation: none;
@@ -237,6 +270,17 @@
 .resume-chips li:hover {
     border-color: rgba(255, 255, 255, 0.4);
     color: white;
+}
+
+/* The interests are emoji, so they come in full colour. The emoji fonts are
+   named first so each shows in colour rather than as a plain text glyph. */
+.chip-emoji {
+    width: 1.5rem;
+    flex-shrink: 0;
+    text-align: center;
+    font-size: 1.15rem;
+    line-height: 1;
+    font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
 }
 
 .chip-icon {
