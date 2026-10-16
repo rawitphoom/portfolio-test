@@ -1280,3 +1280,224 @@
         grid-template-columns: minmax(0, 1fr);
     }
 }
+
+/***************************** SLIDE VIEWER *****************************/
+
+/* A run of slides shown one at a time (main.js, [data-slides]): the slide,
+   then a bar with Previous, the "3 / 29" counter and Next, then a row of
+   small thumbnails that scrolls sideways. Before the script runs, or without
+   it, the figures stack like any other pictures. */
+.slides {
+    margin-top: 2rem;
+    border-radius: 0.9rem;
+}
+
+.slides:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 0.5rem;
+}
+
+/* sideways swipes are the viewer's; up and down still scroll the page */
+.slides-stage {
+    touch-action: pan-y;
+}
+
+.slides .slide {
+    margin: 0;
+}
+
+.slides .slide[hidden] {
+    display: none;
+}
+
+/* Until a slide has loaded, its tiny thumbnail (main.js) is stretched behind
+   it in the same 16:9 box, so the space is never empty and never jumps. */
+.slides .slide img {
+    display: block;
+    aspect-ratio: 16 / 9;
+    background-color: rgba(255, 255, 255, 0.04);
+    background-size: cover;
+    background-position: center;
+}
+
+/* one line kept for the caption, so the controls below don't shift as the
+   slides change */
+.slides .slide figcaption {
+    min-height: 1.5em;
+}
+
+/* each slide fades in as it is shown */
+@media (prefers-reduced-motion: no-preference) {
+    .slides.is-ready .slide:not([hidden]) {
+        animation: slide-in 0.35s ease both;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* The autoplay timer (main.js, data-slides-autoplay). Not shown: it only
+   keeps the time. Its animation runs for --slide-time, and when it ends the
+   next slide shows; holding the viewer (pointer over it, keyboard in it, off
+   screen) pauses it where it is. Hidden by size rather than display: none,
+   since an element that isn't displayed doesn't animate. */
+.slides-timer {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+.slides-timer span {
+    display: block;
+    height: 1px;
+}
+
+.slides.is-playing .slides-timer span {
+    animation: slides-timer var(--slide-time, 6s) linear forwards;
+}
+
+.slides.is-held .slides-timer span {
+    animation-play-state: paused;
+}
+
+@keyframes slides-timer {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.slides-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.slides-btn {
+    display: grid;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    padding: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+    color: white;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.slides-btn:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.slides-btn:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 3px;
+}
+
+.slides-btn:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+.slides-btn svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.slides-count {
+    min-width: 4.5rem;
+    margin: 0;
+    text-align: center;
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* read out, not shown: "Slide 3 of 29" where the eye sees "3 / 29" */
+.slides-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.slides-thumbs {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.3rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.slides-thumb {
+    flex: 0 0 auto;
+    width: 6.5rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0.4rem;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.04);
+    opacity: 0.45;
+    cursor: pointer;
+    transition: opacity 0.2s ease, box-shadow 0.2s ease;
+}
+
+.slides-thumb:hover,
+.slides-thumb[aria-current="true"] {
+    opacity: 1;
+}
+
+.slides-thumb[aria-current="true"] {
+    box-shadow: 0 0 0 1.5px var(--accent-color);
+}
+
+.slides-thumb:focus-visible {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+.slides-thumb img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+}
+
+@media (max-width: 600px) {
+    .slides-thumb {
+        width: 5rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .slides-btn,
+    .slides-thumb {
+        transition: none;
+    }
+}

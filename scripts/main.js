@@ -175,6 +175,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Every picture and clip in a case study has a tiny preview (160px wide, a few
+// KB) of the same name in a thumbs/ folder beside it, as a .jpg: for a clip, a
+// frame from 40% of the way through. The page minimap draws with them, and the
+// slide viewer shows them while a slide loads and in its row of thumbnails.
+// This is where that file is found. Vector drawings are small already and have
+// none, so for those it gives nothing.
+function thumbFor(src) {
+  if (!src || /\.svg($|[?#])/i.test(src)) return null;
+  const url = new URL(src, location.href);
+  // already a preview (the slide viewer's thumbnails are): it is its own
+  if (/\/thumbs\/[^/]+$/.test(url.pathname)) return url.href;
+  // decoded, so a name with spaces ("IAT343 - Image1") finds its file
+  const name = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.[^.]+$/, '');
+  return new URL('thumbs/' + encodeURIComponent(name) + '.jpg', url).href;
+}
+
 // Safari, and every browser on an iPhone (they all run on Apple's engine).
 // Two things below need to know: the avatar file, and the ring's bend.
 const appleEngine = (() => {
@@ -1843,12 +1859,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const src = el.tagName === 'VIDEO'
       ? el.querySelector('source')?.getAttribute('src') || el.getAttribute('src')
       : el.getAttribute('src');
-    // vector drawings are small already and have no thumbnail; use them as they are
-    if (!src || /\.svg($|[?#])/i.test(src)) return null;
-    const url = new URL(src, location.href);
-    // decoded, so a name with spaces ("IAT343 - Image1") finds its file
-    const name = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.[^.]+$/, '');
-    return new URL('thumbs/' + encodeURIComponent(name) + '.jpg', url).href;
+    return thumbFor(src);
   };
 
   const thumb = (el, block) => {
@@ -2238,3 +2249,253 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { threshold: [0, 0.4] }).observe(bar);
 });
+
+/* ---------------------------------------------------------------- *
+ * Slide viewer
+ *
+ * Any element marked [data-slides] whose children are <figure>s, one per
+ * slide, becomes a viewer: one slide at a time, Previous and Next buttons, a
+ * "3 / 29" counter, and a row of small thumbnails that jump to a slide. The
+ * arrow keys move it while it has focus, and a sideways swipe moves it on a
+ * touch screen. At the first and last slide the matching button is turned off
+ * rather than wrapping round. Without JavaScript the figures simply stack.
+ *
+ * data-slides-autoplay="6" also moves it on by itself every 6 seconds, and
+ * from the last slide back to the first. It holds while someone is using it
+ * (pressing, typing or moving the pointer on it) and plays again once they
+ * have been idle for 2 seconds; it also holds while off screen and while the
+ * tab is hidden, and any move by hand starts the time again. With reduced
+ * motion asked for it doesn't move by itself at all.
+ *
+ * Slides load lazily: only the one on show, plus the one either side so the
+ * next press is instant. Until a slide arrives, its thumbnail (thumbFor, the
+ * same tiny previews the minimap uses) is stretched behind it. A slide fades
+ * in when it changes, unless reduced motion is asked for (case-study.css).
+ *
+ * Built straight away rather than when the page is ready, so the stack of
+ * figures is gathered into one before the page is first drawn.
+ * ---------------------------------------------------------------- */
+(() => {
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const make = (tag, className) => Object.assign(document.createElement(tag), { className });
+
+  // the site's short tailed arrow (as on the Resume button), pointing either way
+  const arrow = (back) => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 10 10');
+    svg.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', back ? 'M8.5 5h-7M4.5 2l-3 3 3 3' : 'M1.5 5h7M5.5 2l3 3-3 3');
+    svg.append(path);
+    return svg;
+  };
+
+  const init = (root) => {
+    const slides = [...root.children].filter((el) => el.tagName === 'FIGURE');
+    const total = slides.length;
+    if (total < 2) return;
+
+    root.setAttribute('role', 'region');
+    root.setAttribute('aria-roledescription', 'carousel');
+    root.tabIndex = 0;
+
+    const stage = make('div', 'slides-stage');
+    slides[0].before(stage);
+    stage.append(...slides);
+
+    slides.forEach((slide, i) => {
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'slide');
+      slide.setAttribute('aria-label', `${i + 1} of ${total}`);
+      const img = slide.querySelector('img');
+      const small = img && thumbFor(img.getAttribute('src'));
+      if (small) img.style.backgroundImage = `url("${small}")`;
+    });
+
+    const bar = make('div', 'slides-bar');
+    const prev = make('button', 'slides-btn');
+    prev.type = 'button';
+    prev.setAttribute('aria-label', 'Previous slide');
+    prev.append(arrow(true));
+    const next = make('button', 'slides-btn');
+    next.type = 'button';
+    next.setAttribute('aria-label', 'Next slide');
+    next.append(arrow(false));
+    const count = make('p', 'slides-count');
+    count.setAttribute('aria-live', 'polite');
+    bar.append(prev, count, next);
+
+    const strip = make('div', 'slides-thumbs');
+    const thumbs = slides.map((slide, i) => {
+      const button = make('button', 'slides-thumb');
+      button.type = 'button';
+      button.setAttribute('aria-label', `Go to slide ${i + 1}`);
+      const src = slide.querySelector('img')?.getAttribute('src');
+      const picture = Object.assign(document.createElement('img'), {
+        src: thumbFor(src) || src, alt: '', loading: 'lazy', decoding: 'async',
+      });
+      picture.width = 160;
+      picture.height = 90;
+      button.append(picture);
+      button.addEventListener('click', () => show(i));
+      strip.append(button);
+      return button;
+    });
+
+    root.append(bar, strip);
+
+    // Autoplay. The time is kept by a CSS animation on an unseen element
+    // (case-study.css, .slides-timer): when it finishes the slide moves on, and
+    // holding it is just pausing the animation, which resumes where it was.
+    const seconds = parseFloat(root.dataset.slidesAutoplay);
+    let playing = false;
+    let restart = () => {};
+    if (seconds > 0 && !still.matches) {
+      root.style.setProperty('--slide-time', seconds + 's');
+      const timer = make('div', 'slides-timer');
+      timer.setAttribute('aria-hidden', 'true');
+      const fill = make('span', '');
+      timer.append(fill);
+      stage.after(timer);
+
+      restart = () => {
+        fill.style.animation = 'none';
+        void fill.offsetWidth; // let the browser see it stop, so it starts over
+        fill.style.animation = '';
+      };
+
+      fill.addEventListener('animationend', () => {
+        if (!playing) return;
+        show(index === total - 1 ? 0 : index + 1);
+      });
+
+      // Reasons to hold: someone using it, off screen, the tab hidden. Using
+      // it is any press, key or pointer movement on it; once they have been
+      // idle for IDLE it plays again, even with the pointer still resting
+      // over it.
+      const IDLE = 2000;
+      const hold = { busy: false, away: true, hidden: document.hidden };
+      const update = () => root.classList.toggle('is-held', Object.values(hold).some(Boolean));
+      let quiet = 0;
+      const busy = () => {
+        hold.busy = true;
+        update();
+        clearTimeout(quiet);
+        quiet = setTimeout(() => { hold.busy = false; update(); }, IDLE);
+      };
+      for (const type of ['pointerdown', 'pointermove', 'keydown']) {
+        root.addEventListener(type, busy, { passive: true });
+      }
+      document.addEventListener('visibilitychange', () => { hold.hidden = document.hidden; update(); });
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver((entries) => {
+          hold.away = !entries[0].isIntersecting;
+          update();
+        }, { threshold: 0.5 }).observe(stage);
+      } else {
+        hold.away = false;
+      }
+      update();
+      playing = true;
+      root.classList.add('is-playing');
+    }
+
+    // Fetch a slide now rather than when it is shown, but only once the viewer
+    // is close to the screen: until then nothing is fetched at all, and the
+    // slide on show loads by itself, lazily, as it scrolls into view.
+    let near = false;
+    const warm = (i) => {
+      const img = near && slides[i]?.querySelector('img');
+      if (img && img.loading === 'lazy') img.loading = 'eager';
+    };
+    if ('IntersectionObserver' in window) {
+      const watch = new IntersectionObserver((entries) => {
+        if (!entries.some((entry) => entry.isIntersecting)) return;
+        near = true;
+        watch.disconnect();
+        warm(index);
+        warm(index - 1);
+        warm(index + 1);
+      }, { rootMargin: '600px 0px' });
+      watch.observe(root);
+    } else {
+      near = true;
+    }
+
+    let index = -1;
+    const show = (i, moved = true) => {
+      i = Math.max(0, Math.min(total - 1, i));
+      if (i === index) return;
+      index = i;
+      // a move by hand, or the timer's own, starts the time over
+      restart();
+      slides.forEach((slide, k) => { slide.hidden = k !== i; });
+      warm(i);
+      warm(i - 1);
+      warm(i + 1);
+
+      count.innerHTML = `<span class="slides-sr">Slide </span>${i + 1}<span aria-hidden="true"> / </span>` +
+        `<span class="slides-sr"> of </span>${total}`;
+
+      // a button that has just been turned off can't keep focus, so the
+      // viewer takes it, and the arrow keys carry on working
+      const focused = document.activeElement;
+      prev.disabled = i === 0;
+      next.disabled = i === total - 1;
+      if (focused && focused.disabled) root.focus({ preventScroll: true });
+
+      thumbs.forEach((button, k) => button.setAttribute('aria-current', k === i ? 'true' : 'false'));
+      // bring the thumbnail into the middle of its row without moving the page
+      const active = thumbs[i];
+      strip.scrollTo({
+        left: active.offsetLeft - (strip.clientWidth - active.offsetWidth) / 2,
+        behavior: moved && !still.matches ? 'smooth' : 'auto',
+      });
+    };
+
+    prev.addEventListener('click', () => show(index - 1));
+    next.addEventListener('click', () => show(index + 1));
+
+    root.addEventListener('keydown', (e) => {
+      if (e.altKey || e.ctrlKey || e.metaKey) return;
+      const to = { ArrowLeft: index - 1, ArrowRight: index + 1, Home: 0, End: total - 1 }[e.key];
+      if (to === undefined) return;
+      e.preventDefault();
+      show(to);
+    });
+
+    // A sideways swipe on a touch screen. Up and down still scroll the page
+    // (touch-action in the CSS). A swipe that ends on a slide would otherwise
+    // count as a tap and open the picture viewer, so that tap is swallowed.
+    let startX = null;
+    let startY = 0;
+    let swiped = false;
+    stage.addEventListener('pointerdown', (e) => {
+      if (e.pointerType === 'mouse') return;
+      startX = e.clientX;
+      startY = e.clientY;
+      swiped = false;
+    });
+    stage.addEventListener('pointercancel', () => { startX = null; });
+    stage.addEventListener('pointerup', (e) => {
+      if (startX === null) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      startX = null;
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.2) return;
+      swiped = true;
+      show(index + (dx < 0 ? 1 : -1));
+    });
+    stage.addEventListener('click', (e) => {
+      if (!swiped) return;
+      swiped = false;
+      e.preventDefault();
+      e.stopPropagation();
+    }, true);
+
+    show(0, false);
+    root.classList.add('is-ready');
+  };
+
+  document.querySelectorAll('[data-slides]').forEach(init);
+})();
