@@ -183,6 +183,138 @@ const appleEngine = (() => {
     /CriOS|FxiOS|EdgiOS/.test(ua);
 })();
 
+// The desktop header's picture is a small cube, like a die: the animated
+// avatar on the front and the blue fire profile picture on the other three
+// sides. At the very top of the page, scrolling up further, past the top,
+// turns it a quarter, right to left, onto its next side; keep scrolling and it
+// keeps turning, about a side per flick. The turn and its soft landing are a
+// CSS transition (global.css, .avatar-cube).
+//
+// Built here, around the video already in the page, and straight away rather
+// than when the page is ready, so the header's other scripts measure the cube
+// and not the video. Without JavaScript the plain video stays.
+(() => {
+  const video = document.querySelector('.desktop-header video#profile-pic');
+  if (!video) return;
+
+  const make = (cls) => Object.assign(document.createElement('span'), { className: cls });
+  const box = make('logo-avatar avatar-cube');
+  box.id = 'profile-pic';
+  box.setAttribute('role', 'img');
+  box.setAttribute('aria-label', video.getAttribute('aria-label') || '');
+  const cube = make('cube');
+  box.append(cube);
+
+  video.replaceWith(box);
+  video.removeAttribute('id');
+  video.removeAttribute('aria-label');
+  video.setAttribute('aria-hidden', 'true');
+  video.className = 'avatar-video';
+  const front = make('cube-face cube-front');
+  front.append(video);
+  cube.append(front);
+  for (const side of ['right', 'back', 'left']) {
+    const face = make('cube-face cube-' + side);
+    face.append(Object.assign(document.createElement('img'), {
+      src: '/assets/images/profile_pic-cube.png', alt: '', decoding: 'async',
+    }));
+    cube.append(face);
+  }
+  video.play().catch(() => {});
+
+  // Scrolling turns the cube with the scroll, wherever on the page, including
+  // on past the very top: up turns it right to left, down left to right, a
+  // little scroll a little turn. When the scrolling stops it
+  // settles onto whichever side is nearest, so a turn that got past halfway
+  // carries on to the next side and one that didn't falls back.
+  //
+  // Driven a frame at a time by a spring rather than by a CSS transition: a
+  // mouse wheel moves in big steps, and the spring turns those steps into one
+  // glide, where a transition restarted on every step and stuttered.
+  // How far it turns per px of scrolling. A mouse wheel notch is about 100px,
+  // which makes about 50deg: past halfway, so one notch moves it on a side. A
+  // trackpad nudge of a few px only tips it, and it falls back.
+  const DEG_PER_PX = 0.5;
+  const SETTLE = 220;       // ms without scrolling before it settles onto a side
+  // Two springs. While the scroll is moving, a tight one, so the cube keeps
+  // up with the mouse or trackpad instead of trailing behind it; once the
+  // scroll stops, a calmer one for the settle onto a side. Each is just
+  // damped enough not to wobble (damping = 2 x the square root of the pull).
+  const FOLLOW = { stiff: 260, damp: 32 };
+  const SETTLE_SPRING = { stiff: 70, damp: 16.7 };
+  const AHEAD = 180;        // deg it can be asked to turn beyond where it is now
+  const still = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  let angle = 0;      // where it is drawn
+  let target = 0;     // where it is heading
+  let speed = 0;      // degrees per second
+  let running = false;
+  let idle = 0;
+  let lastFrame = 0;
+  let spring = FOLLOW;
+
+  const draw = () => cube.style.setProperty('--turn', angle.toFixed(2) + 'deg');
+
+  const frame = (now) => {
+    // The time since the last frame, worked through in small steps, so the
+    // turn takes the same time however few frames the browser draws (a busy or
+    // power saving one draws fewer) without the spring overshooting. A frame's
+    // time stamp can come a hair before the moment the turn began, so never
+    // less than nothing; after a long stall, at most a quarter second at once.
+    let left = Math.min(0.25, Math.max(0, (now - lastFrame) / 1000));
+    lastFrame = now;
+    while (left > 0) {
+      const dt = Math.min(1 / 240, left);
+      left -= dt;
+      const pull = (target - angle) * spring.stiff - speed * spring.damp;
+      speed += pull * dt;
+      angle += speed * dt;
+    }
+    if (Math.abs(target - angle) < 0.05 && Math.abs(speed) < 0.5) {
+      angle = target;
+      speed = 0;
+      running = false;
+    }
+    draw();
+    if (running) requestAnimationFrame(frame);
+  };
+
+  const move = () => {
+    if (still.matches) {
+      angle = target;
+      draw();
+      return;
+    }
+    if (running) return;
+    running = true;
+    lastFrame = performance.now();
+    requestAnimationFrame(frame);
+  };
+
+  // onto the nearest side; sides are every 90deg, turning the negative way
+  const settle = () => {
+    spring = SETTLE_SPRING;
+    target = Math.round(target / 90) * 90;
+    move();
+  };
+
+  window.addEventListener('wheel', (e) => {
+    if (!e.deltaY) return;
+    // a wheel that reports whole lines or pages, not pixels
+    const px = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * 800 : e.deltaY;
+    // deltaY is negative going up, which turns it right to left, and positive
+    // going down, which turns it left to right
+    spring = FOLLOW;
+    target += px * DEG_PER_PX;
+    // a long or fast scroll lines up at most two sides ahead, so it never
+    // keeps spinning long after the scrolling has stopped
+    target = Math.max(angle - AHEAD, Math.min(angle + AHEAD, target));
+    move();
+    clearTimeout(idle);
+    idle = setTimeout(settle, SETTLE);
+  }, { passive: true });
+})();
+
 // The animated avatar in the header comes in two copies, both with a see
 // through background: a WebM (VP9) for most browsers and an HEVC MP4 for
 // Apple's. Safari, and every iPhone browser since they all run on Apple's
@@ -194,7 +326,7 @@ const appleEngine = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   if (!appleEngine) return;
 
-  document.querySelectorAll('video.logo-avatar').forEach((video) => {
+  document.querySelectorAll('video.logo-avatar, .avatar-cube video').forEach((video) => {
     const webm = video.querySelector('source[type^="video/webm"]');
     if (!webm) return;
     webm.remove();

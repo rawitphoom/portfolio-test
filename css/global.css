@@ -283,6 +283,65 @@ header.scrolled {
     object-fit: contain;
 }
 
+/* The header picture as a cube (main.js builds it around the video): the
+   animated avatar on the front, the blue fire profile picture on the other
+   three sides, each a dark square so it reads as a solid block while it
+   turns. The cube is pushed back half its depth, so its front
+   sits exactly where the flat picture did and nothing moves until it turns.
+   --turn is set by main.js every frame while it turns, following the scroll
+   and then settling onto the nearest side. */
+.avatar-cube {
+    display: inline-block;
+    flex-shrink: 0;
+    perspective: 12rem;
+}
+
+.avatar-cube .cube {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transform: translateZ(-1.25rem) rotateY(var(--turn, 0deg));
+}
+
+.avatar-cube .cube-face {
+    position: absolute;
+    inset: 0;
+    display: block;
+    overflow: hidden;
+    border-radius: 0.45rem;
+    background: #0e0f11;
+    backface-visibility: hidden;
+}
+
+.avatar-cube .cube-front {
+    transform: rotateY(0deg) translateZ(1.25rem);
+}
+
+.avatar-cube .cube-right {
+    transform: rotateY(90deg) translateZ(1.25rem);
+}
+
+.avatar-cube .cube-back {
+    transform: rotateY(180deg) translateZ(1.25rem);
+}
+
+.avatar-cube .cube-left {
+    transform: rotateY(-90deg) translateZ(1.25rem);
+}
+
+.avatar-cube .cube-face video,
+.avatar-cube .cube-face img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    /* the header's ".logo img" sizing and spacing is for the flat picture */
+    margin: 0;
+    border-radius: 0;
+    object-fit: contain;
+}
+
 #profile-pic {
     /* border: 3px solid red; */
     transition: transform 0.2s ease-in-out;
