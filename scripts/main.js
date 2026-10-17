@@ -520,37 +520,69 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Eased wheel scrolling - snappy, not a slow glide
+// Smooth wheel scrolling: the long, soft glide of most portfolio sites (the
+// feel Lenis gives them), done here rather than with a library. Each wheel
+// step moves a target, and the page glides toward it, easing out, so it keeps
+// drifting a moment after the wheel stops.
+//
+// The glide is worked out from the time between frames, not per frame, so it
+// feels the same on a 60Hz screen and a 120Hz one. The page's own position is
+// kept as a fraction here and only written to the window, since the window
+// rounds it and a glide read back from there can stall.
+//
+// Left to the browser: pinch zoom, sideways scrolling (the slide viewer's row
+// of thumbnails), anything inside a box that scrolls on its own while that box
+// can still go further that way, the phone menu, and the page behind an open
+// picture viewer. Off for touch screens, which glide natively, and for anyone
+// who has asked for less motion.
 document.addEventListener('DOMContentLoaded', () => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
 
-  const EASE = 0.18;  // fraction of the remaining distance covered each frame
+  const SMOOTH = 7;   // how quickly it catches up: higher is snappier, lower is floatier
   const STEP = 1;     // wheel delta multiplier
 
   let target = window.scrollY;
+  let current = window.scrollY;
   let animating = false;
+  let last = 0;
 
   const maxScroll = () =>
     Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
 
-  const run = () => {
-    const distance = target - window.scrollY;
+  const run = (now) => {
+    const dt = Math.min(0.05, Math.max(0, (now - last) / 1000));
+    last = now;
+    current += (target - current) * (1 - Math.exp(-SMOOTH * dt));
 
     // 'instant' matters: html { scroll-behavior: smooth } would otherwise turn each
     // of these into its own native animation and the page would barely move
-    if (Math.abs(distance) < 0.5) { // close enough - hand control back
+    if (Math.abs(target - current) < 0.3) { // close enough - hand control back
+      current = target;
       window.scrollTo({ top: target, behavior: 'instant' });
       animating = false;
       return;
     }
 
-    window.scrollTo({ top: window.scrollY + distance * EASE, behavior: 'instant' });
+    window.scrollTo({ top: current, behavior: 'instant' });
     requestAnimationFrame(run);
+  };
+
+  // a box between the pointer and the page that can still scroll that way
+  const scrollsItself = (el, dy) => {
+    for (let n = el; n && n !== document.body && n !== document.documentElement; n = n.parentElement) {
+      if (n.scrollHeight <= n.clientHeight + 1) continue;
+      const overflow = getComputedStyle(n).overflowY;
+      if (overflow !== 'auto' && overflow !== 'scroll') continue;
+      if (dy < 0 ? n.scrollTop > 0 : n.scrollTop + n.clientHeight < n.scrollHeight - 1) return true;
+    }
+    return false;
   };
 
   window.addEventListener('wheel', e => {
     if (e.ctrlKey) return; // pinch-zoom
+    // sideways: the browser's own
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
     // the mobile sidebar scrolls itself
     if (e.target instanceof Element && e.target.closest('.links-container')) return;
     // and while it is open the page behind stays put (the CSS locks it; this
@@ -558,19 +590,25 @@ document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('sidebar-active')?.checked) return;
     // while the picture viewer is open, the page behind it stays put
     if (document.querySelector('.zoom-box[open]')) return;
+    if (e.target instanceof Element && scrollsItself(e.target, e.deltaY)) return;
+
+    // a wheel that reports whole lines or pages, not pixels
+    const dy = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * window.innerHeight : e.deltaY;
 
     e.preventDefault();
-    target = Math.min(Math.max(target + e.deltaY * STEP, 0), maxScroll());
+    if (!animating) current = window.scrollY;
+    target = Math.min(Math.max(target + dy * STEP, 0), maxScroll());
 
     if (!animating) {
       animating = true;
+      last = performance.now();
       requestAnimationFrame(run);
     }
   }, { passive: false });
 
   // keep in step with scrolling we don't drive (keyboard, scrollbar, anchor links)
   window.addEventListener('scroll', () => {
-    if (!animating) target = window.scrollY;
+    if (!animating) target = current = window.scrollY;
   }, { passive: true });
 
   // Stop easing the instant a press starts. A click only fires when mousedown and
@@ -579,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('pointerdown', () => {
     if (!animating) return;
     animating = false;
-    target = window.scrollY;
+    target = current = window.scrollY;
   }, { passive: true });
 });
 
