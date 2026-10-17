@@ -2499,3 +2499,343 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-slides]').forEach(init);
 })();
+
+/* ---------------------------------------------------------------- *
+ * Blur trail on pictures
+ *
+ * Moving the pointer across a picture in a case study leaves a short motion
+ * blur behind it, smeared the way the pointer went, longer the faster it
+ * went, fading in about a third of a second. Taken from the way
+ * mariavasilyeva.com draws its pictures.
+ *
+ * One WebGL canvas does it for every picture: it is laid over whichever one
+ * the pointer is on and draws that picture again, blurred along the trail,
+ * only while there is a trail to see; otherwise it is hidden and the picture
+ * underneath is the page as usual. It never takes the pointer, so hovering,
+ * the hover zoom and clicking to view larger all still reach the picture,
+ * and it copies the picture's zoom and clip each frame so the two stay in
+ * line. Not on touch screens (no pointer to trail), and not for visitors who
+ * have asked for less motion.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const PICTURES = '.case-main figure img';
+  const POINTS = 20;      // trail points kept
+  const LIFE = 520;       // ms for a point to fade to almost nothing
+  const RADIUS = 26;      // css px the blur reaches either side of the trail
+  const STRETCH = 0.9;    // blur length per px the pointer moved in a frame
+  const LONGEST = 48;     // css px, the longest blur
+
+  const canvas = document.createElement('canvas');
+  canvas.className = 'blur-trail';
+  canvas.setAttribute('aria-hidden', 'true');
+  const gl = canvas.getContext('webgl', { premultipliedAlpha: true, alpha: true, antialias: false });
+  if (!gl) return;
+
+  const vert = `
+    attribute vec2 pos;
+    varying vec2 vUv;
+    void main() { vUv = pos * 0.5 + 0.5; gl_Position = vec4(pos, 0.0, 1.0); }`;
+  const frag = `
+    precision highp float;
+    uniform sampler2D tex;
+    uniform vec2 res;          // canvas size in px
+    uniform vec4 fit;          // box uv -> picture uv: scale (xy), offset (zw)
+    uniform vec4 pts[${POINTS}];   // x, y, push x, push y (px, y from the top)
+    uniform float str[${POINTS}];  // how strong each point still is
+    uniform float radius;
+    varying vec2 vUv;
+
+    vec4 pic(vec2 uv) {        // uv from the top left of the box
+      vec2 t = uv * fit.xy + fit.zw;
+      if (t.x < 0.0 || t.y < 0.0 || t.x > 1.0 || t.y > 1.0) return vec4(0.0);
+      // a picture uploads top row first, so its uv already runs from the top
+      return texture2D(tex, t);
+    }
+
+    void main() {
+      vec2 uv = vec2(vUv.x, 1.0 - vUv.y);
+      vec2 p = uv * res;
+      vec2 push = vec2(0.0);
+      float w = 0.0;
+      for (int i = 0; i < ${POINTS}; i++) {
+        vec2 d = p - pts[i].xy;
+        float f = str[i] * exp(-dot(d, d) / (radius * radius));
+        push += pts[i].zw * f;
+        w += f;
+      }
+      vec4 still = pic(uv);
+      w = clamp(w, 0.0, 1.0);
+      if (w < 0.004) { gl_FragColor = still; return; }
+      // smear along the way the pointer went, heaviest in the middle
+      vec2 stepUv = push / max(w, 0.0001) / res;
+      vec4 sum = vec4(0.0);
+      float total = 0.0;
+      for (int k = 0; k < 14; k++) {
+        float t = (float(k) + 0.5) / 14.0 * 2.0 - 1.0;
+        float fall = 1.0 - abs(t);
+        sum += pic(uv - stepUv * t) * fall;
+        total += fall;
+      }
+      gl_FragColor = mix(still, sum / total, w);
+    }`;
+
+  const shader = (type, src) => {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return gl.getShaderParameter(s, gl.COMPILE_STATUS) ? s : null;
+  };
+  const vs = shader(gl.VERTEX_SHADER, vert);
+  const fs = shader(gl.FRAGMENT_SHADER, frag);
+  if (!vs || !fs) return;
+  const program = gl.createProgram();
+  gl.attachShader(program, vs);
+  gl.attachShader(program, fs);
+  gl.linkProgram(program);
+  if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+  gl.useProgram(program);
+
+  const quad = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
+  const posLoc = gl.getAttribLocation(program, 'pos');
+  gl.enableVertexAttribArray(posLoc);
+  gl.vertexAttribPointer(posLoc, 2, gl.FLOAT, false, 0, 0);
+
+  const u = (name) => gl.getUniformLocation(program, name);
+  const uRes = u('res'), uFit = u('fit'), uPts = u('pts'), uStr = u('str'), uRadius = u('radius');
+
+  const tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.pixelStorei(gl.UNPACK_PREMULTIPLY_ALPHA_WEBGL, true);
+
+  document.body.append(canvas);
+
+  let img = null;          // the picture the canvas is over
+  let over = false;        // the pointer is on it
+  let trail = [];          // {x, y, px, py, t}: css px from the box's top left
+  let last = null;
+  let running = false;
+  const pts = new Float32Array(POINTS * 4);
+  const str = new Float32Array(POINTS);
+
+  // where the picture's own pixels sit in its box, for object-fit contain or
+  // cover (and plain, where they fill it)
+  const fitFor = (el, w, h) => {
+    const nw = el.naturalWidth, nh = el.naturalHeight;
+    const cs = getComputedStyle(el);
+    if (!nw || !nh || cs.objectFit === 'fill' || !cs.objectFit) return [1, 1, 0, 0];
+    const s = cs.objectFit === 'cover' ? Math.max(w / nw, h / nh) : Math.min(w / nw, h / nh);
+    const dw = nw * s, dh = nh * s;
+    const [ax, ay] = cs.objectPosition.split(' ').map((v) => parseFloat(v) / 100);
+    const ox = (w - dw) * (isNaN(ax) ? 0.5 : ax);
+    const oy = (h - dh) * (isNaN(ay) ? 0.5 : ay);
+    return [w / dw, h / dh, -ox / dw, -oy / dh];
+  };
+
+  const take = (el) => {
+    if (!el.complete || !el.naturalWidth) return false;
+    img = el;
+    trail = [];
+    last = null;
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    try {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, el);
+    } catch {
+      img = null;
+      return false;
+    }
+    return true;
+  };
+
+  const frame = (now) => {
+    if (!img) { running = false; return; }
+    // keep only the points still worth drawing
+    trail = trail.filter((p) => now - p.t < LIFE * 2).slice(-POINTS);
+    const alive = trail.length > 0;
+    if (!alive && !over) {
+      canvas.classList.remove('is-on');
+      running = false;
+      return;
+    }
+
+    // sit exactly over the picture, zoom and clip included
+    const r = img.getBoundingClientRect();
+    const cs = getComputedStyle(img);
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const cw = Math.round(r.width * dpr), ch = Math.round(r.height * dpr);
+    if (canvas.width !== cw || canvas.height !== ch) { canvas.width = cw; canvas.height = ch; }
+    Object.assign(canvas.style, {
+      left: r.left + window.scrollX + 'px', top: r.top + window.scrollY + 'px',
+      width: r.width + 'px', height: r.height + 'px',
+      clipPath: cs.clipPath === 'none' ? '' : cs.clipPath, borderRadius: cs.borderRadius,
+    });
+
+    // the trail, measured against the picture's unzoomed box, scaled to the canvas
+    const zoom = img.offsetWidth ? r.width / img.offsetWidth : 1;
+    str.fill(0);
+    pts.fill(0);
+    trail.forEach((p, i) => {
+      const fade = Math.exp(-(now - p.t) / (LIFE / 3));
+      let px = p.px * STRETCH, py = p.py * STRETCH;
+      const len = Math.hypot(px, py);
+      if (len > LONGEST) { px *= LONGEST / len; py *= LONGEST / len; }
+      pts.set([p.x * zoom * dpr, p.y * zoom * dpr, px * zoom * dpr, py * zoom * dpr], i * 4);
+      str[i] = fade * Math.min(1, len / 6);
+    });
+
+    gl.viewport(0, 0, cw, ch);
+    gl.disable(gl.SCISSOR_TEST);
+    gl.clearColor(0, 0, 0, 0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    // Draw only the box around the trail: the rest of the canvas stays clear
+    // and the picture underneath shows as it is, so the work each frame is a
+    // small patch rather than the whole picture.
+    if (alive) {
+      const reach = (RADIUS + LONGEST) * zoom * dpr;
+      let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+      for (let i = 0; i < trail.length; i++) {
+        if (str[i] < 0.01) continue;
+        x0 = Math.min(x0, pts[i * 4]); x1 = Math.max(x1, pts[i * 4]);
+        y0 = Math.min(y0, pts[i * 4 + 1]); y1 = Math.max(y1, pts[i * 4 + 1]);
+      }
+      if (x0 === Infinity) {
+        canvas.classList.remove('is-on');
+        requestAnimationFrame(frame);
+        return;
+      }
+      const sx = Math.max(0, Math.floor(x0 - reach)), sy = Math.max(0, Math.floor(y0 - reach));
+      const ex = Math.min(cw, Math.ceil(x1 + reach)), ey = Math.min(ch, Math.ceil(y1 + reach));
+      gl.enable(gl.SCISSOR_TEST);
+      // scissor counts from the bottom of the canvas, the trail from the top
+      gl.scissor(sx, ch - ey, Math.max(0, ex - sx), Math.max(0, ey - sy));
+    }
+    gl.uniform2f(uRes, cw, ch);
+    gl.uniform4fv(uFit, fitFor(img, img.offsetWidth, img.offsetHeight));
+    gl.uniform4fv(uPts, pts);
+    gl.uniform1fv(uStr, str);
+    gl.uniform1f(uRadius, RADIUS * zoom * dpr);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    canvas.classList.toggle('is-on', alive);
+    requestAnimationFrame(frame);
+  };
+
+  const run = () => {
+    if (running) return;
+    running = true;
+    requestAnimationFrame(frame);
+  };
+
+  document.addEventListener('pointerover', (e) => {
+    const el = e.target.closest && e.target.closest(PICTURES);
+    if (!el || el === img) { over = !!el; return; }
+    over = take(el);
+    if (over) run();
+  });
+  document.addEventListener('pointerout', (e) => {
+    if (img && e.target === img && !img.contains(e.relatedTarget)) over = false;
+  });
+  document.addEventListener('pointermove', (e) => {
+    if (!over || !img || e.pointerType !== 'mouse') return;
+    const r = img.getBoundingClientRect();
+    const zoom = img.offsetWidth ? r.width / img.offsetWidth : 1;
+    const x = (e.clientX - r.left) / zoom;
+    const y = (e.clientY - r.top) / zoom;
+    if (last) trail.push({ x, y, px: x - last.x, py: y - last.y, t: performance.now() });
+    last = { x, y };
+    run();
+  }, { passive: true });
+});
+
+/* ---------------------------------------------------------------- *
+ * Blur trail on the project cards
+ *
+ * The same idea as the blur trail on case study pictures, for the cards on
+ * the home and projects pages. A card isn't one flat picture (some are built
+ * from layers, one is a grid of nine clips, most turn into a clip on hover),
+ * so it isn't redrawn; instead small spots blur whatever is under them
+ * (backdrop-filter, global.css) and fade. On the black page around the cards
+ * there is nothing to blur, so they only show on the picture, and they stay
+ * inside it.
+ *
+ * Two things keep it smooth and shapeless. A follower glides after the
+ * pointer every frame, and spots are laid every few px along its path, so the
+ * trail is one stroke rather than a string of beads. And each spot blurs only
+ * a little but they overlap heavily: the middle of the stroke, under many of
+ * them, comes out properly blurred, while its edges, under one or two, barely
+ * change, so the blur fades out rather than ending in a ring. (Feathering one
+ * strong spot with a mask would be simpler, but Chrome then drops the blur.)
+ * Not on touch screens, and not for visitors who have asked for less motion.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const SPACING = 9;    // css px between spots along the path
+  const FOLLOW = 0.6;   // how much of the way to the pointer the follower goes each frame
+  const MOST = 32;      // spots on a card at once (with SPACING, how long the trail can get)
+
+  document.querySelectorAll('.project-card .project-image-wrapper').forEach((wrap) => {
+    const card = wrap.closest('.project-card');
+    const layer = document.createElement('span');
+    layer.className = 'card-trail';
+    layer.setAttribute('aria-hidden', 'true');
+    wrap.append(layer);
+
+    let aim = null;     // where the pointer is, in the picture
+    let at = null;      // where the follower is
+    let laid = null;    // where the last spot went
+    let running = false;
+
+    const spot = (x, y) => {
+      const el = document.createElement('i');
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.addEventListener('animationend', () => el.remove(), { once: true });
+      layer.append(el);
+      while (layer.children.length > MOST) layer.firstElementChild.remove();
+    };
+
+    const frame = () => {
+      if (!aim) { running = false; return; }
+      at = at ? { x: at.x + (aim.x - at.x) * FOLLOW, y: at.y + (aim.y - at.y) * FOLLOW } : { ...aim };
+      if (!laid) { laid = { ...at }; spot(at.x, at.y); }
+      // fill the way from the last spot to here, a spot every SPACING px
+      let dx = at.x - laid.x, dy = at.y - laid.y;
+      let gap = Math.hypot(dx, dy);
+      while (gap >= SPACING) {
+        laid = { x: laid.x + dx / gap * SPACING, y: laid.y + dy / gap * SPACING };
+        spot(laid.x, laid.y);
+        dx = at.x - laid.x; dy = at.y - laid.y;
+        gap = Math.hypot(dx, dy);
+      }
+      // keep going while the follower is still catching up
+      if (Math.hypot(aim.x - at.x, aim.y - at.y) > 0.5) requestAnimationFrame(frame);
+      else running = false;
+    };
+
+    card.addEventListener('pointermove', (e) => {
+      if (e.pointerType !== 'mouse') return;
+      // The card grows a little on hover (transform: scale), so its box on
+      // screen is bigger than the layout the spots are placed in: measure
+      // against the grown box and scale back, or the trail drifts off the
+      // pointer the further it is from the middle.
+      const r = wrap.getBoundingClientRect();
+      const zoom = wrap.offsetWidth ? r.width / wrap.offsetWidth : 1;
+      const x = (e.clientX - r.left) / zoom;
+      const y = (e.clientY - r.top) / zoom;
+      if (x < 0 || y < 0 || x > wrap.offsetWidth || y > wrap.offsetHeight) { aim = at = laid = null; return; }
+      aim = { x, y };
+      if (!running) { running = true; requestAnimationFrame(frame); }
+    }, { passive: true });
+
+    card.addEventListener('pointerleave', () => { aim = at = laid = null; });
+  });
+});

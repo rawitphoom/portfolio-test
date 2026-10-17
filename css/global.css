@@ -2180,3 +2180,57 @@ like a block-level element, so it can:
 .glass-mark.is-metal .footer-metal {
     opacity: 1;
 }
+
+/* The blur trail over a picture (main.js): placed and sized by the script,
+   shown only while there is a trail, and never in the pointer's way. Above
+   the page's pictures, under the header and everything that floats. */
+.blur-trail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 50;
+    pointer-events: none;
+    visibility: hidden;
+}
+
+.blur-trail.is-on {
+    visibility: visible;
+}
+
+/* The blur trail on the project cards (main.js): many small spots laid close
+   together along the pointer's path, each blurring what is under it only a
+   little; where they overlap, down the middle of the stroke, the blur builds
+   up, and at its edges it fades away, so no spot shows as a circle. Each one
+   fades and shrinks as it goes. The layer sits over the card's picture, under
+   its title, and keeps the spots inside the picture. */
+.card-trail {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    overflow: hidden;
+    border-radius: inherit;
+    pointer-events: none;
+}
+
+.card-trail i {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    margin: -21px 0 0 -21px;
+    border-radius: 50%;
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    animation: card-trail 1s ease-out forwards;
+}
+
+@keyframes card-trail {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(0.4);
+    }
+}
