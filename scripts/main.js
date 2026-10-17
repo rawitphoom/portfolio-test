@@ -175,6 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Trial: the blur trail follows the pointer over the whole page (the "Blur
+// trail everywhere" section at the end of this file) instead of only over
+// case study pictures and project cards. While it is on, those two stand
+// down, so the blur isn't doubled. Set to false to go back to them.
+const BLUR_EVERYWHERE = true;
+
 // Every picture and clip in a case study has a tiny preview (160px wide, a few
 // KB) of the same name in a thumbs/ folder beside it, as a .jpg: for a clip, a
 // frame from 40% of the way through. The page minimap draws with them, and the
@@ -2559,6 +2565,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  if (BLUR_EVERYWHERE) return;
+
   const PICTURES = '.case-main figure img';
   const POINTS = 20;      // trail points kept
   const LIFE = 520;       // ms for a point to fade to almost nothing
@@ -2816,6 +2824,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
+  if (BLUR_EVERYWHERE) return;
+
   const SPACING = 9;    // css px between spots along the path
   const FOLLOW = 0.6;   // how much of the way to the pointer the follower goes each frame
   const MOST = 32;      // spots on a card at once (with SPACING, how long the trail can get)
@@ -2876,4 +2886,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     card.addEventListener('pointerleave', () => { aim = at = laid = null; });
   });
+});
+
+/* ---------------------------------------------------------------- *
+ * Blur trail everywhere (trial, BLUR_EVERYWHERE near the top)
+ *
+ * The project cards' trail, over the whole page: a follower glides after the
+ * pointer and lays small spots along its path, each blurring whatever is
+ * under it a little (backdrop-filter, global.css), overlapping so the middle
+ * of the stroke blurs properly and its edges fade. Text, pictures, cards and
+ * the header all smear as it passes; on the plain black page there is nothing
+ * to blur, so it shows only where it crosses something. It sits under the
+ * cursor's dot and ring. Not on touch screens, and not for visitors who have
+ * asked for less motion.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!BLUR_EVERYWHERE) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const SPACING = 9;    // px between spots along the path
+  const FOLLOW = 0.6;   // how much of the way to the pointer the follower goes each frame
+  const MOST = 32;      // spots on screen at once
+
+  const layer = document.createElement('div');
+  layer.className = 'page-trail';
+  layer.setAttribute('aria-hidden', 'true');
+  document.body.append(layer);
+
+  let aim = null;
+  let at = null;
+  let laid = null;
+  let running = false;
+
+  const spot = (x, y) => {
+    const el = document.createElement('i');
+    el.style.left = x + 'px';
+    el.style.top = y + 'px';
+    el.addEventListener('animationend', () => el.remove(), { once: true });
+    layer.append(el);
+    while (layer.children.length > MOST) layer.firstElementChild.remove();
+  };
+
+  const frame = () => {
+    if (!aim) { running = false; return; }
+    at = at ? { x: at.x + (aim.x - at.x) * FOLLOW, y: at.y + (aim.y - at.y) * FOLLOW } : { ...aim };
+    if (!laid) { laid = { ...at }; spot(at.x, at.y); }
+    let dx = at.x - laid.x, dy = at.y - laid.y;
+    let gap = Math.hypot(dx, dy);
+    while (gap >= SPACING) {
+      laid = { x: laid.x + dx / gap * SPACING, y: laid.y + dy / gap * SPACING };
+      spot(laid.x, laid.y);
+      dx = at.x - laid.x; dy = at.y - laid.y;
+      gap = Math.hypot(dx, dy);
+    }
+    if (Math.hypot(aim.x - at.x, aim.y - at.y) > 0.5) requestAnimationFrame(frame);
+    else running = false;
+  };
+
+  document.addEventListener('pointermove', (e) => {
+    if (e.pointerType !== 'mouse') return;
+    aim = { x: e.clientX, y: e.clientY };
+    if (!running) { running = true; requestAnimationFrame(frame); }
+  }, { passive: true });
+
+  // leaving the window, or the page scrolling under a still pointer, starts
+  // the trail afresh rather than drawing a line across the jump
+  document.addEventListener('mouseleave', () => { aim = at = laid = null; });
+  window.addEventListener('scroll', () => { at = laid = null; }, { passive: true });
 });

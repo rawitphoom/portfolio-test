@@ -2234,3 +2234,24 @@ like a block-level element, so it can:
         transform: scale(0.4);
     }
 }
+
+/* The blur trail everywhere (trial, main.js): the same soft spots as on the
+   project cards, over the whole window, under the cursor's dot and ring. */
+.page-trail {
+    position: fixed;
+    inset: 0;
+    z-index: 9990;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.page-trail i {
+    position: absolute;
+    width: 42px;
+    height: 42px;
+    margin: -21px 0 0 -21px;
+    border-radius: 50%;
+    -webkit-backdrop-filter: blur(3px);
+    backdrop-filter: blur(3px);
+    animation: card-trail 1s ease-out forwards;
+}
