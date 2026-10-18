@@ -205,9 +205,8 @@ const appleEngine = (() => {
     /CriOS|FxiOS|EdgiOS/.test(ua);
 })();
 
-// The desktop header's picture is a small cube, like a die: the animated
-// avatar on the front and the blue fire profile picture on the other three
-// sides. At the very top of the page, scrolling up further, past the top,
+// The desktop header's picture is a small cube, like a die, with the
+// animated avatar on every side. At the very top of the page, scrolling up further, past the top,
 // turns it a quarter, right to left, onto its next side; keep scrolling and it
 // keeps turning, about a side per flick. The turn and its soft landing are a
 // CSS transition (global.css, .avatar-cube).
@@ -235,14 +234,29 @@ const appleEngine = (() => {
   const front = make('cube-face cube-front');
   front.append(video);
   cube.append(front);
-  for (const side of ['right', 'back', 'left']) {
+  // Every side plays the same animated avatar, so it keeps moving while the
+  // cube turns and whichever side it lands on. The copies are the same small
+  // file, which the browser fetches once; they start from wherever the front
+  // one is, so all four stay in step.
+  const copies = ['right', 'back', 'left'].map((side) => {
     const face = make('cube-face cube-' + side);
-    face.append(Object.assign(document.createElement('img'), {
-      src: '/assets/images/profile_pic-cube.png', alt: '', decoding: 'async',
-    }));
+    const copy = video.cloneNode(true);
+    face.append(copy);
     cube.append(face);
-  }
-  video.play().catch(() => {});
+    return copy;
+  });
+  const videos = [video, ...copies];
+  videos.forEach((v) => {
+    v.muted = true;
+    v.play().catch(() => {});
+  });
+  const sync = () => copies.forEach((copy) => {
+    if (Math.abs(copy.currentTime - video.currentTime) > 0.05) copy.currentTime = video.currentTime;
+  });
+  video.addEventListener('playing', sync);
+  video.addEventListener('seeked', sync);
+  // a loop restarts each copy on its own; line them up again each time round
+  video.addEventListener('timeupdate', () => { if (video.currentTime < 0.2) sync(); });
 
   // Scrolling turns the cube with the scroll, wherever on the page, including
   // on past the very top: up turns it right to left, down left to right, a

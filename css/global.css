@@ -284,9 +284,8 @@ header.scrolled {
 }
 
 /* The header picture as a cube (main.js builds it around the video): the
-   animated avatar on the front, the blue fire profile picture on the other
-   three sides, each a dark square so it reads as a solid block while it
-   turns. The cube is pushed back half its depth, so its front
+   animated avatar on every side, each a dark square so it reads as a solid
+   block while it turns. The cube is pushed back half its depth, so its front
    sits exactly where the flat picture did and nothing moves until it turns.
    --turn is set by main.js every frame while it turns, following the scroll
    and then settling onto the nearest side. */
