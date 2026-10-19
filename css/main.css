@@ -1667,3 +1667,160 @@ nav a:hover {
         gap: 2%;
     }
 }
+
+/***************************** ALL THE WORK, UP CLOSE *****************************/
+
+/* Pictures from every project (index.html, .reel). As it stands, before the
+   script runs, without it, or with reduced motion: a plain strip of each
+   project's pictures, one row per project. */
+.reel {
+    position: relative;
+    margin-top: 6rem;
+}
+
+.reel-space {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+.reel-project {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.reel-project img,
+.reel-project video {
+    flex: 0 0 auto;
+    width: auto;
+    height: 9rem;
+    border-radius: 0.5rem;
+    object-fit: cover;
+}
+
+/* The moving version (main.js adds .is-live): the section is as tall as the
+   run (--reel-height) and its stage stays pinned to the window. The pictures
+   sit in one thin row across the middle, pulled left as the page scrolls;
+   each grows out of the row near the middle, card over card, and shrinks
+   back into it as it passes. main.js sets each one's size and place. */
+.reel.is-live {
+    height: var(--reel-height, 400vh);
+    margin-top: 4rem;
+}
+
+.reel.is-live .reel-stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+.reel.is-live .reel-space {
+    position: absolute;
+    inset: 0;
+    display: block;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* the pictures belong to the corridor, not to their project's row */
+.reel.is-live .reel-project {
+    display: contents;
+}
+
+.reel.is-live .reel-project img,
+.reel.is-live .reel-project video {
+    position: absolute;
+    left: 0;
+    top: 0;
+    max-width: none;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
+    cursor: pointer;
+    transform-origin: 0 0;
+    visibility: hidden;
+    will-change: transform;
+}
+
+/* the bar along the bottom: the number and name of the project going past,
+   and a link to it, over a hairline that fills as the trip goes on */
+.reel-bar {
+    position: absolute;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: 1.75rem;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.reel-count {
+    font-variant-numeric: tabular-nums;
+}
+
+.reel-name {
+    color: white;
+}
+
+.reel-link {
+    justify-self: end;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.reel-link:hover,
+.reel-link:focus-visible {
+    color: white;
+}
+
+.reel-link svg {
+    width: 0.8em;
+    height: 0.8em;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.reel-progress {
+    position: absolute;
+    left: 1.5rem;
+    right: 1.5rem;
+    bottom: 1rem;
+    z-index: 2;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.reel-progress span {
+    display: block;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+    transform-origin: left;
+    transform: scaleX(var(--reel-progress, 0));
+}
+
+@media (max-width: 768px) {
+    .reel-bar {
+        font-size: 0.7rem;
+    }
+}

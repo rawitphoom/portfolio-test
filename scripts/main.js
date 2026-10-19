@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // grow the ring over anything clickable: the case study pictures and the
   // picture viewer too, where a click anywhere closes it. Set on every
   // mouseover, not only added, so it never stays open after the viewer closes.
-  const CLICKABLE = 'a, button, label, input, textarea, .project-card, .faq-item label, .zoom-pic, .zoom-box';
+  const CLICKABLE = 'a, button, label, input, textarea, .project-card, .faq-item label, .zoom-pic, .zoom-box, .reel.is-live .reel-project img, .reel.is-live .reel-project video';
   document.addEventListener('mouseover', e => {
     ring.classList.toggle('is-hovering', !!e.target.closest(CLICKABLE));
   });
@@ -2968,4 +2968,223 @@ document.addEventListener('DOMContentLoaded', () => {
   // the trail afresh rather than drawing a line across the jump
   document.addEventListener('mouseleave', () => { aim = at = laid = null; });
   window.addEventListener('scroll', () => { at = laid = null; }, { passive: true });
+});
+
+/* ---------------------------------------------------------------- *
+ * All projects (the home page, .reel)
+ *
+ * Every project's pictures in one thin row across the middle of the screen,
+ * and a lens that travels along it from left to right as the page scrolls.
+ * The pictures near the lens grow out of the row and scatter above and below
+ * it, small and big, card over card with the biggest on top; as the lens
+ * moves on they shrink back into their places in the row. The bar at the
+ * bottom shows the number and name of the project under the lens, with a
+ * link to it, over a line that fills as it goes on. Clicking a picture opens
+ * its project. The clips among them play only while they are on screen.
+ *
+ * The section is made as tall as the run, and its stage is pinned to the
+ * window while it lasts. Adding a project to the markup is all it takes to
+ * add it here. Without JavaScript, or with reduced motion, it stays the plain
+ * strip of pictures the CSS draws.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const reel = document.querySelector('.reel');
+  if (!reel) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const STEP = 60;          // px scrolled to move the lens on by one picture
+  const PROJECT_GAP = 1.5;  // extra steps between one project and the next
+  const THUMB = 0.15;       // a picture's size in the row, of its full size
+  const REACH = 9;          // how many pictures either side of the lens grow
+  const LENS = 0.32;        // half the width the grown pictures take, of the screen
+
+  const projects = [...reel.querySelectorAll('.reel-project')];
+  if (!projects.length) return;
+
+  // a little give, the same every visit: a number from 0 to 1
+  const rand = (a, b) => {
+    const n = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+    return n - Math.floor(n);
+  };
+
+  // small, medium or big: mostly small, a few big
+  const sizeOf = (pick, give) => {
+    if (pick < 0.4) return 0.3 + give * 0.15;
+    if (pick < 0.75) return 0.6 + give * 0.25;
+    return 1 + give * 0.25;
+  };
+
+  let at = 0;
+  const items = [];
+  projects.forEach((project, p) => {
+    [...project.querySelectorAll('img, video')].forEach((img, k) => {
+      if (k === 0 && p > 0) at += PROJECT_GAP;
+      const n = items.length;
+      const aspect = (+img.getAttribute('width') || 16) / (+img.getAttribute('height') || 9);
+      items.push({
+        img,
+        p,
+        at,
+        aspect,
+        // where it sits when grown: a nudge across (of the width), above or
+        // below the row in turn (of the height), and how big it gets
+        x: (rand(n, 1) - 0.5) * 0.18,
+        y: (n % 2 ? 1 : -1) * (0.04 + rand(n, 2) * 0.3),
+        size: sizeOf(rand(n, 3), rand(n, 4)),
+      });
+      img.addEventListener('click', () => { location.href = project.dataset.href; });
+      at += 1;
+    });
+  });
+  const last = at - 1;
+
+  // the bar and the line
+  const stage = reel.querySelector('.reel-stage');
+  const bar = document.createElement('div');
+  bar.className = 'reel-bar';
+  const count = Object.assign(document.createElement('span'), { className: 'reel-count' });
+  const name = Object.assign(document.createElement('span'), { className: 'reel-name' });
+  const link = Object.assign(document.createElement('a'), { className: 'reel-link' });
+  link.append('View project');
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('viewBox', '0 0 10 10');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.innerHTML = '<path d="M1.5 5h7M5.5 2l3 3-3 3"/>';
+  link.append(svg);
+  bar.append(count, name, link);
+  const line = document.createElement('div');
+  line.className = 'reel-progress';
+  line.setAttribute('aria-hidden', 'true');
+  line.append(document.createElement('span'));
+  stage.append(bar, line);
+
+  // fetch the pictures a screen or two before the section arrives, so they
+  // are there when the run starts rather than appearing during it
+  if ('IntersectionObserver' in window) {
+    const early = new IntersectionObserver((entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      early.disconnect();
+      items.forEach(({ img }) => {
+        if (img.tagName === 'VIDEO') img.preload = 'auto';
+        else img.loading = 'eager';
+      });
+    }, { rootMargin: '150% 0px' });
+    early.observe(reel);
+  }
+
+  reel.style.setProperty('--reel-height', `calc(${Math.round(last * STEP)}px + 100vh)`);
+  reel.classList.add('is-live');
+
+  let shown = -1;
+  const label = (p) => {
+    if (p === shown) return;
+    shown = p;
+    const project = projects[p];
+    count.textContent = String(p + 1).padStart(2, '0');
+    name.textContent = '▸ ' + project.dataset.name;
+    link.href = project.dataset.href;
+    link.setAttribute('aria-label', 'View project: ' + project.dataset.name);
+  };
+
+  const mix = (a, b, t) => a + (b - a) * t;
+
+  const update = () => {
+    const W = window.innerWidth;
+    const H = window.innerHeight;
+    // a card's full height: a good share of the screen, kept in check on a phone
+    const tall = Math.min(H * 0.32, W * 0.38);
+    const r = reel.getBoundingClientRect();
+    const room = Math.max(1, reel.offsetHeight - H);
+    const scrolled = Math.min(room, Math.max(0, -r.top));
+    const onScreen = r.bottom > 0 && r.top < H;
+    const progress = scrolled / room;
+
+    // the row: each picture's middle, side by side at their small size, with
+    // a little more room between projects
+    const thumbH = tall * THUMB;
+    const space = thumbH * 0.08;
+    let run = 0;
+    let prevAt = null;
+    for (const item of items) {
+      const w = thumbH * item.aspect;
+      if (prevAt !== null) run += (item.at - prevAt - 1) * thumbH * 1.5;
+      item.row = run + w / 2;
+      run += w + space;
+      prevAt = item.at;
+    }
+
+    // a place along the row, for any step, past either end too
+    const first = items[0];
+    const end = items[items.length - 1];
+    const each = (end.row - first.row) / Math.max(1, end.at - first.at);
+    const rowAt = (a) => {
+      if (a <= first.at) return first.row + (a - first.at) * each;
+      if (a >= end.at) return end.row + (a - end.at) * each;
+      for (let i = 0; i < items.length - 1; i++) {
+        const b = items[i + 1];
+        if (a <= b.at) return mix(items[i].row, b.row, (a - items[i].at) / (b.at - items[i].at));
+      }
+      return end.row;
+    };
+
+    // the lens: where it is along the row, and where on the screen. The row
+    // either side starts at its edges, from the pictures just out of reach.
+    const lens = progress * last;
+    const leftEdge = rowAt(lens - REACH);
+    const rightEdge = rowAt(lens + REACH);
+    const half = LENS * W;
+    const lensX = half + progress * (W - 2 * half);
+
+    let under = 0;
+    let nearest = Infinity;
+    for (const item of items) {
+      const k = item.at - lens;  // pictures from the lens, + to the right
+      if (Math.abs(k) < nearest) { nearest = Math.abs(k); under = item.p; }
+      // full size near the lens, easing to 0 at REACH pictures away
+      const t = Math.min(1, 1.5 * Math.max(0, 1 - Math.abs(k) / REACH));
+      const grow = t * t * (3 - 2 * t);
+      const fullW = tall * item.aspect;
+      // never wider than about a third of the screen, for the very wide ones
+      const size = Math.min(item.size, (W * 0.3) / fullW);
+      const s = THUMB + (size - THUMB) * grow;
+      // in the row, pushed aside by the lens; grown, spread across its width
+      const inRow = k < 0
+        ? lensX - half + (item.row - leftEdge)
+        : lensX + half + (item.row - rightEdge);
+      const grown = lensX + (k / REACH) * half + item.x * W;
+      const cx = mix(inRow, grown, grow);
+      const w = fullW * s;
+      const h = tall * s;
+      // kept clear of the header at the top and the bar at the bottom
+      const cy = Math.min(H - 80 - h / 2, Math.max(70 + h / 2, H / 2 + item.y * H * grow));
+      const isClip = item.img.tagName === 'VIDEO';
+      if (cx + w / 2 < 0 || cx - w / 2 > W) {
+        item.img.style.visibility = 'hidden';
+        if (isClip && !item.img.paused) item.img.pause();
+        continue;
+      }
+      item.img.style.visibility = 'visible';
+      item.img.style.zIndex = String(Math.round(s * 1000));
+      item.img.style.width = `${fullW.toFixed(1)}px`;
+      item.img.style.height = `${tall.toFixed(1)}px`;
+      item.img.style.transform = `translate(${(cx - w / 2).toFixed(1)}px, ${(cy - h / 2).toFixed(1)}px) scale(${s.toFixed(4)})`;
+      if (isClip) {
+        if (onScreen && item.img.paused) item.img.play().catch(() => {});
+        else if (!onScreen && !item.img.paused) item.img.pause();
+      }
+    }
+
+    label(under);
+    line.firstElementChild.style.setProperty('--reel-progress', progress.toFixed(4));
+  };
+
+  let queued = false;
+  const queue = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(() => { queued = false; update(); });
+  };
+  window.addEventListener('scroll', queue, { passive: true });
+  window.addEventListener('resize', queue, { passive: true });
+  update();
 });
