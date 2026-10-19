@@ -1740,13 +1740,13 @@ nav a:hover {
     position: absolute;
     left: 0;
     top: 0;
-    display: none;
     max-width: none;
     object-fit: cover;
     border-radius: 0.5rem;
     cursor: pointer;
     transform-origin: 0 0;
-    backface-visibility: hidden;
+    visibility: hidden;
+    will-change: transform;
 }
 
 /* the bar along the bottom: the number and name of the project going past,

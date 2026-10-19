@@ -2993,10 +2993,12 @@ document.addEventListener('DOMContentLoaded', () => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
   const STEP = 60;          // px scrolled to move the lens on by one picture
-  const PROJECT_GAP = 1.5;  // extra steps between one project and the next
+  const PROJECT_GAP = 0.5;  // extra steps between one project and the next
   const THUMB = 0.15;       // a picture's size in the row, of its full size
   const REACH = 9;          // how many pictures either side of the lens grow
-  const LENS = 0.32;        // half the width the grown pictures take, of the screen
+  const SPACING = 0.15;     // how far apart grown pictures sit, of a card's height,
+                            // so the spread always fits the cards and leaves no gaps
+  const READY = REACH + 14; // how far ahead of the lens pictures are got ready
 
   const projects = [...reel.querySelectorAll('.reel-project')];
   if (!projects.length) return;
@@ -3026,9 +3028,9 @@ document.addEventListener('DOMContentLoaded', () => {
         p,
         at,
         aspect,
-        // where it sits when grown: a nudge across (of the width), above or
-        // below the row in turn (of the height), and how big it gets
-        x: (rand(n, 1) - 0.5) * 0.18,
+        // where it sits when grown: a nudge across (of a card's height), above
+        // or below the row in turn (of the screen's height), and how big it gets
+        x: (rand(n, 1) - 0.5) * 0.8,
         y: (n % 2 ? 1 : -1) * (0.04 + rand(n, 2) * 0.3),
         size: sizeOf(rand(n, 3), rand(n, 4)),
       });
@@ -3128,7 +3130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const lens = progress * last;
     const leftEdge = rowAt(lens - REACH);
     const rightEdge = rowAt(lens + REACH);
-    const half = LENS * W;
+    const half = REACH * SPACING * tall;
     const lensX = half + progress * (W - 2 * half);
 
     let under = 0;
@@ -3136,6 +3138,18 @@ document.addEventListener('DOMContentLoaded', () => {
     for (const item of items) {
       const k = item.at - lens;  // pictures from the lens, + to the right
       if (Math.abs(k) < nearest) { nearest = Math.abs(k); under = item.p; }
+      // get a picture ready at full size a little before the lens reaches
+      // it. In the row the browser only keeps a small copy, and a picture
+      // that grows before its full copy is ready is left blank until it is,
+      // which showed as a gap whenever a new project came in.
+      if (Math.abs(k) < READY) {
+        if (!item.ready && item.img.decode) {
+          item.ready = true;
+          item.img.decode().catch(() => {});
+        }
+      } else if (Math.abs(k) > READY * 2) {
+        item.ready = false;
+      }
       // full size near the lens, easing to 0 at REACH pictures away
       const t = Math.min(1, 1.5 * Math.max(0, 1 - Math.abs(k) / REACH));
       const grow = t * t * (3 - 2 * t);
@@ -3147,21 +3161,21 @@ document.addEventListener('DOMContentLoaded', () => {
       const inRow = k < 0
         ? lensX - half + (item.row - leftEdge)
         : lensX + half + (item.row - rightEdge);
-      const grown = lensX + (k / REACH) * half + item.x * W;
+      const grown = lensX + k * SPACING * tall + item.x * tall;
       const cx = mix(inRow, grown, grow);
       const w = fullW * s;
       const h = tall * s;
       // kept clear of the header at the top and the bar at the bottom
       const cy = Math.min(H - 80 - h / 2, Math.max(70 + h / 2, H / 2 + item.y * H * grow));
       // only what has changed is written: the size only when the screen
-      // does, the stacking only when a card passes another, and cards off
-      // screen are taken out of the page altogether
+      // does, the stacking only when a card passes another. Cards off screen
+      // are hidden rather than taken out, so they stay drawn and ready.
       const el = item.img;
       const isClip = el.tagName === 'VIDEO';
       const shown = onScreen && cx + w / 2 > 0 && cx - w / 2 < W;
       if (shown !== item.shown) {
         item.shown = shown;
-        el.style.display = shown ? 'block' : 'none';
+        el.style.visibility = shown ? 'visible' : 'hidden';
       }
       if (!shown) {
         if (isClip && !el.paused) el.pause();
