@@ -2979,7 +2979,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * it, small and big, card over card with the biggest on top; as the lens
  * moves on they shrink back into their places in the row. The bar at the
  * bottom shows the number and name of the project under the lens, with a
- * link to it, over a line that fills as it goes on. Clicking a picture opens
+ * link to it. Clicking a picture opens
  * its project. The clips among them play only while they are on screen.
  *
  * The section is made as tall as the run, and its stage is pinned to the
@@ -3038,7 +3038,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const last = at - 1;
 
-  // the bar and the line
+  // the bar
   const stage = reel.querySelector('.reel-stage');
   const bar = document.createElement('div');
   bar.className = 'reel-bar';
@@ -3052,11 +3052,7 @@ document.addEventListener('DOMContentLoaded', () => {
   svg.innerHTML = '<path d="M1.5 5h7M5.5 2l3 3-3 3"/>';
   link.append(svg);
   bar.append(count, name, link);
-  const line = document.createElement('div');
-  line.className = 'reel-progress';
-  line.setAttribute('aria-hidden', 'true');
-  line.append(document.createElement('span'));
-  stage.append(bar, line);
+  stage.append(bar);
 
   // fetch the pictures a screen or two before the section arrives, so they
   // are there when the run starts rather than appearing during it
@@ -3190,7 +3186,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     label(under);
-    line.firstElementChild.style.setProperty('--reel-progress', progress.toFixed(4));
   };
 
   let queued = false;
