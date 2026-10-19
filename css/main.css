@@ -1740,14 +1740,13 @@ nav a:hover {
     position: absolute;
     left: 0;
     top: 0;
+    display: none;
     max-width: none;
     object-fit: cover;
     border-radius: 0.5rem;
-    box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.45);
     cursor: pointer;
     transform-origin: 0 0;
-    visibility: hidden;
-    will-change: transform;
+    backface-visibility: hidden;
 }
 
 /* the bar along the bottom: the number and name of the project going past,
@@ -1779,6 +1778,7 @@ nav a:hover {
 .reel-link {
     justify-self: end;
     display: inline-flex;
+    white-space: nowrap;
     align-items: center;
     gap: 0.5rem;
     color: inherit;

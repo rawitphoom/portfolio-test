@@ -3094,7 +3094,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // a card's full height: a good share of the screen, kept in check on a phone
     const tall = Math.min(H * 0.32, W * 0.38);
     const r = reel.getBoundingClientRect();
-    const room = Math.max(1, reel.offsetHeight - H);
+    const room = Math.max(1, r.height - H);
     const scrolled = Math.min(room, Math.max(0, -r.top));
     const onScreen = r.bottom > 0 && r.top < H;
     const progress = scrolled / room;
@@ -3157,20 +3157,35 @@ document.addEventListener('DOMContentLoaded', () => {
       const h = tall * s;
       // kept clear of the header at the top and the bar at the bottom
       const cy = Math.min(H - 80 - h / 2, Math.max(70 + h / 2, H / 2 + item.y * H * grow));
-      const isClip = item.img.tagName === 'VIDEO';
-      if (cx + w / 2 < 0 || cx - w / 2 > W) {
-        item.img.style.visibility = 'hidden';
-        if (isClip && !item.img.paused) item.img.pause();
+      // only what has changed is written: the size only when the screen
+      // does, the stacking only when a card passes another, and cards off
+      // screen are taken out of the page altogether
+      const el = item.img;
+      const isClip = el.tagName === 'VIDEO';
+      const shown = onScreen && cx + w / 2 > 0 && cx - w / 2 < W;
+      if (shown !== item.shown) {
+        item.shown = shown;
+        el.style.display = shown ? 'block' : 'none';
+      }
+      if (!shown) {
+        if (isClip && !el.paused) el.pause();
         continue;
       }
-      item.img.style.visibility = 'visible';
-      item.img.style.zIndex = String(Math.round(s * 1000));
-      item.img.style.width = `${fullW.toFixed(1)}px`;
-      item.img.style.height = `${tall.toFixed(1)}px`;
-      item.img.style.transform = `translate(${(cx - w / 2).toFixed(1)}px, ${(cy - h / 2).toFixed(1)}px) scale(${s.toFixed(4)})`;
+      if (tall !== item.tall) {
+        item.tall = tall;
+        el.style.width = `${fullW.toFixed(1)}px`;
+        el.style.height = `${tall.toFixed(1)}px`;
+      }
+      const z = Math.round(s * 100);
+      if (z !== item.z) {
+        item.z = z;
+        el.style.zIndex = String(z);
+      }
+      el.style.transform = `translate3d(${(cx - w / 2).toFixed(1)}px, ${(cy - h / 2).toFixed(1)}px, 0) scale(${s.toFixed(3)})`;
+      // a clip plays once it has grown out of the row
       if (isClip) {
-        if (onScreen && item.img.paused) item.img.play().catch(() => {});
-        else if (!onScreen && !item.img.paused) item.img.pause();
+        if (grow > 0.25) { if (el.paused) el.play().catch(() => {}); }
+        else if (!el.paused) el.pause();
       }
     }
 
