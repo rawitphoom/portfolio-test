@@ -371,6 +371,34 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// A second try for videos the browser would not start. Every looping video on
+// the site is started from script when it comes into view, and a phone can
+// refuse that: an iPhone in Low Power Mode, or a browser saving data, will
+// not play a video until the visitor has touched the page. Left alone, those
+// videos stayed still for the whole visit. On each touch, click or key, every
+// looping video on screen that is still paused is started again, since a
+// touch only lets through the videos in sight at the time; the code that
+// started each one pauses it as usual once it leaves.
+// With reduced motion they are left as they are.
+(() => {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const retry = () => {
+    document.querySelectorAll('video[loop]').forEach((video) => {
+      if (!video.paused) return;
+      const box = video.getBoundingClientRect();
+      const onScreen = box.width > 0 && box.height > 0
+        && box.bottom > 0 && box.top < window.innerHeight
+        && box.right > 0 && box.left < window.innerWidth;
+      if (onScreen && getComputedStyle(video).visibility !== 'hidden') {
+        video.play().catch(() => {});
+      }
+    });
+  };
+  ['pointerdown', 'touchend', 'keydown'].forEach((type) => {
+    window.addEventListener(type, retry, { passive: true, capture: true });
+  });
+})();
+
 // Project cards: loop their video automatically, but only while the card is on screen,
 // so a visitor never downloads six videos at once.
 document.addEventListener('DOMContentLoaded', () => {
@@ -3189,11 +3217,8 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.zIndex = String(z);
       }
       el.style.transform = `translate3d(${(cx - w / 2).toFixed(1)}px, ${(cy - h / 2).toFixed(1)}px, 0) scale(${s.toFixed(3)})`;
-      // a clip plays once it has grown out of the row
-      if (isClip) {
-        if (grow > 0.25) { if (el.paused) el.play().catch(() => {}); }
-        else if (!el.paused) el.pause();
-      }
+      // a clip plays whenever it is on screen, small in the row or grown
+      if (isClip && el.paused) el.play().catch(() => {});
     }
 
     label(under);
