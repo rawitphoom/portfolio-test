@@ -3007,7 +3007,7 @@ document.addEventListener('DOMContentLoaded', () => {
  * it, small and big, card over card with the biggest on top; as the lens
  * moves on they shrink back into their places in the row. The bar at the
  * bottom shows the number and name of the project under the lens, with a
- * link to it. Clicking a picture opens
+ * link to it; on a phone just the name and the link. Clicking a picture opens
  * its project. The clips among them play only while they are on screen.
  *
  * The section is made as tall as the run, and its stage is pinned to the
@@ -3027,6 +3027,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const SPACING = 0.15;     // how far apart grown pictures sit, of a card's height,
                             // so the spread always fits the cards and leaves no gaps
   const READY = REACH + 14; // how far ahead of the lens pictures are got ready
+  const LEAD = 5;           // on a phone, how many pictures before the first one the
+                            // lens starts, so only a few have begun to grow at first
+  const phone = window.matchMedia('(max-width: 768px)');
 
   const projects = [...reel.querySelectorAll('.reel-project')];
   if (!projects.length) return;
@@ -3076,11 +3079,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const name = Object.assign(document.createElement('span'), { className: 'reel-name' });
   const link = Object.assign(document.createElement('a'), { className: 'reel-link' });
   link.append('View project');
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  svg.setAttribute('viewBox', '0 0 10 10');
-  svg.setAttribute('aria-hidden', 'true');
-  svg.innerHTML = '<path d="M1.5 5h7M5.5 2l3 3-3 3"/>';
-  link.append(svg);
   bar.append(count, name, link);
   stage.append(bar);
 
@@ -3098,7 +3096,13 @@ document.addEventListener('DOMContentLoaded', () => {
     early.observe(reel);
   }
 
-  reel.style.setProperty('--reel-height', `calc(${Math.round(last * STEP)}px + 100vh)`);
+  // the run is as long as the lens's trip, a little longer on a phone
+  const leadIn = () => (phone.matches ? LEAD : 0);
+  const setLength = () => {
+    reel.style.setProperty('--reel-height', `calc(${Math.round((last + leadIn()) * STEP)}px + 100vh)`);
+  };
+  setLength();
+  phone.addEventListener?.('change', setLength);
   reel.classList.add('is-live');
 
   let shown = -1;
@@ -3117,8 +3121,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const update = () => {
     const W = window.innerWidth;
     const H = window.innerHeight;
-    // a card's full height: a good share of the screen, kept in check on a phone
-    const tall = Math.min(H * 0.32, W * 0.38);
+    // a card's full height: a good share of the screen, and on a phone, where
+    // the screen is narrow, a larger share of its width so cards stay readable
+    const narrow = phone.matches;
+    const tall = Math.min(H * 0.32, W * (narrow ? 0.5 : 0.38));
     const r = reel.getBoundingClientRect();
     const room = Math.max(1, r.height - H);
     const scrolled = Math.min(room, Math.max(0, -r.top));
@@ -3152,11 +3158,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // the lens: where it is along the row, and where on the screen. The row
     // either side starts at its edges, from the pictures just out of reach.
-    const lens = progress * last;
+    const lead = leadIn();
+    const lens = progress * (last + lead) - lead;
     const leftEdge = rowAt(lens - REACH);
     const rightEdge = rowAt(lens + REACH);
     const half = REACH * SPACING * tall;
-    const lensX = half + progress * (W - 2 * half);
+    // the lens crosses the screen from near one edge to near the other; on a
+    // phone the cluster is wider than half the screen, so it is let run up
+    // close to the edges rather than standing still in the middle
+    const margin = Math.min(half, W * 0.25);
+    const lensX = margin + progress * (W - 2 * margin);
 
     let under = 0;
     let nearest = Infinity;
@@ -3179,8 +3190,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const t = Math.min(1, 1.5 * Math.max(0, 1 - Math.abs(k) / REACH));
       const grow = t * t * (3 - 2 * t);
       const fullW = tall * item.aspect;
-      // never wider than about a third of the screen, for the very wide ones
-      const size = Math.min(item.size, (W * 0.3) / fullW);
+      // never wider than about a third of the screen (most of it on a phone),
+      // for the very wide ones
+      const size = Math.min(item.size, (W * (narrow ? 0.6 : 0.3)) / fullW);
       const s = THUMB + (size - THUMB) * grow;
       // in the row, pushed aside by the lens; grown, spread across its width
       const inRow = k < 0

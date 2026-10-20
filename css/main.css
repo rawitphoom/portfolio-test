@@ -1749,8 +1749,9 @@ nav a:hover {
     will-change: transform;
 }
 
-/* the bar along the bottom: the number and name of the project going past,
-   and a link to it */
+/* the bar along the bottom: the number of the project going past, its name
+   and a link to it. On a phone, just the name on the left and the link on
+   the right. */
 .reel-bar {
     position: absolute;
     left: 1.5rem;
@@ -1791,18 +1792,14 @@ nav a:hover {
     color: white;
 }
 
-.reel-link svg {
-    width: 0.8em;
-    height: 0.8em;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 1.2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
 @media (max-width: 768px) {
     .reel-bar {
+        display: flex;
+        justify-content: space-between;
         font-size: 0.7rem;
+    }
+
+    .reel-count {
+        display: none;
     }
 }
