@@ -3030,6 +3030,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const LEAD = 5;           // on a phone, how many pictures before the first one the
                             // lens starts, so only a few have begun to grow at first
   const phone = window.matchMedia('(max-width: 768px)');
+  const EASE = 5;           // how quickly the gallery catches up with the scroll;
+                            // lower is a longer, softer glide after the page stops
 
   const projects = [...reel.querySelectorAll('.reel-project')];
   if (!projects.length) return;
@@ -3118,7 +3120,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const mix = (a, b, t) => a + (b - a) * t;
 
-  const update = () => {
+  // the gallery follows the scroll a moment behind, easing into place, so the
+  // cards keep gliding and growing for a beat after the page stops rather
+  // than stopping dead with it. Worked out from the time between frames, so
+  // it feels the same at 60 and 120 frames a second.
+  let eased = null;
+  let then = null;            // the last frame's time, none while at rest
+
+  const update = (time) => {
     const W = window.innerWidth;
     const H = window.innerHeight;
     // a card's full height: a good share of the screen, and on a phone, where
@@ -3129,7 +3138,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const room = Math.max(1, r.height - H);
     const scrolled = Math.min(room, Math.max(0, -r.top));
     const onScreen = r.bottom > 0 && r.top < H;
-    const progress = scrolled / room;
+    const target = scrolled / room;
+    const dt = then === null ? 1 / 60 : Math.min(0.1, Math.max(0, (time - then) / 1000));
+    then = time;
+    // off screen there is nothing to glide, so it simply keeps up
+    if (eased === null || !onScreen) eased = target;
+    else eased += (target - eased) * (1 - Math.exp(-EASE * dt));
+    if (Math.abs(target - eased) * last < 0.002) eased = target;
+    const progress = eased;
 
     // the row: each picture's middle, side by side at their small size, one
     // project running straight on into the next
@@ -3234,15 +3250,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     label(under);
+    return eased !== target;
   };
 
+  // keep drawing while the gallery is still catching up, then rest
   let queued = false;
+  const frame = (time) => {
+    queued = false;
+    if (update(time)) queue();
+    else then = null;
+  };
   const queue = () => {
     if (queued) return;
     queued = true;
-    requestAnimationFrame(() => { queued = false; update(); });
+    requestAnimationFrame(frame);
   };
   window.addEventListener('scroll', queue, { passive: true });
   window.addEventListener('resize', queue, { passive: true });
-  update();
+  update(performance.now());
+  then = null;
 });
