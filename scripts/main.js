@@ -3097,18 +3097,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const onScreen = r.bottom > 0 && r.top < H;
     const progress = scrolled / room;
 
-    // the row: each picture's middle, side by side at their small size, with
-    // a little more room between projects
+    // the row: each picture's middle, side by side at their small size, one
+    // project running straight on into the next
     const thumbH = tall * THUMB;
     const space = thumbH * 0.08;
     let run = 0;
-    let prevAt = null;
     for (const item of items) {
       const w = thumbH * item.aspect;
-      if (prevAt !== null) run += (item.at - prevAt - 1) * thumbH * 1.5;
       item.row = run + w / 2;
       run += w + space;
-      prevAt = item.at;
     }
 
     // a place along the row, for any step, past either end too
