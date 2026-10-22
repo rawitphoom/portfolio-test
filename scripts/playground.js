@@ -171,8 +171,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // the row's resting height, and enough passes in each row to fill it at
   // its smallest, with room before the first for a shrinking row to show
   let rest = 0;
+  // where the header's own things sit (the picture and name, the badges, the
+  // links, the menu button), which a title must never show up underneath
+  let blocks = [];
+  let boxTop = 0;
+  let titleHeight = 0;
   const lay = () => {
     rest = rows[0].offsetHeight;
+    boxTop = rowsBox.getBoundingClientRect().top;
+    titleHeight = rows[0].querySelector('.pg-title').offsetHeight;
+    blocks = [...document.querySelectorAll('.desktop-header .logo, .desktop-header nav, nav.hamburger .mobile-logo, nav.hamburger .menu-button')]
+      .map((el) => el.getBoundingClientRect())
+      .filter((b) => b.width > 0 && b.height > 0);
     const width = rowsBox.clientWidth;
     lanes.forEach((lane) => {
       lane.width = lane.set.getBoundingClientRect().width;
@@ -229,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ? `translate3d(0, ${((y - i) * rest).toFixed(2)}px, 0) scale(1, ${s.toFixed(4)})`
         : '';
       lines.children[i].style.transform = `translate3d(0, ${(y * rest).toFixed(2)}px, 0)`;
+      const rowTop = boxTop + y * rest;
       y += s;
       if (!lane.width) return;
       const at = lane.start * lane.width + shown * lane.pace;
@@ -243,10 +254,20 @@ document.addEventListener('DOMContentLoaded', () => {
       const zone = zoneFor(i);
       const from = zone[0] * width;
       const to = zone[1] * width;
+      const sx = Math.max(1, s);
       lane.labels.forEach((label, k) => {
-        const middle = originX + Math.max(1, s) * (k * lane.width - x + lane.labelAt + lane.labelWidth / 2 - originX);
+        const left = originX + sx * (k * lane.width - x + lane.labelAt - originX);
+        const right = left + sx * lane.labelWidth;
+        const middle = (left + right) / 2;
         const give = label.shown ? GIVE : 0;
-        const on = middle >= from - give && middle <= to + give;
+        // the middle of the label in this row's span, the whole label on
+        // screen (so the title is never cut off, its year with it), and
+        // nothing of the header over where the title would be
+        const bottom = rowTop + titleHeight * sx;
+        const clear = !blocks.some((b) => left < b.right + 8 && right > b.left - 8 && rowTop < b.bottom + 4 && bottom > b.top - 4);
+        const on = middle >= from - give && middle <= to + give
+          && left >= 4 - give && right <= width - 4 + give
+          && clear;
         if (on !== label.shown) {
           label.shown = on;
           label.el.classList.toggle('is-shown', on);

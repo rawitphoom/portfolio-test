@@ -3,9 +3,8 @@
 /* Every project as one row of its pictures (playground/index.html). The rows
    share the height of the window below the header, one per project, with a
    hairline between them. Each row starts with the project's title, its year
-   raised beside it and its number under it, then its pictures, then how
-   many there are. The title is silver, plain grey metal against the colour
-   of the pictures.
+   raised beside it and its number under it, then its pictures. The title
+   is silver, plain grey metal against the colour of the pictures.
 
    As it stands, before the script runs or without it, each row is a strip
    that scrolls sideways on its own. The moving version (playground.js adds
@@ -72,7 +71,7 @@
     outline-offset: -2px;
 }
 
-/* one pass of a project: the label, the pictures, the count, then a long
+/* one pass of a project: the label, the pictures, then a long
    stretch of empty row before the next pass begins, so each project comes
    through as a block with black around it */
 .pg-set {
@@ -150,8 +149,7 @@
     vertical-align: top;
 }
 
-.pg-num,
-.pg-count {
+.pg-num {
     font-size: 0.62rem;
     font-variant-numeric: tabular-nums;
     color: rgba(255, 255, 255, 0.5);
@@ -160,12 +158,6 @@
 /* the number keeps a little room from the picture */
 .pg-num {
     padding-right: 0.6rem;
-}
-
-.pg-count {
-    flex: 0 0 auto;
-    align-self: flex-end;
-    padding: 0 0 0.35rem 0.6rem;
 }
 
 /* the moving version: the page holds still, each row is a window onto a track
@@ -231,13 +223,11 @@ html.pg-still body::before {
 
 /* the pointed row's own title and numbers step aside while it is big; its
    details are beside the pointer instead */
-.playground.is-live .pg-label,
-.playground.is-live .pg-count {
+.playground.is-live .pg-label {
     transition: opacity 0.4s ease;
 }
 
-.pg-row.is-focus .pg-label,
-.pg-row.is-focus .pg-count {
+.pg-row.is-focus .pg-label {
     opacity: 0;
 }
 
