@@ -3296,9 +3296,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const early = new IntersectionObserver((entries) => {
       if (!entries.some((e) => e.isIntersecting)) return;
       early.disconnect();
+      // (clips fetch nothing until they play, showing their first frame)
       items.forEach(({ img }) => {
-        if (img.tagName === 'VIDEO') img.preload = 'auto';
-        else img.loading = 'eager';
+        if (img.tagName !== 'VIDEO') img.loading = 'eager';
       });
     }, { rootMargin: '150% 0px' });
     early.observe(reel);
@@ -3451,8 +3451,13 @@ document.addEventListener('DOMContentLoaded', () => {
         el.style.zIndex = String(z);
       }
       el.style.transform = `translate3d(${(cx - w / 2).toFixed(1)}px, ${(cy - h / 2).toFixed(1)}px, 0) scale(${s.toFixed(3)})`;
-      // a clip plays whenever it is on screen, small in the row or grown
-      if (isClip && el.paused) el.play().catch(() => {});
+      // a clip plays once it is big enough to see it move; a thumbnail in
+      // the row shows its first frame, which spares the machine dozens of
+      // tiny clips playing at once
+      if (isClip) {
+        if (w >= 80) { if (el.paused) el.play().catch(() => {}); }
+        else if (!el.paused) el.pause();
+      }
     }
 
     label(under);

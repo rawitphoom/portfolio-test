@@ -160,11 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     })
     : null;
-  const watch = (video, first) => {
-    video.preload = first ? 'auto' : 'metadata';
+  const watch = (video) => {
+    // nothing until it plays on screen, showing its first frame till then:
+    // there are dozens of clips, and most are off screen at any moment
+    video.preload = 'none';
     sight?.observe(video);
   };
-  playground.querySelectorAll('video').forEach((v) => watch(v, true));
+  playground.querySelectorAll('video').forEach(watch);
 
   // the row's resting height, and enough passes in each row to fill it at
   // its smallest, with room before the first for a shrinking row to show
@@ -176,12 +178,15 @@ document.addEventListener('DOMContentLoaded', () => {
       lane.width = lane.set.getBoundingClientRect().width;
       if (!lane.width) return;
       lane.lead = LENS ? Math.ceil((width * (1 / SMALLEST - 1)) / lane.width) * lane.width : 0;
-      const need = Math.ceil((lane.lead + lane.width + width / SMALLEST) / lane.width) + 1;
+      // exactly enough: the window onto the track starts somewhere in the
+      // first pass and reaches a screen's width on, so no spare pass is laid
+      // (each one holds six clips, and a page can only keep so many going)
+      const need = Math.ceil((lane.lead + lane.width + width / SMALLEST) / lane.width);
       const passes = lane.track.children;
       while (passes.length < need) {
         const copy = lane.set.cloneNode(true);
         copy.setAttribute('aria-hidden', 'true');
-        copy.querySelectorAll('video').forEach((v) => { v.muted = true; watch(v, false); });
+        copy.querySelectorAll('video').forEach((v) => { v.muted = true; watch(v); });
         lane.track.append(copy);
       }
       while (passes.length > need) passes[passes.length - 1].remove();
