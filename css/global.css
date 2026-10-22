@@ -2254,3 +2254,420 @@ like a block-level element, so it can:
     backdrop-filter: blur(3px);
     animation: card-trail 1s ease-out forwards;
 }
+
+/***************************** THE MENU *****************************/
+
+/* The round menu button and the panel it opens (main.js builds both). The
+   panel wipes in from the right edge: it slides in by its own width while
+   what is on it slides back the same distance, so the words hold still and
+   only the edge travels across them. Then the words drift in from the right
+   one after another, each smeared into a trail of copies that closes up as it
+   lands. Closing: the words slip away first, then the edge wipes back out.
+   Each state carries its own timing, so opening and closing differ. Only
+   transform and opacity ever change, which the graphics card moves on its
+   own without redrawing anything. */
+
+:root {
+    /* slow away, quick through the middle, a soft landing */
+    --menu-ease: cubic-bezier(0.76, 0, 0.24, 1);
+    /* quick away, a long soft landing */
+    --menu-land: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* the button: the word MENU and two thin lines after it (as on cartier.com,
+   mirrored, the lines on the right). Pointed at, the lines draw together and
+   the top one shortens towards the right; open, both shorten, step left and
+   turn about their right ends into a cross, while the word rolls up out of
+   sight and CLOSE rolls up into its place. */
+.menu-button {
+    position: relative;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-left: 0.5rem;
+    padding: 0.5rem 0 0.5rem 1rem;
+    border: 0;
+    background: none;
+    color: #fff;
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1;
+    cursor: pointer;
+    align-self: center;
+}
+
+.menu-button:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+
+.menu-button-lines {
+    position: relative;
+    width: 1.25rem;
+    height: 0.6rem;
+}
+
+.menu-button-lines::before,
+.menu-button-lines::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: currentColor;
+    transform-origin: right center;
+    transition: transform 0.4s var(--menu-ease);
+}
+
+.menu-button-lines::before {
+    top: 0;
+}
+
+.menu-button-lines::after {
+    bottom: 0;
+}
+
+.menu-button:hover .menu-button-lines::before {
+    transform: translateY(0.12rem) scaleX(0.75);
+}
+
+.menu-button:hover .menu-button-lines::after {
+    transform: translateY(-0.12rem);
+}
+
+/* open: from their right ends the two lines cross, the top one turning down
+   and the bottom one up, meeting in the middle */
+html.menu-open .menu-button-lines::before,
+html.menu-open .menu-button:hover .menu-button-lines::before {
+    transform: translateX(-0.2rem) rotate(-40deg) scaleX(0.75);
+}
+
+html.menu-open .menu-button-lines::after,
+html.menu-open .menu-button:hover .menu-button-lines::after {
+    transform: translateX(-0.2rem) rotate(40deg) scaleX(0.75);
+}
+
+/* the words, MENU over CLOSE in a window one line tall. Capitals only, they
+   sit a pixel high next to the header's mixed-case words; the nudge puts the
+   middle of MENU level with the middle of About and of the lines. */
+.menu-button-words {
+    position: relative;
+    top: 1px;
+    display: inline-grid;
+    overflow: hidden;
+    /* room above and below so no letter is clipped as it rolls */
+    padding: 0.15em 0;
+}
+
+.menu-button-words>span {
+    grid-area: 1 / 1;
+    transition: transform 0.55s var(--menu-ease);
+}
+
+.menu-button-words>span:last-child {
+    transform: translateY(130%);
+}
+
+html.menu-open .menu-button-words>span:first-child {
+    transform: translateY(-130%);
+}
+
+html.menu-open .menu-button-words>span:last-child {
+    transform: none;
+}
+
+/* the phone bar keeps its own button; the old three lines step aside */
+.menu-button--phone {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    html.has-site-menu .open-sidebar-button {
+        display: none;
+    }
+
+    .menu-button--phone {
+        display: inline-flex;
+        margin-left: 0.5rem;
+        padding: 0.5rem 0 0.5rem 0.25rem;
+        gap: 0.5rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.1em;
+    }
+
+    /* smaller here, the word already sits level with the lines */
+    .menu-button--phone .menu-button-words {
+        top: 0;
+    }
+}
+
+/* the header's own links make way while the panel is over them */
+html.menu-open .desktop-header nav a {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* the blur trail would smear the words; it rests while the menu is open */
+html.menu-open .page-trail {
+    opacity: 0;
+}
+
+/* the page's own looping movement (the icon slider, the cover sweeps and the
+   rest) holds still under the dimmed page while the menu is open and while
+   it wipes out again, so all the machine has to draw is the menu; it carries
+   on from where it stopped once the menu has gone. The header, the menu and the cursor keep moving. */
+html:is(.menu-open, .menu-closing) body> :not(header, .hamburger, .site-menu, .site-menu-shade, .cursor-ring),
+html:is(.menu-open, .menu-closing) body> :not(header, .hamburger, .site-menu, .site-menu-shade, .cursor-ring) *,
+html:is(.menu-open, .menu-closing) body> :not(header, .hamburger, .site-menu, .site-menu-shade, .cursor-ring) *::before,
+html:is(.menu-open, .menu-closing) body> :not(header, .hamburger, .site-menu, .site-menu-shade, .cursor-ring) *::after {
+    animation-play-state: paused !important;
+}
+
+/* the page beside the panel dims, and a click on it closes the menu */
+.site-menu-shade {
+    position: fixed;
+    inset: 0;
+    z-index: 997;
+    background: rgba(0, 0, 0, 0.55);
+    opacity: 0;
+    visibility: hidden;
+    will-change: opacity;
+    transition:
+        opacity 0.7s var(--menu-ease) 0.3s,
+        visibility 0s linear 1s;
+}
+
+html.menu-open .site-menu-shade {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.8s var(--menu-ease);
+}
+
+/* the panel, just under the header so the logo and the button stay on top */
+.site-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 998;
+    width: min(46vw, 46rem);
+    overflow: hidden;
+    background: #121212;
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+    transform: translateX(100%);
+    visibility: hidden;
+    will-change: transform;
+    transition:
+        transform 0.9s var(--menu-ease) 0.3s,
+        visibility 0s linear 1.2s;
+}
+
+.site-menu-inner {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 7rem clamp(2rem, 5vw, 5rem) 6rem;
+    transform: translateX(-100%);
+    will-change: transform;
+    transition: transform 0.9s var(--menu-ease) 0.3s;
+}
+
+html.menu-open .site-menu {
+    transform: none;
+    visibility: visible;
+    transition: transform 0.9s var(--menu-ease), visibility 0s;
+}
+
+html.menu-open .site-menu-inner {
+    transform: none;
+    transition: transform 0.9s var(--menu-ease);
+}
+
+/* the words: big, each with its number up beside it */
+.site-menu-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.1em;
+}
+
+.site-menu-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 0;
+    color: #fff;
+    text-decoration: none;
+    /* waiting off to the right, later words further out */
+    transform: translateX(calc(2.5rem + var(--i) * 1.75rem));
+    opacity: 0;
+    will-change: transform, opacity;
+    transition:
+        transform 0.45s var(--menu-ease),
+        opacity 0.3s ease,
+        color 0.3s ease;
+}
+
+html.menu-open .site-menu-item {
+    transform: none;
+    opacity: 1;
+    transition:
+        transform 1.2s var(--menu-land) calc(0.4s + var(--i) * 0.08s),
+        opacity 0.6s ease calc(0.4s + var(--i) * 0.08s),
+        color 0.3s ease;
+}
+
+.site-menu-num {
+    margin-top: 0.85em;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.45);
+}
+
+.site-menu-word {
+    position: relative;
+    font-size: clamp(3rem, 6.4vw, 6.25rem);
+    font-weight: 400;
+    line-height: 1.04;
+    letter-spacing: -0.04em;
+    transition: color 0.3s ease;
+}
+
+/* the trail: four copies of the word laid over it, strung out behind it to
+   the right and fainter the further back; as the word lands they close up
+   into it and fade, so a landed word is just the word */
+.site-menu-trail {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.site-menu-trail>span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    color: #fff;
+    white-space: nowrap;
+    transform: translateX(calc(var(--k) * 0.16em));
+    opacity: calc(0.55 - var(--k) * 0.1);
+    will-change: transform, opacity;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+html.menu-open .site-menu-trail>span {
+    transform: none;
+    opacity: 0;
+    transition:
+        transform 1.1s var(--menu-land) calc(0.4s + var(--i) * 0.08s),
+        opacity 0.9s ease calc(0.5s + var(--i) * 0.08s);
+}
+
+/* pointing at one word dims the others */
+.site-menu-nav:hover .site-menu-item:not(:hover) {
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* the page you are on: faded and underlined */
+.site-menu-item[aria-current="page"] .site-menu-word {
+    color: rgba(255, 255, 255, 0.35);
+    text-decoration: underline;
+    text-decoration-thickness: 0.05em;
+    text-underline-offset: 0.12em;
+}
+
+.site-menu-item:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 6px;
+}
+
+/* the email and LinkedIn along the bottom, rising in last */
+.site-menu-foot {
+    position: absolute;
+    left: clamp(2rem, 5vw, 5rem);
+    right: clamp(2rem, 5vw, 5rem);
+    bottom: 2.25rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 0.85rem;
+    transform: translateY(0.75rem);
+    opacity: 0;
+    transition: transform 0.4s var(--menu-ease), opacity 0.3s ease;
+}
+
+html.menu-open .site-menu-foot {
+    transform: none;
+    opacity: 1;
+    transition:
+        transform 0.9s var(--menu-land) 0.75s,
+        opacity 0.6s ease 0.75s;
+}
+
+.site-menu-foot a {
+    padding: 0;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.site-menu-foot a:hover,
+.site-menu-foot a:focus-visible {
+    color: #fff;
+}
+
+/* a phone: the whole screen */
+@media (max-width: 768px) {
+    .site-menu {
+        width: 100%;
+        border-left: 0;
+    }
+
+    .site-menu-inner {
+        padding: 6rem 1.5rem 5rem;
+    }
+
+    .site-menu-word {
+        font-size: clamp(3rem, 15vw, 4.5rem);
+    }
+
+    .site-menu-foot {
+        left: 1.5rem;
+        right: 1.5rem;
+        bottom: 1.75rem;
+    }
+}
+
+/* reduced motion: no wipe, no drift, no trail; the panel simply fades */
+@media (prefers-reduced-motion: reduce) {
+    .site-menu,
+    .site-menu-inner,
+    .site-menu-item,
+    .site-menu-foot,
+    html.menu-open .site-menu,
+    html.menu-open .site-menu-inner,
+    html.menu-open .site-menu-item,
+    html.menu-open .site-menu-foot {
+        transform: none;
+        transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+    }
+
+    .site-menu {
+        opacity: 0;
+    }
+
+    html.menu-open .site-menu {
+        opacity: 1;
+        transition: opacity 0.25s ease, visibility 0s;
+    }
+
+    .site-menu-trail {
+        display: none;
+    }
+}

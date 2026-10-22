@@ -1749,6 +1749,14 @@ nav a:hover {
     will-change: transform;
 }
 
+/* Mage in the Maze's gameplay is pixel art, kept at its own small size and
+   enlarged with crisp square pixels rather than smoothed (its cover, the first
+   picture, is not pixel art) */
+.reel-project img[src*="mage-in-the-maze-"]:not([src$="-1.jpg"]),
+.reel-project video[src*="mage-in-the-maze-"] {
+    image-rendering: pixelated;
+}
+
 /* the bar along the bottom: the number of the project going past, its name
    and a link to it. On a phone, just the name on the left and the link on
    the right. */

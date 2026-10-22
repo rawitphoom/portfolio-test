@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rawi | Playground</title>
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/icons/favicon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/icons/favicon-16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/icons/apple-touch-icon.png">
+        <link rel="stylesheet" href="/css/global.css">
+    <link rel="stylesheet" href="/css/playground.css">
+
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Geist:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- a slow moving gradient behind the whole page, drawn in here by main.js once the page has loaded -->
+    <div class="page-gradient" aria-hidden="true"></div>
+    <nav class="hamburger">
+        <!-- Mobile Logo -->
+        <div class="mobile-logo">
+            <!-- <img src="/assets/images/profile_pic.png" alt="Rawi Logo"> -->
+            <a href="/index.html">
+                <video class="logo-avatar" autoplay muted loop playsinline
+                    poster="/assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="/assets/images/profile_pic_animated.webm" type="video/webm; codecs=&quot;vp9&quot;">
+                    <source src="/assets/images/profile_pic_animated.mp4" type="video/mp4; codecs=&quot;hvc1&quot;">
+                </video>
+                <div class="mobile-logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                </div>
+            </a>
+            <div class="social-badges">
+                <a class="social-badge" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                </a>
+                <a class="social-badge" href="mailto:rawitphoom1@gmail.com" aria-label="Email" title="Email">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+            </div>
+        </div>
+
+        <input type="checkbox" id="sidebar-active">
+        <label for="sidebar-active" class="open-sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#1f1f1f">
+                <path d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z" />
+            </svg>
+        </label>
+
+        <label id="overlay" for="sidebar-active"></label>
+        <div class="links-container">
+
+            <!-- who you're looking at -->
+            <div class="sidebar-head">
+                <img class="sidebar-avatar" src="/assets/images/profile_photo.jpg"
+                    alt="Rawitphoom Kiatthitinan">
+                <div class="sidebar-identity">
+                    <p class="sidebar-name">Rawitphoom Kiatthitinan</p>
+                    <p class="sidebar-role">Frontend Developer &amp; UX/UI Designer</p>
+                </div>
+                <label for="sidebar-active" class="close-sidebar-button" aria-label="Close menu">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px">
+                    <path
+                        d="m256-200-56-56 224-224-224-224 56-56 224 224 224-224 56 56-224 224 224 224-56 56-224-224-224 224Z" />
+                </svg>
+                </label>
+            </div>
+
+            <p class="sidebar-label">Navigate</p>
+            <a href="/"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7v7H4V4Zm9 0h7v7h-7V4ZM4 13h7v7H4v-7Zm9 0h7v7h-7v-7Z"/></svg><span>Projects</span></a>
+            <a href="/about.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Zm0 2c-4.42 0-8 2.24-8 5v1a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-1c0-2.76-3.58-5-8-5Z"/></svg><span>About Me</span></a>
+            <a href="/resume.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4a2 2 0 0 0-2 2v1H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3V6a2 2 0 0 0-2-2H9Zm0 2h6v1H9V6Z"/></svg><span>Experience &amp; Education</span></a>
+
+            <p class="sidebar-label">Contact</p>
+            <a href="mailto:rawitphoom1@gmail.com"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg><span>rawitphoom1@gmail.com</span></a>
+            <a href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg><span>LinkedIn</span></a>
+            <a href="/resume.html"><svg class="sidebar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6Zm0 7V3.5L19.5 9H14Z"/></svg><span>Resume</span></a>
+        </div>
+    </nav>
+    <!-- HEADER -->
+    <header class="desktop-header">
+        <div class="logo">
+            <a href="/index.html" id="logo-link">
+                <video class="logo-avatar" id="profile-pic" autoplay muted loop playsinline
+                    poster="/assets/images/profile_pic.png" aria-label="Rawitphoom Kiatthitinan">
+                    <source src="/assets/images/profile_pic_animated.webm" type="video/webm; codecs=&quot;vp9&quot;">
+                    <source src="/assets/images/profile_pic_animated.mp4" type="video/mp4; codecs=&quot;hvc1&quot;">
+                </video>
+                <div class="logo-text">
+                    <h1>Rawitphoom Kiatthitinan</h1>
+                </div>
+            </a>
+            <div class="social-badges">
+                <a class="social-badge" href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zm1.78 13.02H3.55V9h3.57v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+                </a>
+                <a class="social-badge" href="mailto:rawitphoom1@gmail.com" aria-label="Email" title="Email">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                </a>
+            </div>
+        </div>
+
+
+        <nav>
+            <a href="/">Projects</a>
+            <a href="/resume.html">Resume</a>
+            <a href="/about.html">About</a>
+            <!-- <a href="mailto:rawitphoom1@gmail.com" class="say-hello">Say Hello</a> -->
+        </nav>
+    </header>
+
+    <!------------------------------- PLAYGROUND -------------------------------->
+    <!-- Every project as one row of its pictures (playground.js and playground.css).
+         Scrolling slides the rows sideways, each at its own pace, round and round
+         without end, and a row's title shows only while it passes through the
+         middle of the screen. To add a project, add a .pg-row like these: its link, what kind
+         of project it was and your role (shown beside the pointer), its title and
+         the year, and its pictures, and number it. Without
+         JavaScript each row is a strip that scrolls sideways on its own. -->
+    <main class="playground" style="--rows: 8">
+        <h2 class="visually-hidden">Playground</h2>
+        <div class="pg-rows">
+            <a class="pg-row" href="/mixtape" aria-label="Mixtape, 2026, academic project, UX/UI Designer, Frontend/Backend Developer" data-context="Academic Project" data-role="UX/UI Designer, Frontend/Backend Developer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">Mixtape<sup>(2026)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(01)</span>
+                    </span>
+                    <img src="/assets/images/reel/mixtape-1.jpg" width="1280" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/mixtape-clip.mp4" poster="/assets/images/reel/mixtape-clip.jpg" width="1108" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/mixtape-2.jpg" width="1108" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-3.jpg" width="1108" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-4.jpg" width="932" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-5.jpg" width="348" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-6.jpg" width="1108" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-7.jpg" width="1108" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-8.jpg" width="1108" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-9.jpg" width="1108" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/mixtape-10.jpg" width="960" height="624" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/consistency" aria-label="Consistency, academic project, UX/UI Designer, Frontend Developer" data-context="Academic Project" data-role="UX/UI Designer, Frontend Developer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">Consistency</span></span>
+                        <span class="pg-num" aria-hidden="true">(02)</span>
+                    </span>
+                    <img src="/assets/images/reel/consistency-1.jpg" width="960" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/consistency-clip.mp4" poster="/assets/images/reel/consistency-clip.jpg" width="332" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/consistency-2.jpg" width="960" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-3.jpg" width="878" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-4.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-5.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-6.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-7.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-8.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-9.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/consistency-10.jpg" width="332" height="720" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/lintelai" aria-label="LintelAI, 2026, work project, UX/UI Designer and Frontend Developer" data-context="Work Project" data-role="UX/UI Designer and Frontend Developer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">LintelAI<sup>(2026)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(03)</span>
+                    </span>
+                    <img src="/assets/images/reel/lintelai-1.jpg" width="1280" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/lintelai-clip.mp4" poster="/assets/images/reel/lintelai-clip.jpg" width="1280" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/lintelai-2.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-3.jpg" width="906" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-4.jpg" width="1154" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-5.jpg" width="534" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-6.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-7.jpg" width="334" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-8.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-9.jpg" width="334" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/lintelai-10.jpg" width="1188" height="720" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/nextstep" aria-label="NextStep, 2025, academic project, UX/UI Designer, Prototyper" data-context="Academic Project" data-role="UX/UI Designer, Prototyper">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">NextStep<sup>(2025)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(04)</span>
+                    </span>
+                    <img src="/assets/images/reel/nextstep-1.jpg" width="986" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/nextstep-clip.mp4" poster="/assets/images/reel/nextstep-clip.jpg" width="332" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/nextstep-2.jpg" width="960" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-3.jpg" width="884" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-4.jpg" width="986" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-5.jpg" width="858" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-6.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-7.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-8.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-9.jpg" width="332" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/nextstep-10.jpg" width="332" height="720" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/tempo" aria-label="Tempo, 2026, FigBuild 2026, UX/UI Designer" data-context="FigBuild 2026" data-role="UX/UI Designer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">Tempo<sup>(2026)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(05)</span>
+                    </span>
+                    <img src="/assets/images/reel/tempo-1.jpg" width="1012" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/tempo-clip.mp4" poster="/assets/images/reel/tempo-clip.jpg" width="400" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/tempo-2.jpg" width="286" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-3.jpg" width="434" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-4.jpg" width="1480" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-5.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-6.jpg" width="400" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-7.jpg" width="400" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-8.jpg" width="400" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-9.jpg" width="400" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/tempo-10.jpg" width="400" height="720" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/whimsy-bites" aria-label="Whimsy Bites, 2025, academic project, Web Designer, Frontend Developer" data-context="Academic Project" data-role="Web Designer, Frontend Developer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">Whimsy Bites<sup>(2025)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(06)</span>
+                    </span>
+                    <img src="/assets/images/reel/whimsy-bites-1.jpg" width="962" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/whimsy-bites-clip.mp4" poster="/assets/images/reel/whimsy-bites-clip.jpg" width="1280" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/whimsy-bites-2.jpg" width="2132" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-3.jpg" width="1144" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-4.jpg" width="956" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-5.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-6.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-7.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-8.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-9.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/whimsy-bites-10.jpg" width="1280" height="720" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/mage-in-the-maze" aria-label="Mage in the Maze, 2024, academic project, Game Designer, Developer" data-context="Academic Project" data-role="Game Designer, Developer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">Mage in the Maze<sup>(2024)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(07)</span>
+                    </span>
+                    <img src="/assets/images/reel/mage-in-the-maze-1.jpg" width="1364" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/mage-in-the-maze-clip.mp4" poster="/assets/images/reel/mage-in-the-maze-clip.jpg" width="800" height="422" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/mage-in-the-maze-2.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-3.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-4.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-5.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-6.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-7.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-8.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-9.jpg" width="800" height="422" alt="" decoding="async">
+                    <img src="/assets/images/reel/mage-in-the-maze-10.jpg" width="800" height="422" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+            <a class="pg-row" href="/small-but-mighty" aria-label="Small But Mighty, 2025, academic project, Animator, Designer" data-context="Academic Project" data-role="Animator, Designer">
+                <div class="pg-set">
+                    <span class="pg-label">
+                        <span class="pg-title-mask"><span class="pg-title">Small But Mighty<sup>(2025)</sup></span></span>
+                        <span class="pg-num" aria-hidden="true">(08)</span>
+                    </span>
+                    <img src="/assets/images/reel/small-but-mighty-1.jpg" width="1174" height="720" alt="" decoding="async">
+                    <video src="/assets/images/reel/small-but-mighty-clip.mp4" poster="/assets/images/reel/small-but-mighty-clip.jpg" width="1280" height="720" muted loop playsinline preload="none" aria-hidden="true"></video>
+                    <img src="/assets/images/reel/small-but-mighty-2.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-3.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-4.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-5.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-6.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-7.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-8.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-9.jpg" width="1280" height="720" alt="" decoding="async">
+                    <img src="/assets/images/reel/small-but-mighty-10.jpg" width="1280" height="720" alt="" decoding="async">
+                    <span class="pg-count" aria-hidden="true">(11)</span>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <script src="/scripts/main.js"></script>
+    <script src="/scripts/playground.js"></script>
+</body>
+
+</html>

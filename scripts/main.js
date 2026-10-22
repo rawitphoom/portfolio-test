@@ -383,6 +383,8 @@ document.addEventListener('DOMContentLoaded', () => {
 (() => {
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   const retry = () => {
+    // behind the open menu the videos are resting on purpose
+    if (document.documentElement.matches('.menu-open, .menu-closing')) return;
     document.querySelectorAll('video[loop]').forEach((video) => {
       if (!video.paused) return;
       const box = video.getBoundingClientRect();
@@ -634,8 +636,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // the mobile sidebar scrolls itself
     if (e.target instanceof Element && e.target.closest('.links-container')) return;
     // and while it is open the page behind stays put (the CSS locks it; this
-    // stops the glide from moving it anyway)
+    // stops the glide from moving it anyway). The same for the round menu.
     if (document.getElementById('sidebar-active')?.checked) return;
+    if (document.documentElement.classList.contains('menu-open')) return;
     // while the picture viewer is open, the page behind it stays put
     if (document.querySelector('.zoom-box[open]')) return;
     if (e.target instanceof Element && scrollsItself(e.target, e.deltaY)) return;
@@ -2222,6 +2225,209 @@ document.addEventListener('DOMContentLoaded', () => {
     roll.append(first, second);
     link.replaceChildren(roll);
     link.classList.add('has-roll');
+  });
+});
+
+/* ---------------------------------------------------------------- *
+ * The menu: a round button and a panel
+ *
+ * A menu button sits at the end of the header (on a phone, in place of the
+ * old three lines): the word MENU with two thin lines after it, as on
+ * cartier.com but the other way round.
+ * Pressed, the lines turn into a cross and the word rolls over to CLOSE, and
+ * a panel wipes in from the right edge: the panel slides in
+ * while what is on it slides the other way just as far, so the words stay put
+ * and only the edge travels across them (the reveal unseen.co uses). Then
+ * each word drifts in from the right, one after the other, smeared into a
+ * trail of copies that closes up into the word as it lands (as on
+ * mariavasilyeva.com). The copies are real copies of the word, moved and
+ * faded, so the graphics card carries them without redrawing the letters
+ * each frame. Closing runs it backwards: the words slip away, then
+ * the edge wipes back out. On a wide screen the panel takes a little under
+ * half the width; on a phone, all of it. The movement itself is in
+ * global.css; this builds the button and the panel, and opens and closes
+ * them.
+ *
+ * Escape, the button again, or a click on the page beside the panel closes
+ * it. While it is open the page behind stays put (its scrolling is held
+ * rather than switched off, which would make the browser lay the whole page
+ * out again just as the panel starts to move), its videos rest, the keyboard
+ * stays within the button and the panel, and the page you are on is marked
+ * in it.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  const root = document.documentElement;
+  const ITEMS = [
+    { word: 'Index', href: '/', here: (p) => p === '/' },
+    // every project as a row of its pictures
+    { word: 'Playground', href: '/playground', here: (p) => p.replace(/\/$/, '') === '/playground' },
+    { word: 'Resume', href: '/resume.html', here: (p) => p === '/resume' },
+    { word: 'About', href: '/about.html', here: (p) => p === '/about' },
+  ];
+  const path = location.pathname.replace(/\/index\.html$/, '/').replace(/\.html$/, '');
+
+  // the panel, and a shade over the page beside it
+  const shade = document.createElement('div');
+  shade.className = 'site-menu-shade';
+  shade.setAttribute('aria-hidden', 'true');
+
+  const panel = document.createElement('div');
+  panel.className = 'site-menu';
+  panel.id = 'site-menu';
+  panel.setAttribute('role', 'dialog');
+  panel.setAttribute('aria-modal', 'true');
+  panel.setAttribute('aria-label', 'Menu');
+  panel.inert = true;
+
+  const inner = document.createElement('div');
+  inner.className = 'site-menu-inner';
+
+  const list = document.createElement('nav');
+  list.className = 'site-menu-nav';
+  list.setAttribute('aria-label', 'Site');
+  ITEMS.forEach((item, i) => {
+    const link = document.createElement('a');
+    link.className = 'site-menu-item';
+    link.href = item.href;
+    link.style.setProperty('--i', i);
+    if (item.here(path)) link.setAttribute('aria-current', 'page');
+    const num = document.createElement('span');
+    num.className = 'site-menu-num';
+    num.setAttribute('aria-hidden', 'true');
+    num.textContent = String(i + 1).padStart(2, '0');
+    const word = document.createElement('span');
+    word.className = 'site-menu-word';
+    word.textContent = item.word;
+    // the trail: copies of the word laid over it, each further behind
+    const trail = document.createElement('span');
+    trail.className = 'site-menu-trail';
+    trail.setAttribute('aria-hidden', 'true');
+    for (let k = 1; k <= 4; k++) {
+      const copy = document.createElement('span');
+      copy.textContent = item.word;
+      copy.style.setProperty('--k', k);
+      trail.append(copy);
+    }
+    word.append(trail);
+    link.append(num, word);
+    list.append(link);
+  });
+
+  const foot = document.createElement('div');
+  foot.className = 'site-menu-foot';
+  foot.innerHTML =
+    '<a href="mailto:rawitphoom1@gmail.com">rawitphoom1@gmail.com</a>' +
+    '<a href="https://www.linkedin.com/in/rawitphoom-k-b7b61a276/" target="_blank" rel="noopener noreferrer">LinkedIn</a>';
+
+  inner.append(list, foot);
+  panel.append(inner);
+  document.body.append(shade, panel);
+
+  // the button, once in the desktop header and once in the phone bar; only
+  // one shows at a time
+  const makeButton = () => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'menu-button';
+    button.setAttribute('aria-controls', 'site-menu');
+    button.setAttribute('aria-expanded', 'false');
+    button.setAttribute('aria-label', 'Open menu');
+    button.innerHTML =
+      '<span class="menu-button-words" aria-hidden="true"><span>Menu</span><span>Close</span></span>' +
+      '<span class="menu-button-lines" aria-hidden="true"></span>';
+    button.addEventListener('click', () => (root.classList.contains('menu-open') ? close() : open()));
+    return button;
+  };
+  const buttons = [];
+  const desktopNav = document.querySelector('.desktop-header nav');
+  if (desktopNav) {
+    const button = makeButton();
+    desktopNav.append(button);
+    buttons.push(button);
+  }
+  const phoneBar = document.querySelector('nav.hamburger');
+  if (phoneBar) {
+    const button = makeButton();
+    button.classList.add('menu-button--phone');
+    phoneBar.append(button);
+    buttons.push(button);
+  }
+  if (!buttons.length) return;
+  root.classList.add('has-site-menu');
+
+  const shownButton = () => buttons.find((b) => b.offsetParent !== null) || buttons[0];
+  let opener = null;
+  let resting = [];
+  let settling = 0;
+
+  const open = () => {
+    opener = shownButton();
+    clearTimeout(settling);
+    root.classList.remove('menu-closing');
+    root.classList.add('menu-open');
+    panel.inert = false;
+    buttons.forEach((b) => {
+      b.setAttribute('aria-expanded', 'true');
+      b.setAttribute('aria-label', 'Close menu');
+    });
+    // the page's videos rest behind the panel (the picture in the header
+    // keeps going), so the panel has the machine to itself
+    resting = resting.concat([...document.querySelectorAll('video')].filter((v) => !v.paused && !v.closest('header, .hamburger')));
+    resting.forEach((v) => v.pause());
+    // the first link takes the keyboard once the panel has landed
+    setTimeout(() => {
+      if (root.classList.contains('menu-open')) list.querySelector('a')?.focus({ preventScroll: true });
+    }, 950);
+  };
+
+  const close = () => {
+    if (!root.classList.contains('menu-open')) return;
+    root.classList.remove('menu-open');
+    panel.inert = true;
+    buttons.forEach((b) => {
+      b.setAttribute('aria-expanded', 'false');
+      b.setAttribute('aria-label', 'Open menu');
+    });
+    opener?.focus({ preventScroll: true });
+    // the page stays still until the panel has wiped out, then carries on
+    root.classList.add('menu-closing');
+    settling = setTimeout(() => {
+      root.classList.remove('menu-closing');
+      resting.forEach((v) => v.play().catch(() => {}));
+      resting = [];
+    }, 1250);
+  };
+
+  // the page behind stays put: wheel, touch and the scrolling keys are held
+  const hold = (e) => {
+    if (root.classList.contains('menu-open')) e.preventDefault();
+  };
+  window.addEventListener('wheel', hold, { passive: false });
+  window.addEventListener('touchmove', hold, { passive: false });
+  const SCROLL_KEYS = [' ', 'PageDown', 'PageUp', 'ArrowDown', 'ArrowUp', 'Home', 'End'];
+  document.addEventListener('keydown', (e) => {
+    if (root.classList.contains('menu-open') && SCROLL_KEYS.includes(e.key)) e.preventDefault();
+  });
+
+  shade.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => {
+    if (!root.classList.contains('menu-open')) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      close();
+      return;
+    }
+    // Tab goes round the button and the panel's links, and no further
+    if (e.key !== 'Tab') return;
+    const ring = [shownButton(), ...panel.querySelectorAll('a')];
+    const at = ring.indexOf(document.activeElement);
+    if (e.shiftKey && at <= 0) {
+      e.preventDefault();
+      ring[ring.length - 1].focus();
+    } else if (!e.shiftKey && (at === ring.length - 1 || at === -1)) {
+      e.preventDefault();
+      ring[0].focus();
+    }
   });
 });
 

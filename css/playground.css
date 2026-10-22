@@ -1,0 +1,404 @@
+/***************************** PLAYGROUND *****************************/
+
+/* Every project as one row of its pictures (playground/index.html). The rows
+   share the height of the window below the header, one per project, with a
+   hairline between them. Each row starts with the project's title, its year
+   raised beside it and its number under it, then its pictures, then how
+   many there are. The title is silver, plain grey metal against the colour
+   of the pictures.
+
+   As it stands, before the script runs or without it, each row is a strip
+   that scrolls sideways on its own. The moving version (playground.js adds
+   .is-live) holds the page still and slides the rows instead, round and round
+   without end, as the visitor scrolls; pointing at a row grows it while the
+   others make room, with its details beside the pointer. */
+
+:root {
+    /* the silver: a plain grey metal, laid twice the width of the letters so
+       the shine can slide along them */
+    --pg-silver: linear-gradient(100deg,
+            #8c8c8c 0%, #bdbdbd 12%, #ececec 20%, #ffffff 24%, #f2f2f2 26.5%,
+            #a8a8a8 32%, #707070 42%, #909090 52%, #c8c8c8 64%,
+            #f5f5f5 72%, #d2d2d2 78%, #9c9c9c 88%, #8c8c8c 100%);
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* the rows run up under the header, which floats over them with no bar and
+   no shade of its own here, with a small margin at the top and bottom; the
+   lines there cap the rows, which never cross them */
+.playground {
+    --pg-top: 0.75rem;
+    --pg-bottom: 0.75rem;
+    --pg-line: rgba(255, 255, 255, 0.1);
+    /* each row's share of the window, never so thin the pictures can't be seen */
+    --row-h: max(3.5rem, calc((100dvh - var(--pg-top) - var(--pg-bottom)) / var(--rows, 8)));
+    padding: var(--pg-top) 0 var(--pg-bottom);
+    color: #fff;
+}
+
+.pg-rows {
+    border-bottom: 1px solid var(--pg-line);
+}
+
+.pg-row {
+    position: relative;
+    display: block;
+    height: var(--row-h);
+    border-top: 1px solid var(--pg-line);
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    color: inherit;
+    text-decoration: none;
+}
+
+.pg-row::-webkit-scrollbar {
+    display: none;
+}
+
+.pg-row:focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: -2px;
+}
+
+/* one pass of a project: the label, the pictures, the count, then a long
+   stretch of empty row before the next pass begins, so each project comes
+   through as a block with black around it */
+.pg-set {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: stretch;
+    height: 100%;
+    padding-right: 80vw;
+}
+
+.pg-set>img,
+.pg-set>video {
+    display: block;
+    flex: 0 0 auto;
+    height: 100%;
+    width: auto;
+    object-fit: cover;
+}
+
+/* Mage in the Maze's gameplay is pixel art, kept at its own small size and
+   enlarged with crisp square pixels rather than smoothed into a blur (its
+   cover, the first picture, is not pixel art) */
+.pg-set>img[src*="mage-in-the-maze-"]:not([src$="-1.jpg"]),
+.pg-set>video[src*="mage-in-the-maze-"] {
+    image-rendering: pixelated;
+}
+
+/* the title, its year raised beside it, and the number under its end;
+   the title runs right up to the project's first picture */
+.pg-label {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 0 0 0.35rem 1.5rem;
+}
+
+/* the title sits in a window that ends where the pictures begin, so it can
+   slide out of them. Only that edge is cut, so the tops of the letters can
+   sit right up against the line above the row. */
+.pg-title-mask {
+    display: block;
+    clip-path: inset(-1em 0 -1em -1em);
+}
+
+/* the title in silver */
+.pg-title {
+    display: block;
+    width: max-content;
+    margin-left: auto;
+    margin-top: var(--pg-title-lift, -0.1em);
+    color: transparent;
+    background-image: var(--pg-silver);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    font-size: calc(var(--row-h) * 0.24);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* level with the tops of the capitals rather than the top of the line, which
+   would put it above the row */
+.pg-title sup {
+    position: relative;
+    top: 0.45em;
+    margin-left: 0.2em;
+    font-size: 0.32em;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: top;
+}
+
+.pg-num,
+.pg-count {
+    font-size: 0.62rem;
+    font-variant-numeric: tabular-nums;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* the number keeps a little room from the picture */
+.pg-num {
+    padding-right: 0.6rem;
+}
+
+.pg-count {
+    flex: 0 0 auto;
+    align-self: flex-end;
+    padding: 0 0 0.35rem 0.6rem;
+}
+
+/* the moving version: the page holds still, each row is a window onto a track
+   of passes laid end to end, and the script slides the tracks */
+html.pg-still,
+html.pg-still body {
+    overflow: hidden;
+}
+
+html.pg-still body::before {
+    display: none;
+}
+
+.playground.is-live .pg-rows {
+    position: relative;
+    border-bottom: 0;
+    overflow: hidden;
+    touch-action: none;
+}
+
+/* each row is moved up or down to make room, and the pointed one stretched
+   from its top edge and its track widened by as much again, so its pictures
+   grow evenly; rows pushed past the top or bottom are cut off there. No
+   will-change at rest: with it the browser keeps drawing a grown row from its
+   small picture, stretched and blurred; without it, it draws the row again
+   sharp once it has grown (the 3D move keeps it on its own layer anyway). */
+.playground.is-live .pg-row {
+    overflow: hidden;
+    border-top: 0;
+    transform-origin: 0 0;
+}
+
+.pg-track {
+    display: flex;
+    height: 100%;
+    transform-origin: 0 0;
+}
+
+/* only while a row is growing or shrinking (playground.js adds .is-growing):
+   moved as drawn, for a smooth change, then drawn again sharp when it stops */
+.pg-rows.is-growing .pg-row,
+.pg-rows.is-growing .pg-track {
+    will-change: transform;
+}
+
+/* the lines between the rows, drawn apart from them so they stay a hair
+   thin however much a row grows */
+.pg-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.pg-lines>i {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--pg-line);
+    will-change: transform;
+}
+
+/* the pointed row's own title and numbers step aside while it is big; its
+   details are beside the pointer instead */
+.playground.is-live .pg-label,
+.playground.is-live .pg-count {
+    transition: opacity 0.4s ease;
+}
+
+.pg-row.is-focus .pg-label,
+.pg-row.is-focus .pg-count {
+    opacity: 0;
+}
+
+/* the details beside the pointer, as on mariavasilyeva.com/work: the title
+   and its year, then what kind of project it was and the role in it, each
+   line on its own silver bar, the bars set in at different steps. They
+   wipe open from the left one after another, slowly and evenly, and close
+   quicker. */
+.pg-tip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 990;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    pointer-events: none;
+    will-change: transform;
+}
+
+/* each bar a polished silver plate: the grey metal of the titles, a bright
+   edge along the top and a dark one along the bottom, and the shine sliding
+   slowly across, each bar a little behind the one above */
+.pg-tip>* {
+    background-image: var(--pg-silver);
+    background-size: 200% 100%;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.75),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+    animation: chrome-sweep 7s linear infinite;
+    color: #0d0d0d;
+    white-space: nowrap;
+    clip-path: inset(0 100% 0 0);
+    transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* a long, even wipe: easing in and out, so it neither jumps open nor stops
+   short */
+.pg-tip.is-on>* {
+    clip-path: inset(0 0 0 0);
+    transition: clip-path 1.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/* snapped shut at once, to wipe open again for the next project */
+.pg-tip.is-reset>* {
+    clip-path: inset(0 100% 0 0);
+    transition: none;
+}
+
+.pg-tip.is-on>:nth-child(2) {
+    transition-delay: 0.22s;
+}
+
+.pg-tip>:nth-child(2) {
+    animation-delay: -0.6s;
+}
+
+.pg-tip>:nth-child(3) {
+    animation-delay: -1.2s;
+}
+
+.pg-tip.is-on>:nth-child(3) {
+    transition-delay: 0.44s;
+}
+
+.pg-tip-title {
+    padding: 0.02em 0.2em 0;
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+}
+
+.pg-tip-title sup {
+    position: relative;
+    top: 0.3em;
+    margin-left: 0.15em;
+    font-size: 0.42em;
+    letter-spacing: 0;
+    text-transform: none;
+    vertical-align: top;
+}
+
+/* each line set in a different step from the left */
+.pg-tip-line {
+    padding: 0.05em 0.3em;
+    font-size: 0.85rem;
+    line-height: 1.25;
+}
+
+.pg-tip-line:nth-child(2) {
+    margin-left: 2.25rem;
+}
+
+.pg-tip-line:nth-child(3) {
+    margin-left: 0.6rem;
+}
+
+.pg-tip-line:empty {
+    display: none;
+}
+
+/* a title shows only while its row passes through the middle of the screen
+   (playground.js adds .is-shown): it slides out of the pictures to its place,
+   and back into them as it leaves */
+.playground.is-live .pg-title {
+    transform: translateX(105%);
+    opacity: 0;
+    transition:
+        transform 0.7s var(--menu-ease, ease),
+        opacity 0.45s ease 0.1s;
+}
+
+.playground.is-live .pg-label.is-shown .pg-title {
+    transform: none;
+    opacity: 1;
+    transition:
+        transform 1s var(--menu-land, ease-out),
+        opacity 0.5s ease;
+}
+
+/* while one project is pointed at, the other rows' titles slip back into
+   their pictures, and come out again when the pointer leaves */
+.playground.is-live .pg-rows.has-focus .pg-row:not(.is-focus) .pg-label.is-shown .pg-title {
+    transform: translateX(105%);
+    opacity: 0;
+    transition:
+        transform 0.7s var(--menu-ease, ease),
+        opacity 0.45s ease 0.1s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .playground.is-live .pg-title,
+    .playground.is-live .pg-label.is-shown .pg-title {
+        transform: none;
+        transition: opacity 0.3s ease;
+    }
+
+    .pg-tip>*,
+    .pg-tip.is-on>* {
+        transition: none;
+        animation: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .playground {
+        --pg-top: 0.5rem;
+        --pg-bottom: 0.5rem;
+    }
+
+    .pg-label {
+        padding: 0 0 0.25rem 1rem;
+    }
+
+    .pg-num {
+        padding-right: 0.45rem;
+    }
+
+    .pg-set {
+        padding-right: 100vw;
+    }
+}
