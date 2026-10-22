@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     track.className = 'pg-track';
     row.insertBefore(track, set);
     track.append(set);
-    return { row, track, set, pace: PACE[i % PACE.length], start: rand(i + 1), width: 0, lead: 0, labels: [] };
+    return { row, track, set, pace: PACE[i % PACE.length], start: rand(i + 1), width: 0, lead: 0, labels: [], up: new Map() };
   });
 
   // the lines between the rows, drawn apart from them
@@ -206,8 +206,9 @@ document.addEventListener('DOMContentLoaded', () => {
       lane.labelWidth = label.offsetWidth;
       lane.labels = [...lane.track.querySelectorAll('.pg-label')].map((el) => {
         el.classList.remove('is-shown');
-        return { el, shown: false };
+        return { el, shown: false, place: undefined };
       });
+      lane.up.clear();
     });
   };
 
@@ -255,24 +256,50 @@ document.addEventListener('DOMContentLoaded', () => {
       const from = zone[0] * width;
       const to = zone[1] * width;
       const sx = Math.max(1, s);
+      // which pass of the endless strip the track's first pass is: when the
+      // track is snapped back a pass, a different copy draws the same place
+      // on the strip, so whether a title is up is kept by its place on the
+      // strip, not by the copy drawing it
+      const first = Math.floor(at / lane.width) - Math.round(lane.lead / lane.width);
       lane.labels.forEach((label, k) => {
+        const place = first + k;
+        const was = lane.up.get(place) || false;
         const left = originX + sx * (k * lane.width - x + lane.labelAt - originX);
         const right = left + sx * lane.labelWidth;
         const middle = (left + right) / 2;
-        const give = label.shown ? GIVE : 0;
-        // the middle of the label in this row's span, the whole label on
-        // screen (so the title is never cut off, its year with it), and
-        // nothing of the header over where the title would be
+        const give = was ? GIVE : 0;
+        // a title comes up with the middle of its label in this row's span,
+        // the whole label on screen (so it never comes up cut off, its year
+        // with it) and nothing of the header over where it would be. Once
+        // up, the screen's edge doesn't take it away: it rides off with its
+        // row like the pictures and goes once it is out of sight (on a wide
+        // screen it still slides away on leaving its row's span)
         const bottom = rowTop + titleHeight * sx;
         const clear = !blocks.some((b) => left < b.right + 8 && right > b.left - 8 && rowTop < b.bottom + 4 && bottom > b.top - 4);
-        const on = middle >= from - give && middle <= to + give
-          && left >= 4 - give && right <= width - 4 + give
-          && clear;
-        if (on !== label.shown) {
-          label.shown = on;
+        const inSpan = narrow || (middle >= from - give && middle <= to + give);
+        const on = was
+          ? inSpan && right > 0 && left < width && clear
+          : inSpan && middle >= from && middle <= to && left >= 4 && right <= width - 4 && clear;
+        lane.up.set(place, on);
+        if (on === label.shown && label.place === place) return;
+        if (label.place !== place && label.place !== undefined) {
+          // a copy taking over a place on the strip takes its state at once,
+          // with no movement, so nothing changes on screen
+          const title = label.el.querySelector('.pg-title');
+          title.style.transition = 'none';
+          label.el.classList.toggle('is-shown', on);
+          void title.offsetWidth;
+          title.style.transition = '';
+        } else {
           label.el.classList.toggle('is-shown', on);
         }
+        label.place = place;
+        label.shown = on;
       });
+      // forget places long gone by
+      if (lane.up.size > lane.labels.length * 4) {
+        for (const key of lane.up.keys()) if (key < first - 2 || key > first + lane.labels.length + 2) lane.up.delete(key);
+      }
     });
     lines.children[N].style.transform = `translate3d(0, ${(y * rest).toFixed(2)}px, 0)`;
     // the details, a little below and to the right of the pointer, always;
