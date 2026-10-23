@@ -1798,6 +1798,24 @@ nav a:hover {
     cursor: pointer;
 }
 
+/* the mark before the name turns to point up at the list while it is open */
+.reel-name-mark {
+    display: inline-block;
+    margin-right: 0.45em;
+    transition: transform 0.4s var(--menu-land, ease-out);
+}
+
+.reel-picker.is-open .reel-name-mark,
+.reel-picker:has(:focus-visible) .reel-name-mark {
+    transform: rotate(-90deg);
+}
+
+@media (hover: hover) {
+    .reel-picker:hover .reel-name-mark {
+        transform: rotate(-90deg);
+    }
+}
+
 .reel-name:focus-visible,
 .reel-choice:focus-visible {
     outline: 1px solid white;

@@ -3328,6 +3328,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const name = Object.assign(document.createElement('button'), { className: 'reel-name', type: 'button' });
   name.setAttribute('aria-haspopup', 'true');
   name.setAttribute('aria-expanded', 'false');
+  // the mark before the name, its own piece so it can turn to point up at
+  // the list while it is open (main.css)
+  const mark = Object.assign(document.createElement('span'), { className: 'reel-name-mark', textContent: '▸' });
+  mark.setAttribute('aria-hidden', 'true');
+  const nameText = document.createElement('span');
+  name.append(mark, nameText);
   const list = Object.assign(document.createElement('div'), { className: 'reel-list' });
   list.setAttribute('role', 'list');
   const choices = projects.map((project, p) => {
@@ -3402,7 +3408,7 @@ document.addEventListener('DOMContentLoaded', () => {
     shown = p;
     const project = projects[p];
     count.textContent = String(p + 1).padStart(2, '0');
-    name.textContent = '▸ ' + project.dataset.name;
+    nameText.textContent = project.dataset.name;
     choices.forEach((choice, k) => {
       if (k === p) choice.setAttribute('aria-current', 'true');
       else choice.removeAttribute('aria-current');
