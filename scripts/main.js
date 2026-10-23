@@ -362,6 +362,20 @@ const appleEngine = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   if (!appleEngine) return;
 
+  // The phone bar's picture goes further: an iPhone saving power (Low Power
+  // Mode) won't play videos by itself and can show a held frame without its
+  // see through layer, the white box again. There the bar shows the animated
+  // PNG instead, which is see through everywhere and animates as a picture,
+  // power saving or not.
+  document.querySelectorAll('nav.hamburger video.logo-avatar').forEach((video) => {
+    const img = document.createElement('img');
+    img.className = 'logo-avatar';
+    // the same folder as the still picture the video shows first
+    img.src = (video.getAttribute('poster') || '/assets/images/profile_pic.png').replace('profile_pic.png', 'profile_pic_animated.png');
+    img.alt = video.getAttribute('aria-label') || '';
+    video.replaceWith(img);
+  });
+
   document.querySelectorAll('video.logo-avatar, .avatar-cube video').forEach((video) => {
     const webm = video.querySelector('source[type^="video/webm"]');
     if (!webm) return;

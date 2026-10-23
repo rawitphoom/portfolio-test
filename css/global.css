@@ -832,13 +832,15 @@ like a block-level element, so it can:
         color: var(--text-color);
     }
 
+    /* the picture at its own 4:5 shape rather than boxed in a square, which
+       left empty room beside it, with the name close by */
     .mobile-logo img,
     .mobile-logo .logo-avatar {
-        width: 2rem;
+        width: 1.6rem;
         height: 2rem;
-        border-radius: 0.5rem;
-        margin-right: 1rem;
-        object-fit: contain;
+        border-radius: 0.4rem;
+        margin-right: 0.6rem;
+        object-fit: cover;
     }
 
     .mobile-logo-text h1 {
@@ -846,10 +848,13 @@ like a block-level element, so it can:
         margin: 0;
     }
 
+    /* no padding at the sides, so the picture sits as far in from the left
+       edge as MENU does from the right */
     .mobile-logo a {
         display: flex;
         align-items: center;
-        padding: 1rem;
+        gap: 0;
+        padding: 0.75rem 0;
         margin: 0;
         /* the mobile bar is a <nav>, so the dimmed "nav a" colour was reaching
            the name - keep it full white */
@@ -860,10 +865,10 @@ like a block-level element, so it can:
         background-color: black;
     }
 
-    /* the top bar is tight on phones - shrink the badges and drop the link padding */
+    /* the phone bar keeps to the picture, the name and MENU; LinkedIn and
+       email are in the menu */
     .mobile-logo .social-badges {
-        margin-left: 0.5rem;
-        gap: 0.3rem;
+        display: none;
     }
 
     .mobile-logo .social-badges a.social-badge {
