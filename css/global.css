@@ -104,31 +104,12 @@ body {
     backdrop-filter: none;
 }
 
-/* The phone top bar, the same way. Its glass is on a layer behind the bar's
-   contents rather than on the bar: a blur on the bar itself would trap the
-   slide out menu inside it, since the menu is fixed in place and lives
-   inside the bar. */
-@media (max-width: 768px) {
-    .page-gradient ~ .hamburger {
-        background-color: transparent;
-    }
+/* The phone top bar, the same way as the desktop header: no bar of its own
+   on any page, not even once the page scrolls (it had a solid strip on the
+   pages without the gradient, and a dark glass that faded in on scroll);
+   the shade under it (body::before, below) keeps it readable. The bar's
+   own rule, further down, leaves it see through. */
 
-    .page-gradient ~ .hamburger::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        background: rgba(0, 0, 0, 0.18);
-        -webkit-backdrop-filter: blur(18px);
-        backdrop-filter: blur(18px);
-        opacity: 0;
-        transition: opacity 0.4s ease;
-    }
-
-    .page-gradient ~ .hamburger.scrolled::before {
-        opacity: 1;
-    }
-}
 
 /*************************************************************************/
 
@@ -166,8 +147,23 @@ header.scrolled {
 /* The shade: a faint black fade fixed across the very top of the window, just
    under the header, so the links stay readable over whatever scrolls under
    them. Pinned to the window itself rather than drawn from the header, so it
-   always reaches the top edge and both sides. It never takes a click. Desktop
-   only: the phone bar has its own glass. */
+   always reaches the top edge and both sides. It never takes a click. On a
+   phone too, a little shorter for the shorter bar. */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5rem;
+    z-index: 999;
+    pointer-events: none;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.35) 0%,
+            rgba(0, 0, 0, 0.15) 50%,
+            rgba(0, 0, 0, 0) 100%);
+}
+
 @media (min-width: 769px) {
     body::before {
         content: '';
@@ -593,7 +589,7 @@ like a block-level element, so it can:
         align-items: center;
         padding: 0 1rem;
         height: 60px;
-        background-color: var(--color-1);
+        background-color: transparent;
         position: fixed;
         width: 100%;
         z-index: 1000;
