@@ -205,58 +205,79 @@ const appleEngine = (() => {
     /CriOS|FxiOS|EdgiOS/.test(ua);
 })();
 
-// The desktop header's picture is a small cube, like a die, with the
-// animated avatar on every side. At the very top of the page, scrolling up further, past the top,
-// turns it a quarter, right to left, onto its next side; keep scrolling and it
-// keeps turning, about a side per flick. The turn and its soft landing are a
-// CSS transition (global.css, .avatar-cube).
+// The header's picture is a small cube, like a die, with the animated avatar
+// on every side: the desktop header's, and the phone bar's. Scrolling turns
+// it, about a side per flick, and it settles onto the nearest side.
 //
 // Built here, around the video already in the page, and straight away rather
 // than when the page is ready, so the header's other scripts measure the cube
 // and not the video. Without JavaScript the plain video stays.
 (() => {
-  const video = document.querySelector('.desktop-header video#profile-pic');
-  if (!video) return;
-
   const make = (cls) => Object.assign(document.createElement('span'), { className: cls });
-  const box = make('logo-avatar avatar-cube');
-  box.id = 'profile-pic';
-  box.setAttribute('role', 'img');
-  box.setAttribute('aria-label', video.getAttribute('aria-label') || '');
-  const cube = make('cube');
-  box.append(cube);
+  const cubes = [];
 
-  video.replaceWith(box);
-  video.removeAttribute('id');
-  video.removeAttribute('aria-label');
-  video.setAttribute('aria-hidden', 'true');
-  video.className = 'avatar-video';
-  const front = make('cube-face cube-front');
-  front.append(video);
-  cube.append(front);
-  // Every side plays the same animated avatar, so it keeps moving while the
-  // cube turns and whichever side it lands on. The copies are the same small
-  // file, which the browser fetches once; they start from wherever the front
-  // one is, so all four stay in step.
-  const copies = ['right', 'back', 'left'].map((side) => {
-    const face = make('cube-face cube-' + side);
-    const copy = video.cloneNode(true);
-    face.append(copy);
-    cube.append(face);
-    return copy;
-  });
-  const videos = [video, ...copies];
-  videos.forEach((v) => {
-    v.muted = true;
-    v.play().catch(() => {});
-  });
-  const sync = () => copies.forEach((copy) => {
-    if (Math.abs(copy.currentTime - video.currentTime) > 0.05) copy.currentTime = video.currentTime;
-  });
-  video.addEventListener('playing', sync);
-  video.addEventListener('seeked', sync);
-  // a loop restarts each copy on its own; line them up again each time round
-  video.addEventListener('timeupdate', () => { if (video.currentTime < 0.2) sync(); });
+  const build = (video, { phone }) => {
+    const box = make('logo-avatar avatar-cube');
+    if (video.id) box.id = video.id;
+    box.setAttribute('role', 'img');
+    box.setAttribute('aria-label', video.getAttribute('aria-label') || '');
+    const cube = make('cube');
+    box.append(cube);
+    cubes.push(cube);
+    video.replaceWith(box);
+
+    // On an iPhone the phone bar's sides are the animated PNG rather than
+    // the video: one saving power (Low Power Mode) won't play videos by
+    // itself and can show a held frame without its see through layer, a white
+    // box. The PNG is see through everywhere and animates as a picture.
+    if (phone && appleEngine) {
+      const src = (video.getAttribute('poster') || '/assets/images/profile_pic.png').replace('profile_pic.png', 'profile_pic_animated.png');
+      ['front', 'right', 'back', 'left'].forEach((side) => {
+        const face = make('cube-face cube-' + side);
+        const img = Object.assign(document.createElement('img'), { src, alt: '' });
+        img.setAttribute('aria-hidden', 'true');
+        face.append(img);
+        cube.append(face);
+      });
+      return;
+    }
+
+    video.removeAttribute('id');
+    video.removeAttribute('aria-label');
+    video.setAttribute('aria-hidden', 'true');
+    video.className = 'avatar-video';
+    const front = make('cube-face cube-front');
+    front.append(video);
+    cube.append(front);
+    // Every side plays the same animated avatar, so it keeps moving while the
+    // cube turns and whichever side it lands on. The copies are the same small
+    // file, which the browser fetches once; they start from wherever the front
+    // one is, so all four stay in step.
+    const copies = ['right', 'back', 'left'].map((side) => {
+      const face = make('cube-face cube-' + side);
+      const copy = video.cloneNode(true);
+      face.append(copy);
+      cube.append(face);
+      return copy;
+    });
+    [video, ...copies].forEach((v) => {
+      v.muted = true;
+      v.play().catch(() => {});
+    });
+    const sync = () => copies.forEach((copy) => {
+      if (Math.abs(copy.currentTime - video.currentTime) > 0.05) copy.currentTime = video.currentTime;
+    });
+    video.addEventListener('playing', sync);
+    video.addEventListener('seeked', sync);
+    // a loop restarts each copy on its own; line them up again each time round
+    video.addEventListener('timeupdate', () => { if (video.currentTime < 0.2) sync(); });
+  };
+
+  const desktop = document.querySelector('.desktop-header video#profile-pic');
+  if (desktop) build(desktop, { phone: false });
+  const phone = document.querySelector('nav.hamburger .mobile-logo video.logo-avatar');
+  if (phone) build(phone, { phone: true });
+  if (!cubes.length) return;
 
   // Scrolling turns the cube with the scroll, wherever on the page, including
   // on past the very top: up turns it right to left, down left to right, a
@@ -289,7 +310,7 @@ const appleEngine = (() => {
   let lastFrame = 0;
   let spring = FOLLOW;
 
-  const draw = () => cube.style.setProperty('--turn', angle.toFixed(2) + 'deg');
+  const draw = () => cubes.forEach((cube) => cube.style.setProperty('--turn', angle.toFixed(2) + 'deg'));
 
   const frame = (now) => {
     // The time since the last frame, worked through in small steps, so the
@@ -334,21 +355,38 @@ const appleEngine = (() => {
     move();
   };
 
-  window.addEventListener('wheel', (e) => {
-    if (!e.deltaY) return;
-    // a wheel that reports whole lines or pages, not pixels
-    const px = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * 800 : e.deltaY;
-    // deltaY is negative going up, which turns it right to left, and positive
-    // going down, which turns it left to right
+  // up turns it right to left, down left to right
+  const turn = (px, perPx) => {
     spring = FOLLOW;
-    target += px * DEG_PER_PX;
+    target += px * perPx;
     // a long or fast scroll lines up at most two sides ahead, so it never
     // keeps spinning long after the scrolling has stopped
     target = Math.max(angle - AHEAD, Math.min(angle + AHEAD, target));
     move();
     clearTimeout(idle);
     idle = setTimeout(settle, SETTLE);
+  };
+
+  window.addEventListener('wheel', (e) => {
+    if (!e.deltaY) return;
+    // a wheel that reports whole lines or pages, not pixels
+    const px = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * 800 : e.deltaY;
+    turn(px, DEG_PER_PX);
   }, { passive: true });
+
+  // A touch screen has no wheel: there it follows the page's own scroll, the
+  // finger and the glide after it, including the stretch past the top on an
+  // iPhone, at the same rate as the wheel, so a short swipe turns it a side
+  // (a long flick is held to two sides ahead, like a fast wheel).
+  if (window.matchMedia('(pointer: coarse)').matches) {
+    const DEG_PER_TOUCH_PX = DEG_PER_PX;
+    let last = window.scrollY;
+    window.addEventListener('scroll', () => {
+      const px = window.scrollY - last;
+      last = window.scrollY;
+      if (px) turn(px, DEG_PER_TOUCH_PX);
+    }, { passive: true });
+  }
 })();
 
 // The animated avatar in the header comes in two copies, both with a see
@@ -362,20 +400,7 @@ const appleEngine = (() => {
 document.addEventListener('DOMContentLoaded', () => {
   if (!appleEngine) return;
 
-  // The phone bar's picture goes further: an iPhone saving power (Low Power
-  // Mode) won't play videos by itself and can show a held frame without its
-  // see through layer, the white box again. There the bar shows the animated
-  // PNG instead, which is see through everywhere and animates as a picture,
-  // power saving or not.
-  document.querySelectorAll('nav.hamburger video.logo-avatar').forEach((video) => {
-    const img = document.createElement('img');
-    img.className = 'logo-avatar';
-    // the same folder as the still picture the video shows first
-    img.src = (video.getAttribute('poster') || '/assets/images/profile_pic.png').replace('profile_pic.png', 'profile_pic_animated.png');
-    img.alt = video.getAttribute('aria-label') || '';
-    video.replaceWith(img);
-  });
-
+  // (the phone bar's cube shows the animated PNG instead; see above)
   document.querySelectorAll('video.logo-avatar, .avatar-cube video').forEach((video) => {
     const webm = video.querySelector('source[type^="video/webm"]');
     if (!webm) return;

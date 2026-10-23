@@ -286,6 +286,8 @@ body::before {
    --turn is set by main.js every frame while it turns, following the scroll
    and then settling onto the nearest side. */
 .avatar-cube {
+    /* half the cube's width, which is how deep its sides sit */
+    --cube-half: 1.25rem;
     display: inline-block;
     flex-shrink: 0;
     perspective: 12rem;
@@ -297,7 +299,7 @@ body::before {
     width: 100%;
     height: 100%;
     transform-style: preserve-3d;
-    transform: translateZ(-1.25rem) rotateY(var(--turn, 0deg));
+    transform: translateZ(calc(-1 * var(--cube-half))) rotateY(var(--turn, 0deg));
 }
 
 .avatar-cube .cube-face {
@@ -311,19 +313,19 @@ body::before {
 }
 
 .avatar-cube .cube-front {
-    transform: rotateY(0deg) translateZ(1.25rem);
+    transform: rotateY(0deg) translateZ(var(--cube-half));
 }
 
 .avatar-cube .cube-right {
-    transform: rotateY(90deg) translateZ(1.25rem);
+    transform: rotateY(90deg) translateZ(var(--cube-half));
 }
 
 .avatar-cube .cube-back {
-    transform: rotateY(180deg) translateZ(1.25rem);
+    transform: rotateY(180deg) translateZ(var(--cube-half));
 }
 
 .avatar-cube .cube-left {
-    transform: rotateY(-90deg) translateZ(1.25rem);
+    transform: rotateY(-90deg) translateZ(var(--cube-half));
 }
 
 .avatar-cube .cube-face video,
@@ -830,6 +832,11 @@ like a block-level element, so it can:
 
     /* the picture at its own 4:5 shape rather than boxed in a square, which
        left empty room beside it, with the name close by */
+    /* the phone bar's cube: as wide as its 4:5 picture, so half that deep */
+    .mobile-logo .avatar-cube {
+        --cube-half: 0.8rem;
+    }
+
     .mobile-logo img,
     .mobile-logo .logo-avatar {
         width: 1.6rem;
