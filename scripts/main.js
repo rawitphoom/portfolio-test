@@ -3318,16 +3318,60 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   const last = at - 1;
 
-  // the bar
+  // the bar. The name in its middle opens a list of every project (pointed
+  // at, or tapped on a phone), and picking one carries the gallery to it
   const stage = reel.querySelector('.reel-stage');
   const bar = document.createElement('div');
   bar.className = 'reel-bar';
   const count = Object.assign(document.createElement('span'), { className: 'reel-count' });
-  const name = Object.assign(document.createElement('span'), { className: 'reel-name' });
+  const picker = Object.assign(document.createElement('div'), { className: 'reel-picker' });
+  const name = Object.assign(document.createElement('button'), { className: 'reel-name', type: 'button' });
+  name.setAttribute('aria-haspopup', 'true');
+  name.setAttribute('aria-expanded', 'false');
+  const list = Object.assign(document.createElement('div'), { className: 'reel-list' });
+  list.setAttribute('role', 'list');
+  const choices = projects.map((project, p) => {
+    const choice = Object.assign(document.createElement('button'), { className: 'reel-choice', type: 'button' });
+    choice.setAttribute('role', 'listitem');
+    // its place counted from the bottom, so the list builds upward from the
+    // name, the nearest first; and from the top, so it clears from the top
+    // down as it closes
+    choice.style.setProperty('--k', projects.length - 1 - p);
+    choice.style.setProperty('--top', p);
+    choice.textContent = project.dataset.name;
+    choice.addEventListener('click', () => {
+      goTo(p);
+      setOpen(false);
+      // let go of it, so the list doesn't stay up for having the focus
+      choice.blur();
+    });
+    list.append(choice);
+    return choice;
+  });
+  picker.append(list, name);
   const link = Object.assign(document.createElement('a'), { className: 'reel-link' });
   link.append('View project');
-  bar.append(count, name, link);
+  bar.append(count, picker, link);
   stage.append(bar);
+
+  const setOpen = (open) => {
+    picker.classList.toggle('is-open', open);
+    name.setAttribute('aria-expanded', String(open));
+  };
+  // on a touch screen a tap opens and closes it (pointing opens it on its
+  // own, in main.css)
+  if (window.matchMedia('(hover: none)').matches) {
+    name.addEventListener('click', () => setOpen(!picker.classList.contains('is-open')));
+  }
+  document.addEventListener('click', (e) => {
+    if (!picker.contains(e.target)) setOpen(false);
+  });
+  picker.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      setOpen(false);
+      name.focus();
+    }
+  });
 
   // fetch the pictures a screen or two before the section arrives, so they
   // are there when the run starts rather than appearing during it
@@ -3359,11 +3403,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const project = projects[p];
     count.textContent = String(p + 1).padStart(2, '0');
     name.textContent = '▸ ' + project.dataset.name;
+    choices.forEach((choice, k) => {
+      if (k === p) choice.setAttribute('aria-current', 'true');
+      else choice.removeAttribute('aria-current');
+    });
     link.href = project.dataset.href;
     link.setAttribute('aria-label', 'View project: ' + project.dataset.name);
   };
 
   const mix = (a, b, t) => a + (b - a) * t;
+
+  // Carry the gallery to a project: the page moves at once to where the lens
+  // sits in the middle of that project's pictures, and the gallery, pinned in
+  // place, eases along the row to it as it always does after a scroll, past
+  // the projects in between
+  const goTo = (p) => {
+    const own = items.filter((item) => item.p === p);
+    const middle = (own[0].at + own[own.length - 1].at) / 2;
+    const lead = leadIn();
+    const progress = Math.min(1, Math.max(0, (middle + lead) / (last + lead)));
+    const room = Math.max(1, reel.offsetHeight - window.innerHeight);
+    const top = reel.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({ top: Math.round(top + progress * room), behavior: 'instant' });
+  };
 
   // the gallery follows the scroll a moment behind, easing into place, so the
   // cards keep gliding and growing for a beat after the page stops rather

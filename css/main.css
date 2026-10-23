@@ -1765,7 +1765,8 @@ nav a:hover {
     left: 1.5rem;
     right: 1.5rem;
     bottom: 1.75rem;
-    z-index: 2;
+    /* above the cards, which stack themselves by size */
+    z-index: 300;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
@@ -1780,8 +1781,164 @@ nav a:hover {
     font-variant-numeric: tabular-nums;
 }
 
+/* the project's name, which opens the list of them all */
+.reel-picker {
+    position: relative;
+    justify-self: center;
+}
+
 .reel-name {
+    padding: 0.4rem 0.2rem;
+    border: 0;
+    background: none;
     color: white;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+}
+
+.reel-name:focus-visible,
+.reel-choice:focus-visible {
+    outline: 1px solid white;
+    outline-offset: 2px;
+}
+
+/* the list rises above the name like a game's select menu: just the names,
+   floating with no panel, coming up one after another; a cursor jumps to
+   the one pointed at, which lights up, and the one in view keeps a dimmer
+   mark. A dark halo round the letters, rather than a box,
+   keeps them readable over the pictures. */
+.reel-list {
+    position: absolute;
+    bottom: calc(100% + 0.5rem);
+    left: 50%;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-50%);
+    visibility: hidden;
+    /* held until the last name has gone */
+    transition: visibility 0s linear 0.6s;
+}
+
+/* a bridge over the gap, so moving from the name to the list keeps it open */
+.reel-list::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 0.8rem;
+}
+
+.reel-choice {
+    position: relative;
+    display: block;
+    padding: 0.32rem 0.6rem 0.32rem 1.4rem;
+    border: 0;
+    background: none;
+    color: rgba(255, 255, 255, 0.5);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    text-shadow: 0 0 0.6rem rgba(0, 0, 0, 0.95), 0 0 0.2rem rgba(0, 0, 0, 0.9);
+    opacity: 0;
+    translate: 0 0.3rem;
+    /* closing: the opposite of opening, each sinking as it fades, from the
+       top down */
+    transition:
+        translate 0.3s ease calc(var(--top) * 0.035s),
+        color 0.18s ease,
+        transform 0.25s var(--menu-land, ease-out),
+        text-shadow 0.25s ease,
+        opacity 0.25s ease calc(var(--top) * 0.035s);
+}
+
+/* the cursor */
+.reel-choice::before {
+    content: '▸';
+    position: absolute;
+    left: 0.4rem;
+    color: white;
+    opacity: 0;
+    transform: translateX(-0.3rem);
+    transition: opacity 0.15s ease, transform 0.25s var(--menu-land, ease-out);
+}
+
+/* open: tabbed to from the keyboard, or tapped open on a touch screen (and
+   pointed at, where there is a pointer that can point) */
+.reel-picker.is-open .reel-list,
+.reel-picker:has(:focus-visible) .reel-list {
+    visibility: visible;
+    transition: visibility 0s;
+}
+
+/* the names rise into place one after another, from the bottom up */
+.reel-picker.is-open .reel-choice,
+.reel-picker:has(:focus-visible) .reel-choice {
+    opacity: 1;
+    translate: 0 0;
+    transition:
+        translate 0.45s var(--menu-land, ease-out) calc(var(--k) * 0.035s),
+        color 0.18s ease,
+        transform 0.25s var(--menu-land, ease-out),
+        text-shadow 0.25s ease,
+        opacity 0.3s ease calc(var(--k) * 0.035s);
+}
+
+@media (hover: hover) {
+    .reel-picker:hover .reel-list {
+        visibility: visible;
+        transition: visibility 0s;
+    }
+
+    .reel-picker:hover .reel-choice {
+        opacity: 1;
+        translate: 0 0;
+        transition:
+            translate 0.45s var(--menu-land, ease-out) calc(var(--k) * 0.035s),
+            color 0.18s ease,
+            transform 0.25s var(--menu-land, ease-out),
+            text-shadow 0.25s ease,
+            opacity 0.3s ease calc(var(--k) * 0.035s);
+    }
+}
+
+/* pointed at or tabbed to: lit, nudged along, the cursor beside it */
+.reel-choice:hover,
+.reel-choice:focus-visible {
+    color: white;
+    transform: translateX(0.35rem);
+    text-shadow:
+        0 0 0.55rem rgba(255, 255, 255, 0.55),
+        0 0 0.6rem rgba(0, 0, 0, 0.95);
+}
+
+.reel-choice:hover::before,
+.reel-choice:focus-visible::before {
+    opacity: 1;
+    transform: none;
+}
+
+/* the project in view: white, with a dimmer mark (full again when pointed at) */
+.reel-choice[aria-current="true"] {
+    color: white;
+}
+
+.reel-choice[aria-current="true"]::before {
+    opacity: 0.45;
+    transform: none;
+}
+
+.reel-list:hover .reel-choice[aria-current="true"]:not(:hover)::before {
+    opacity: 0.2;
+}
+
+.reel-choice[aria-current="true"]:hover::before {
+    opacity: 1;
 }
 
 .reel-link {
@@ -1805,6 +1962,12 @@ nav a:hover {
         display: flex;
         justify-content: space-between;
         font-size: 0.7rem;
+    }
+
+    /* on a phone the name is on the left, so the list opens from there */
+    .reel-list {
+        left: 0;
+        transform: none;
     }
 
     .reel-count {
