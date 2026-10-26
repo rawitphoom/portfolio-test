@@ -170,14 +170,18 @@
                     <div class="project-image-wrapper">
                         <div class="preview-image cover-stage mixtape-stage" role="img"
                             aria-label="Mixtape &ndash; IAT459 Internet Computing.">
-                            <video class="cover-bg" muted loop playsinline preload="none">
+                            <!-- each with its first frame as a poster, so the card isn't blank
+                                 while the video is still on its way on a slow connection -->
+                            <video class="cover-bg" muted loop playsinline preload="none"
+                                poster="assets/images/IAT459-CoverBg-poster.webp">
                                 <!-- mp4 only: VP9 came out nearly twice the size on this grain -->
                                 <source src="assets/images/IAT459-CoverBg.mp4" type="video/mp4">
                             </video>
 
                             <p class="mixtape-title">MIXTAPE</p>
 
-                            <video class="cover-screen" muted loop playsinline preload="none">
+                            <video class="cover-screen" muted loop playsinline preload="none"
+                                poster="assets/images/IAT459-CoverScreen-poster.webp">
                                 <source src="assets/images/IAT459-CoverScreen.webm" type="video/webm">
                                 <source src="assets/images/IAT459-CoverScreen.mp4" type="video/mp4">
                             </video>
@@ -198,7 +202,9 @@
                             aria-label="Consistency &ndash; Build Habits That Last. IAT359 Mobile Computing.">
                             <video class="cover-bg" muted loop playsinline preload="none"
                                 poster="assets/images/IAT359-Cover.webp">
-                                <source src="assets/images/IAT359-CoverBackground.webm" type="video/webm">
+                                <!-- the 720p mp4 only: the card is never wider than about 550px,
+                                     and the 1080p webm the case study uses was nearly three times
+                                     the size -->
                                 <source src="assets/images/IAT359-CoverBackground.mp4" type="video/mp4">
                             </video>
 
@@ -316,7 +322,7 @@
             <div class="project-card">
                 <a href="/mage-in-the-maze" class="project-link">
                     <div class="project-image-wrapper">
-                        <img class="preview-image" src="assets/images/contents/project1/IAT167_Cover.webp" alt="Mage in the Maze cover" loading="lazy" decoding="async">
+                        <img class="preview-image" src="assets/images/contents/project1/IAT167_Cover-card.webp" alt="Mage in the Maze cover" loading="lazy" decoding="async">
                         <video class="auto-video" src="assets/images/contents/project1/IAT167_Preview.mp4" muted loop playsinline
                             preload="none" aria-label="Mage in the Maze animation"></video>
                     </div>
