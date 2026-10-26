@@ -1580,8 +1580,14 @@ document.addEventListener('DOMContentLoaded', () => {
     mark.style.setProperty('--pull', pull.toFixed(3));
   };
 
+  // Only worked out while the footer is within the stretch of the screen.
+  // Further up the page the mark is simply squashed, and measuring the page
+  // on every frame there, after the home gallery has moved its cards, made
+  // the browser work its styles out twice a frame for nothing.
+  let near = false;
+
   const onScroll = () => {
-    if (queued) return;
+    if (queued || !near) return;
     queued = true;
     requestAnimationFrame(() => {
       queued = false;
@@ -1592,6 +1598,39 @@ document.addEventListener('DOMContentLoaded', () => {
   sync();
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
+
+  // the footer is the last thing on the page, so while its top is more than
+  // the stretch below the screen, the page has more than that still to go
+  const footer = mark.closest('footer');
+  if (footer && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([entry]) => {
+      near = entry.isIntersecting;
+      sync();   // and settles it, squashed, on the way out
+    }, { rootMargin: `0px 0px ${RUN}px 0px` }).observe(footer);
+  } else {
+    near = true;
+  }
+});
+
+/* ---------------------------------------------------------------- *
+ * Off screen sections hold still
+ *
+ * The page's looping movement (the icon slider, the cover sweeps, the pulsing
+ * dots) keeps the browser working out its styles on every frame even while
+ * it is far off screen, and on a slower phone that took a share of each frame
+ * from whatever is being scrolled. A section well off screen gets .is-away,
+ * which pauses everything inside it (global.css), and loses it a little
+ * before it comes back into view, so it carries on from where it stopped
+ * without anyone seeing it stop. The sections' own scroll linked fade-ins
+ * are on the sections themselves and are left alone.
+ * ---------------------------------------------------------------- */
+document.addEventListener('DOMContentLoaded', () => {
+  if (!('IntersectionObserver' in window)) return;
+  const sections = document.querySelectorAll('body > section, body > footer');
+  const io = new IntersectionObserver((entries) => {
+    for (const entry of entries) entry.target.classList.toggle('is-away', !entry.isIntersecting);
+  }, { rootMargin: '25% 0px' });
+  sections.forEach((section) => io.observe(section));
 });
 
 /* ---------------------------------------------------------------- *
@@ -1878,14 +1917,20 @@ document.addEventListener('DOMContentLoaded', () => {
         mount.setSpeed(moving ? SPEED : 0);
       }
     };
+    // only while the footer is on screen: below it, the gradient is whole
+    let near = false;
     const onScroll = () => {
-      if (queued) return;
+      if (queued || !near) return;
       queued = true;
       requestAnimationFrame(fade);
     };
     fade();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onScroll, { passive: true });
+    new IntersectionObserver(([entry]) => {
+      near = entry.isIntersecting;
+      fade();   // and settles it, whole, once the footer has gone
+    }).observe(footer);
   };
 
   const begin = () => {

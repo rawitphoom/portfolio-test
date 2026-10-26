@@ -2436,6 +2436,16 @@ html:is(.menu-open, .menu-closing) body> :not(header, .hamburger, .site-menu, .s
     animation-play-state: paused !important;
 }
 
+/* a section well off screen holds its looping movement still (main.js adds
+   .is-away), and carries on from where it stopped just before it comes back
+   into view. Only what is inside it: a section's own scroll linked fade-in
+   keeps following the scroll. */
+.is-away *,
+.is-away *::before,
+.is-away *::after {
+    animation-play-state: paused !important;
+}
+
 /* the page beside the panel dims, and a click on it closes the menu */
 .site-menu-shade {
     position: fixed;
