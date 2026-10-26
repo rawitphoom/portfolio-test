@@ -2422,12 +2422,41 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', () => (root.classList.contains('menu-open') ? close() : open()));
     return button;
   };
+  // Pointing at the desktop button slides the header's links into its lines,
+  // the way the name slides into the picture (global.css). The links are put
+  // in a group that stays still and is cut off where the lines begin, so they
+  // vanish exactly there however the slide runs. Measured from the layout,
+  // which a slide doesn't change: how far the links travel (--fold), and how
+  // far the group ends short of the lines (--fold-gap).
+  const foldInto = (nav, lines) => {
+    const links = [...nav.querySelectorAll('a')];
+    if (!links.length) return;
+    const group = document.createElement('span');
+    group.className = 'nav-links';
+    links[0].before(group);
+    group.append(...links);
+    const leftOf = (el) => {
+      let x = 0;
+      for (let n = el; n; n = n.offsetParent) x += n.offsetLeft;
+      return x;
+    };
+    const measure = () => {
+      const edge = leftOf(lines);
+      group.style.setProperty('--fold', edge - leftOf(group) + 'px');
+      group.style.setProperty('--fold-gap', edge - leftOf(group) - group.offsetWidth + 'px');
+    };
+    measure();
+    if (document.fonts) document.fonts.ready.then(measure);
+    window.addEventListener('resize', measure);
+  };
+
   const buttons = [];
   const desktopNav = document.querySelector('.desktop-header nav');
   if (desktopNav) {
     const button = makeButton();
     desktopNav.append(button);
     buttons.push(button);
+    foldInto(desktopNav, button.querySelector('.menu-button-lines'));
   }
   const phoneBar = document.querySelector('nav.hamburger');
   if (phoneBar) {

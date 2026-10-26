@@ -232,10 +232,10 @@ html.pg-still body::before {
 }
 
 /* the details beside the pointer, as on mariavasilyeva.com/work: the title
-   and its year, then what kind of project it was and the role in it, each
-   line on its own silver bar, the bars set in at different steps. They
-   wipe open from the left one after another, slowly and evenly, and close
-   quicker. */
+   and its year, then what kind of project it was and the role in it, the
+   lines set in at different steps. No plates behind them: plain white
+   text, with a soft dark halo so it reads over any picture. They wipe open from the
+   left one after another, slowly and evenly, and close quicker. */
 .pg-tip {
     position: fixed;
     top: 0;
@@ -248,32 +248,26 @@ html.pg-still body::before {
     will-change: transform;
 }
 
-/* each bar a polished silver plate: the grey metal of the titles, a bright
-   edge along the top and a dark one along the bottom, and the shine sliding
-   slowly across, each bar a little behind the one above */
+/* the wipe is cut a little wide of each line, so its halo is not cut off
+   when open, and nothing of it shows when shut */
 .pg-tip>* {
-    background-image: var(--pg-silver);
-    background-size: 200% 100%;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.75),
-        inset 0 -1px 0 rgba(0, 0, 0, 0.35);
-    animation: chrome-sweep 7s linear infinite;
-    color: #0d0d0d;
+    color: #fff;
     white-space: nowrap;
-    clip-path: inset(0 100% 0 0);
+    text-shadow: 0 0 0.6rem rgba(0, 0, 0, 0.95), 0 0 0.2rem rgba(0, 0, 0, 0.9);
+    clip-path: inset(-0.6rem calc(100% + 0.6rem) -0.6rem -0.6rem);
     transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* a long, even wipe: easing in and out, so it neither jumps open nor stops
    short */
 .pg-tip.is-on>* {
-    clip-path: inset(0 0 0 0);
+    clip-path: inset(-0.6rem -0.6rem -0.6rem -0.6rem);
     transition: clip-path 1.5s cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 /* snapped shut at once, to wipe open again for the next project */
 .pg-tip.is-reset>* {
-    clip-path: inset(0 100% 0 0);
+    clip-path: inset(-0.6rem calc(100% + 0.6rem) -0.6rem -0.6rem);
     transition: none;
 }
 
@@ -281,20 +275,11 @@ html.pg-still body::before {
     transition-delay: 0.22s;
 }
 
-.pg-tip>:nth-child(2) {
-    animation-delay: -0.6s;
-}
-
-.pg-tip>:nth-child(3) {
-    animation-delay: -1.2s;
-}
-
 .pg-tip.is-on>:nth-child(3) {
     transition-delay: 0.44s;
 }
 
 .pg-tip-title {
-    padding: 0.02em 0.2em 0;
     font-size: 1.75rem;
     font-weight: 400;
     line-height: 1.05;
@@ -314,7 +299,7 @@ html.pg-still body::before {
 
 /* each line set in a different step from the left */
 .pg-tip-line {
-    padding: 0.05em 0.3em;
+    padding-top: 0.15em;
     font-size: 0.85rem;
     line-height: 1.25;
 }
@@ -372,7 +357,6 @@ html.pg-still body::before {
     .pg-tip>*,
     .pg-tip.is-on>* {
         transition: none;
-        animation: none;
     }
 }
 
