@@ -1758,8 +1758,8 @@ nav a:hover {
 }
 
 /* the bar along the bottom: the number of the project going past, its name
-   and a link to it. On a phone, just the name on the left and the link on
-   the right. */
+   and a link to it. On a phone, just the name, in the middle, with its list
+   opening above it. */
 .reel-bar {
     position: absolute;
     left: 1.5rem;
@@ -1978,17 +1978,13 @@ nav a:hover {
 @media (max-width: 768px) {
     .reel-bar {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         font-size: 0.7rem;
     }
 
-    /* on a phone the name is on the left, so the list opens from there */
-    .reel-list {
-        left: 0;
-        transform: none;
-    }
-
-    .reel-count {
+    /* the cards themselves open their project here */
+    .reel-count,
+    .reel-link {
         display: none;
     }
 }
