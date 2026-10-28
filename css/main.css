@@ -527,6 +527,11 @@ nav a:hover {
     height: 100%;
 }
 
+/* the colour split while the pointer moves over a cover (main.js) */
+.project-image-wrapper.is-splitting {
+    filter: url(#card-split);
+}
+
 .preview-image,
 .hover-video,
 .auto-video,

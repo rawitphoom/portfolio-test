@@ -150,6 +150,76 @@
             </figure>
         </div>
 
+        <!-- FLIGHT (hidden for now: remove "hidden" on the section to bring it back)
+             A sentence with five small clips set in among its words. Scrolling
+             on, each clip flies out of the sentence, growing and tilting as it
+             goes, and lands as a tile in the row below, a link to its project.
+             The clips live in the tiles; main.js carries them up into the gaps
+             in the sentence and lets the scroll bring them home. Without it, or
+             with reduced motion, the gaps close and the tiles simply sit in the
+             row. -->
+        <section class="about-flight" aria-label="Some of my projects" hidden>
+            <div class="flight-intro">
+                <p class="flight-sentence">
+                    <!-- no punctuation straight after a gap: a line can break between the
+                         two and leave a comma at the start of the next line -->
+                    Every project <span class="flight-slot" aria-hidden="true"></span> starts as a rough
+                    sketch <span class="flight-slot" aria-hidden="true"></span> that I design
+                    <span class="flight-slot" aria-hidden="true"></span> and build
+                    <span class="flight-slot" aria-hidden="true"></span> myself, then test with real people
+                    <span class="flight-slot" aria-hidden="true"></span> until it works.
+                </p>
+            </div>
+
+            <div class="flight-stage">
+                <div class="flight-panel">
+                    <div class="flight-track">
+                        <a class="flight-cell" href="/mixtape">
+                            <span class="flight-frame">
+                                <video class="flight-media auto-video" src="assets/images/reel/mixtape-6.mp4"
+                                    poster="assets/images/reel/mixtape-6.jpg" muted loop playsinline preload="none"
+                                    aria-hidden="true"></video>
+                            </span>
+                            <span class="flight-name">Mixtape</span>
+                        </a>
+                        <a class="flight-cell" href="/tempo">
+                            <span class="flight-frame">
+                                <video class="flight-media auto-video" src="assets/images/reel/tempo-6.mp4"
+                                    poster="assets/images/reel/tempo-6.jpg" muted loop playsinline preload="none"
+                                    aria-hidden="true"></video>
+                            </span>
+                            <span class="flight-name">Tempo</span>
+                        </a>
+                        <a class="flight-cell" href="/whimsy-bites">
+                            <span class="flight-frame">
+                                <video class="flight-media auto-video" src="assets/images/reel/whimsy-bites-6.mp4"
+                                    poster="assets/images/reel/whimsy-bites-6.jpg" muted loop playsinline
+                                    preload="none" aria-hidden="true"></video>
+                            </span>
+                            <span class="flight-name">Whimsy Bites</span>
+                        </a>
+                        <a class="flight-cell" href="/mage-in-the-maze">
+                            <span class="flight-frame">
+                                <video class="flight-media flight-media--pixels auto-video"
+                                    src="assets/images/reel/mage-in-the-maze-6.mp4"
+                                    poster="assets/images/reel/mage-in-the-maze-6.jpg" muted loop playsinline
+                                    preload="none" aria-hidden="true"></video>
+                            </span>
+                            <span class="flight-name">Mage in the Maze</span>
+                        </a>
+                        <a class="flight-cell" href="/small-but-mighty">
+                            <span class="flight-frame">
+                                <video class="flight-media auto-video" src="assets/images/reel/small-but-mighty-clip.mp4"
+                                    poster="assets/images/reel/small-but-mighty-clip.jpg" muted loop playsinline
+                                    preload="none" aria-hidden="true"></video>
+                            </span>
+                            <span class="flight-name">Small But Mighty</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- SCROLL-LIT TEXT
              Sits directly above the phone and leads into it. The words start
              dim and light up as the paragraph crosses the middle of the

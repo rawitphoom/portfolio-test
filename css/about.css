@@ -18,6 +18,25 @@
   flex-direction: column;
 }
 
+/* the display above would otherwise outrank the hidden attribute */
+.about-hero[hidden] {
+  display: none;
+}
+
+/* with the hero hidden the flight opens the page: pulled up by the 7rem the
+   page sits below the top (its own margin and padding), so its sentence lands
+   in the middle of the window */
+.about-hero[hidden] + .about-flight {
+  margin-top: -7rem;
+}
+
+/* on a phone the page starts at the top with 6rem of padding instead */
+@media (max-width: 768px) {
+  .about-hero[hidden] + .about-flight {
+    margin-top: -6rem;
+  }
+}
+
 .about-hero-inner {
   position: relative;
   z-index: 2;
@@ -1508,4 +1527,153 @@
 html.gsap-text .about-heading,
 html.gsap-text .about-bio p {
     visibility: hidden;
+}
+
+/***************************** FLIGHT *****************************/
+
+/* A sentence with five clips set in among its words, then a row of tiles they
+   fly down into as the page scrolls (main.js). The clips belong to the tiles;
+   main.js lifts each one into its gap in the sentence and the scroll brings
+   it home. Each part is a screen tall, and the flight runs while the row's
+   screen scrolls up into view. */
+.about-flight {
+    position: relative;
+    margin-top: 2rem;
+}
+
+.flight-intro,
+.flight-stage {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+}
+
+.flight-sentence {
+    max-width: 16em;
+    margin: 0;
+    font-size: clamp(2rem, 5vw, 4.5rem);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+}
+
+/* a gap in the sentence the size of a capital, where a clip waits; closed
+   until main.js is running the flight, so the sentence reads plainly
+   without it */
+.flight-slot {
+    display: none;
+    width: 1.1em;
+    height: 1.1em;
+    margin: 0 0.08em;
+    vertical-align: middle;
+}
+
+.about-flight.is-live .flight-slot {
+    display: inline-block;
+}
+
+/* The words come in one after another, each starting as a coloured glow, its
+   colour a step further round the wheel than the last, and settling into
+   plain white (main.js splits them and adds .is-lit once the sentence is in
+   view). The clips fade in after them. */
+.about-flight.is-live .flight-word {
+    opacity: 0;
+    color: transparent;
+    text-shadow: 0 0 8px hsl(var(--hue) 100% 60%);
+}
+
+.about-flight.is-lit .flight-word {
+    opacity: 1;
+    color: #fff;
+    text-shadow: 0 0 8px hsl(var(--hue) 100% 60% / 0);
+    transition:
+        opacity 0.6s ease calc(var(--i) * 0.06s),
+        color 1.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) calc(var(--i) * 0.06s),
+        text-shadow 1.4s cubic-bezier(0.55, 0.055, 0.675, 0.19) calc(var(--i) * 0.06s);
+}
+
+.about-flight.is-live .flight-media {
+    opacity: 0;
+}
+
+.about-flight.is-lit .flight-media {
+    opacity: 1;
+    transition: opacity 0.6s ease calc(var(--n) * 0.15s);
+}
+
+/* the row: a dark panel holding five square tiles */
+.flight-panel {
+    width: min(1100px, 100%);
+    padding: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 32px;
+    background: #141414;
+    box-shadow: 0 40px 80px -30px rgba(0, 0, 0, 0.8);
+}
+
+.flight-track {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+}
+
+.flight-cell {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+.flight-frame {
+    display: block;
+    aspect-ratio: 1;
+}
+
+/* drawn from its top left corner, which is the corner main.js lines up with
+   the gap in the sentence */
+.flight-media {
+    position: relative;
+    z-index: 2;
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 24%;
+    transform-origin: 0 0;
+}
+
+/* Mage in the Maze's gameplay is pixel art, kept crisp */
+.flight-media--pixels {
+    image-rendering: pixelated;
+}
+
+/* each tile's name, shown once its clip has landed */
+.flight-name {
+    display: block;
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    transition: color 0.3s ease;
+}
+
+.flight-cell:hover .flight-name,
+.flight-cell:focus-visible .flight-name {
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .flight-panel {
+        padding: 12px;
+        border-radius: 20px;
+    }
+
+    .flight-track {
+        gap: 8px;
+    }
+
+    .flight-name {
+        margin-top: 0.5rem;
+        font-size: 0.6rem;
+    }
 }

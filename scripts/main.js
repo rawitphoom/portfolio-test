@@ -499,6 +499,107 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Project covers: moving the pointer over one splits it into its red, green
+// and blue: red trails behind the movement and blue runs ahead of it, so a
+// sweep leaves colour fringes on every edge. The faster the move, the wider
+// the split, and it closes up again as the pointer slows or stops. An SVG
+// filter (built here, used by .is-splitting in main.css), so it works on the
+// covers' clips and live type as well as on pictures. Only on the cover being
+// moved over, only while it's splitting, and not on touch screens or for
+// visitors who have asked for less motion.
+document.addEventListener('DOMContentLoaded', () => {
+  const covers = document.querySelectorAll('.projects .project-image-wrapper');
+  if (!covers.length) return;
+  if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const MOST = 30;              // px, the furthest red and blue ever move apart
+  const GAIN = 1.5;             // px of split per px the pointer moves in a frame
+  const SPREAD = [1, 0, -1];    // red trails, green stays, blue runs ahead
+
+  // each channel lifted out of the cover on its own, shifted, then laid back
+  // together with screen, which adds them up to the full colour again
+  const keep = (row) => {
+    const values = Array(20).fill(0);
+    values[row * 5 + row] = 1;
+    values[18] = 1;
+    return values.join(' ');
+  };
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('width', '0');
+  svg.setAttribute('height', '0');
+  svg.style.position = 'absolute';
+  svg.innerHTML = `
+    <filter id="card-split" x="-5%" y="-5%" width="110%" height="110%" color-interpolation-filters="sRGB">
+      <feColorMatrix in="SourceGraphic" values="${keep(0)}" result="r"/>
+      <feOffset in="r" result="r2"/>
+      <feColorMatrix in="SourceGraphic" values="${keep(1)}" result="g"/>
+      <feOffset in="g" result="g2"/>
+      <feColorMatrix in="SourceGraphic" values="${keep(2)}" result="b"/>
+      <feOffset in="b" result="b2"/>
+      <feBlend in="r2" in2="g2" mode="screen" result="rg"/>
+      <feBlend in="rg" in2="b2" mode="screen"/>
+    </filter>`;
+  document.body.append(svg);
+  const shifts = [...svg.querySelectorAll('feOffset')];
+
+  let active = null;    // the cover being split
+  let at = null;        // where the pointer is
+  let was = null;       // where it was last frame
+  let sx = 0;           // the split now, eased toward the pointer's movement
+  let sy = 0;
+  let running = false;
+
+  const frame = () => {
+    const mx = at && was ? at.x - was.x : 0;
+    const my = at && was ? at.y - was.y : 0;
+    was = at;
+    sx += (mx * GAIN - sx) * 0.3;
+    sy += (my * GAIN - sy) * 0.3;
+
+    const size = Math.hypot(sx, sy);
+    const fit = size > MOST ? MOST / size : 1;
+    // against the way the pointer went, so red lags and blue leads
+    shifts.forEach((shift, i) => {
+      shift.setAttribute('dx', (-sx * fit * SPREAD[i]).toFixed(2));
+      shift.setAttribute('dy', (-sy * fit * SPREAD[i]).toFixed(2));
+    });
+
+    // the filter is only on while there is a split to show; the loop keeps
+    // going while the pointer is over the cover, and stops once it has left
+    // and the split has closed
+    const open = size >= 0.05;
+    if (active) active.classList.toggle('is-splitting', open);
+    if (!open && !at) {
+      active = null;
+      running = false;
+      return;
+    }
+    requestAnimationFrame(frame);
+  };
+
+  // listened for on the whole card: its name and gradient lie over the cover,
+  // over all of it on a smaller screen, and would keep the pointer off it
+  covers.forEach((cover) => {
+    const card = cover.closest('.project-card') || cover;
+    card.addEventListener('pointermove', (event) => {
+      if (active !== cover) {
+        if (active) active.classList.remove('is-splitting');
+        active = cover;
+      }
+      at = { x: event.clientX, y: event.clientY };
+      if (!running) {
+        running = true;
+        was = at;
+        requestAnimationFrame(frame);
+      }
+    });
+    // leaving, the split eases shut on its own
+    card.addEventListener('pointerleave', () => { at = null; was = null; });
+  });
+});
+
 // Fade the header's border in once the page scrolls away from the top. The
 // phone top bar gets the same class; the home page turns both to glass with it.
 document.addEventListener('DOMContentLoaded', () => {
@@ -1151,6 +1252,145 @@ document.addEventListener('DOMContentLoaded', () => {
   }, { rootMargin: '200px 0px' });
 
   covers.forEach(cover => observer.observe(cover));
+});
+
+// About page: the flight. A sentence with five gaps among its words and a row
+// of five tiles below it, each tile a clip of a project (about.css). Each clip
+// starts in its gap in the sentence, drawn small, and as the row scrolls up
+// into view it flies down to its tile: growing to full size, tilting one way
+// and back on the way, the five setting off one after another. The flight
+// follows the scroll a moment behind, so it glides rather than jumps. Before
+// that, the sentence's words come in one by one, each a coloured glow that
+// settles into white.
+document.addEventListener('DOMContentLoaded', () => {
+  const flight = document.querySelector('.about-flight');
+  if (!flight) return;
+  // reduced motion, or no observer: the plain sentence and the tiles in place
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (!('IntersectionObserver' in window)) return;
+
+  const sentence = flight.querySelector('.flight-sentence');
+  const stage = flight.querySelector('.flight-stage');
+  const slots = [...flight.querySelectorAll('.flight-slot')];
+  const frames = [...flight.querySelectorAll('.flight-frame')];
+  const media = frames.map((frame) => frame.querySelector('.flight-media'));
+  const names = [...flight.querySelectorAll('.flight-name')];
+  if (!sentence || !stage || slots.length < frames.length) return;
+
+  // each word in a span of its own, its glow a step further round the wheel
+  let count = 0;
+  [...sentence.childNodes].forEach((node) => {
+    if (node.nodeType !== Node.TEXT_NODE) return;
+    const words = document.createDocumentFragment();
+    node.textContent.split(/(\s+)/).forEach((part) => {
+      if (!part) return;
+      if (/^\s+$/.test(part)) {
+        words.append(' ');
+        return;
+      }
+      const word = document.createElement('span');
+      word.className = 'flight-word';
+      word.textContent = part;
+      word.style.setProperty('--i', count);
+      word.style.setProperty('--hue', (180 + count * 15) % 360);
+      count++;
+      words.append(word);
+    });
+    node.replaceWith(words);
+  });
+  media.forEach((clip, i) => clip.style.setProperty('--n', i));
+  flight.classList.add('is-live');
+
+  // the words come in once the sentence is well in view
+  const lit = new IntersectionObserver(([entry]) => {
+    if (!entry.isIntersecting) return;
+    flight.classList.add('is-lit');
+    lit.disconnect();
+  }, { threshold: 0.35 });
+  lit.observe(sentence);
+
+  const LEAD = 0.1;                 // of a flight between one clip setting off and the next
+  const TOTAL = 1 + LEAD * (frames.length - 1);
+  const EASE = 5;                   // how quickly the flight catches up with the scroll
+  const clamp = (v) => Math.min(1, Math.max(0, v));
+  // slow out of the gap, quick across, slow into the tile
+  const glide = (t) => (t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2);
+  const sway = (t) => (1 - Math.cos(Math.PI * t)) / 2;
+
+  // where each gap is from its tile, and how small the clip is there. Both
+  // scroll together, so this only changes when the layout does.
+  let trips = [];
+  const measure = () => {
+    trips = frames.map((frame, i) => {
+      const from = slots[i].getBoundingClientRect();
+      const to = frame.getBoundingClientRect();
+      return {
+        x: from.left - to.left,
+        y: from.top - to.top,
+        scale: from.width / Math.max(1, to.width),
+        tilt: i % 2 === 0 ? 12 : -12,
+      };
+    });
+  };
+
+  let eased = null;
+  let then = null;
+  let near = false;
+  const update = (time) => {
+    const box = stage.getBoundingClientRect();
+    const target = clamp((window.innerHeight - box.top) / box.height);
+    const dt = then === null ? 1 / 60 : Math.min(0.1, (time - then) / 1000);
+    then = time;
+    if (eased === null) eased = target;
+    else eased += (target - eased) * (1 - Math.exp(-EASE * dt));
+    if (Math.abs(target - eased) < 0.0005) eased = target;
+
+    const at = eased * TOTAL;
+    trips.forEach((trip, i) => {
+      const t = clamp(at - i * LEAD);
+      const e = glide(t);
+      const x = trip.x * (1 - e);
+      const y = trip.y * (1 - e);
+      const scale = trip.scale + (1 - trip.scale) * e;
+      // over to one side for the first half of the flight, back for the second
+      const tilt = trip.tilt * sway(t < 0.5 ? t * 2 : (1 - t) * 2);
+      media[i].style.transform =
+        `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) rotate(${tilt.toFixed(2)}deg) scale(${scale.toFixed(4)})`;
+      names[i].style.opacity = clamp((t - 0.85) / 0.15).toFixed(2);
+    });
+    return eased !== target;
+  };
+
+  let queued = false;
+  const frame = (time) => {
+    queued = false;
+    if (update(time) && near) queue();
+    else then = null;
+  };
+  const queue = () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(frame);
+  };
+
+  // only worked out while the section is on screen
+  new IntersectionObserver(([entry]) => {
+    near = entry.isIntersecting;
+    if (near) queue();
+  }).observe(flight);
+  window.addEventListener('scroll', () => { if (near) queue(); }, { passive: true });
+
+  const refresh = () => {
+    // measured with every clip at home, so its own move doesn't count
+    media.forEach((clip) => (clip.style.transform = 'none'));
+    measure();
+    eased = null;
+    update(performance.now());
+    then = null;
+  };
+  refresh();
+  if (document.fonts) document.fonts.ready.then(refresh);
+  window.addEventListener('resize', refresh);
 });
 
 // About page: the "Say hi" chat.
@@ -2381,7 +2621,17 @@ document.addEventListener('DOMContentLoaded', () => {
     num.textContent = String(i + 1).padStart(2, '0');
     const word = document.createElement('span');
     word.className = 'site-menu-word';
-    word.textContent = item.word;
+    // laid in twice, like the header's links, so pointing at it can roll
+    // the first copy up and the second into its place
+    const roll = document.createElement('span');
+    roll.className = 'nav-roll';
+    const first = document.createElement('span');
+    first.textContent = item.word;
+    const second = document.createElement('span');
+    second.textContent = item.word;
+    second.setAttribute('aria-hidden', 'true');
+    roll.append(first, second);
+    word.append(roll);
     // the trail: copies of the word laid over it, each further behind
     const trail = document.createElement('span');
     trail.className = 'site-menu-trail';

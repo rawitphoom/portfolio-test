@@ -2601,7 +2601,7 @@ html.menu-open .site-menu-item {
     font-weight: 400;
     line-height: 1.04;
     letter-spacing: -0.04em;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease, filter 0.3s ease;
 }
 
 /* the trail: four copies of the word laid over it, strung out behind it to
@@ -2633,17 +2633,70 @@ html.menu-open .site-menu-trail>span {
         opacity 0.9s ease calc(0.5s + var(--i) * 0.08s);
 }
 
-/* pointing at one word dims the others */
+/* pointing at one word dims the others. A solid grey (what 35% white came
+   out as on the panel), not a see through white, so the metal behind each
+   word stays hidden. */
 .site-menu-nav:hover .site-menu-item:not(:hover) {
-    color: rgba(255, 255, 255, 0.35);
+    color: #656565;
 }
 
 /* the page you are on: faded and underlined */
 .site-menu-item[aria-current="page"] .site-menu-word {
-    color: rgba(255, 255, 255, 0.35);
+    color: #656565;
+}
+
+.site-menu-item[aria-current="page"] .nav-roll>span {
     text-decoration: underline;
     text-decoration-thickness: 0.05em;
     text-underline-offset: 0.12em;
+}
+
+/* Pointing at a word turns it to moving metal with a soft glow, as the
+   header's links do, and rolls it the other way round: sideways, the first
+   copy out to the left as the second slides in from the right (main.js lays
+   the word in twice, in a .nav-roll; the metal is with the header's links).
+   The window it rolls in is let out a little all round, so the tails of the
+   g and y and the edge of the last letter aren't cut off, and pulled back
+   in by as much, so the word doesn't move. */
+.site-menu-word .nav-roll {
+    margin: -0.12em -0.08em -0.22em;
+}
+
+.site-menu-word .nav-roll>span {
+    padding: 0.12em 0.08em 0.22em;
+}
+
+.site-menu-word .nav-roll>span:last-child {
+    transform: translateX(102%);
+}
+
+.site-menu-item:is(:hover, :focus-visible) .site-menu-word {
+    color: transparent;
+    filter: drop-shadow(0 0 0.6rem rgba(170, 210, 255, 0.35));
+}
+
+.site-menu-item:is(:hover, :focus-visible) .nav-roll>span {
+    transition: transform 0.8s cubic-bezier(0.14, 1, 0.34, 1);
+    animation-play-state: running;
+}
+
+.site-menu-item:is(:hover, :focus-visible) .nav-roll>span:first-child {
+    transform: translateX(-102%);
+}
+
+.site-menu-item:is(:hover, :focus-visible) .nav-roll>span:last-child {
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    /* no roll: the word stays put and just turns to metal */
+    .site-menu-item:is(:hover, :focus-visible) .nav-roll>span:first-child {
+        transform: none;
+    }
+
+    .site-menu-item:is(:hover, :focus-visible) .nav-roll>span:last-child {
+        transform: translateX(102%);
+    }
 }
 
 .site-menu-item:focus-visible {
