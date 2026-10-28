@@ -499,6 +499,164 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+// Page transition. Following a link to another page of the site, a black
+// panel rises over this one in columns, each setting off a moment apart, so
+// its top edge comes up stepped like a bar chart. Once it has covered the
+// screen, the name of the page it's going to fades in, and the browser goes
+// there. That page opens already covered, name and all (a line in its
+// <head>, global.css html.pt-in), and the panel carries on up and off the
+// top, its bottom edge stepped the same way. The name doesn't fade out: it
+// holds still while the panel slides away under it, so the stepped edge
+// wipes it off column by column. Links to other sites, new tabs, files and spots on
+// the same page are left alone, and so is everything with reduced motion.
+// goToPage() is for the few places that change page from script (the reel).
+const goToPage = (() => {
+  const plain = (href) => { location.href = href; };
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return plain;
+  if (!document.body.animate) return plain;
+
+  // what each page is called on the panel, by its address
+  const NAMES = {
+    '': 'Projects', index: 'Projects', projects: 'Projects',
+    about: 'About', resume: 'Resume', contact: 'Contact', playground: 'Playground',
+    mixtape: 'Mixtape', consistency: 'Consistency', lintelai: 'LintelAI',
+    nextstep: 'NextStep', tempo: 'Tempo', 'whimsy-bites': 'Whimsy Bites',
+    'mage-in-the-maze': 'Mage in the Maze', 'small-but-mighty': 'Small But Mighty',
+  };
+  const nameOf = (url) =>
+    NAMES[url.pathname.replace(/^\/|\/$|\.html$/g, '').replace(/\/index$/, '')] || '';
+
+  const RISE = 1000;    // ms each column takes to cross the screen
+  const STAGGER = 150;  // ms between the first column to set off and the last
+  // eases in and out gently, so the panel glides rather than snaps
+  const EASE = 'cubic-bezier(0.65, 0, 0.35, 1)';
+  // when each column sets off, as a share of STAGGER: out of order, so the
+  // edge is ragged rather than a slope
+  const STEPS = [0.35, 0.8, 0.1, 0.6, 0.95, 0.25, 0.7, 0.45, 0.05, 0.85];
+  const count = window.innerWidth < 768 ? 6 : 10;
+
+  const wipe = document.createElement('div');
+  wipe.className = 'page-wipe';
+  wipe.setAttribute('aria-hidden', 'true');
+  // each column carries its own copy of the name, set across the whole
+  // window and cut down to the column's width, so the copies line up into
+  // one name
+  const cols = Array.from({ length: count }, (_, i) => {
+    const col = document.createElement('span');
+    col.className = 'page-wipe-col';
+    // a pixel wider than its share, so no seam shows between columns
+    col.style.left = `${(i * 100) / count}%`;
+    col.style.width = `calc(${100 / count}% + 1px)`;
+    const name = document.createElement('span');
+    name.className = 'page-wipe-name';
+    col.append(name);
+    wipe.append(col);
+    return col;
+  });
+  const names = cols.map((col) => col.firstChild);
+  document.body.append(wipe);
+
+  const line = () => {
+    const width = wipe.clientWidth;
+    names.forEach((name, i) => {
+      name.style.left = `${-(i * width) / count}px`;
+      name.style.width = `${width}px`;
+    });
+  };
+  line();
+  window.addEventListener('resize', line);
+
+  const say = (text) => names.forEach((name) => { name.textContent = text; });
+  const stop = (el) => el.getAnimations().forEach((a) => a.cancel());
+
+  // from and to are in screen heights (1 below, 0 covering, -1 above). Each
+  // copy of the name moves the other way by the same amount, so it holds
+  // still on the screen while its column slides past
+  const sweep = (from, to) => {
+    const height = cols[0].offsetHeight;
+    return Promise.all(cols.map((col, i) => {
+      const timing = { duration: RISE, delay: STEPS[i % STEPS.length] * STAGGER, easing: EASE, fill: 'forwards' };
+      stop(col);
+      stop(names[i]);
+      names[i].animate(
+        [{ transform: `translateY(${-from * height}px)` }, { transform: `translateY(${-to * height}px)` }],
+        timing,
+      );
+      return col.animate(
+        [{ transform: `translateY(${from * height}px)` }, { transform: `translateY(${to * height}px)` }],
+        timing,
+      ).finished;
+    }));
+  };
+
+  const fadeIn = () => Promise.all(names.map((name) => name.animate(
+    [{ opacity: 0 }, { opacity: 1 }],
+    { duration: 500, easing: 'ease-out', fill: 'forwards' },
+  ).finished));
+
+  let busy = false;
+
+  const go = (href, text) => {
+    if (busy) return;
+    busy = true;
+    wipe.classList.add('is-on');
+    say(text);
+    names.forEach((name) => { name.style.opacity = '0'; });
+    sweep(1.01, 0).then(fadeIn).then(() => {
+      try {
+        sessionStorage.setItem('page-wipe', JSON.stringify({ name: text, at: Date.now() }));
+      } catch (e) { /* no storage: the next page simply opens uncovered */ }
+      location.href = href;
+    });
+  };
+
+  const reset = () => {
+    cols.forEach((col, i) => {
+      stop(col);
+      stop(names[i]);
+      col.style.transform = '';
+      names[i].style.opacity = '';
+    });
+    wipe.classList.remove('is-on');
+  };
+
+  // arriving: the page is under the stand-in panel; swap in the real one
+  // with the name showing, hold a beat, then lift it away from under the name
+  const root = document.documentElement;
+  if (root.classList.contains('pt-in')) {
+    say(root.dataset.wipe || '');
+    cols.forEach((col) => { col.style.transform = 'none'; });
+    names.forEach((name) => { name.style.opacity = '1'; });
+    wipe.classList.add('is-on');
+    root.classList.remove('pt-in');
+    setTimeout(() => sweep(0, -1.01).then(reset), 250);
+  }
+
+  // back or forward to a page the browser kept as it was, panel and all
+  window.addEventListener('pageshow', (event) => {
+    if (!event.persisted) return;
+    reset();
+    busy = false;
+  });
+
+  document.addEventListener('click', (event) => {
+    if (event.defaultPrevented || event.button !== 0) return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+    const link = event.target.closest('a[href]');
+    if (!link || (link.target && link.target !== '_self') || link.hasAttribute('download')) return;
+    const url = new URL(link.href, location.href);
+    if (url.origin !== location.origin) return;
+    // a file, like the résumé PDF, rather than a page
+    if (/\.[a-z0-9]+$/i.test(url.pathname) && !/\.html$/.test(url.pathname)) return;
+    // this same page, or a spot on it
+    if (url.pathname === location.pathname && url.search === location.search) return;
+    event.preventDefault();
+    go(url.href, nameOf(url));
+  });
+
+  return (href) => go(new URL(href, location.href).href, nameOf(new URL(href, location.href)));
+})();
+
 // Fade the header's border in once the page scrolls away from the top. The
 // phone top bar gets the same class; the home page turns both to glass with it.
 document.addEventListener('DOMContentLoaded', () => {
@@ -3535,7 +3693,7 @@ document.addEventListener('DOMContentLoaded', () => {
         y: (n % 2 ? 1 : -1) * (0.04 + rand(n, 2) * 0.3),
         size: sizeOf(rand(n, 3), rand(n, 4)),
       });
-      img.addEventListener('click', () => { location.href = project.dataset.href; });
+      img.addEventListener('click', () => goToPage(project.dataset.href));
       at += 1;
     });
   });

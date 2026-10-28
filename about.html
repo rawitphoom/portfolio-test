@@ -25,6 +25,20 @@
             setTimeout(() => document.documentElement.classList.remove('gsap-text'), 3000);
         }
     </script>
+    <!-- page transition (main.js): arriving from another page of the site, this
+         page opens under the panel, and main.js lifts it away. Uncovered after
+         4s whatever happens, in case the script never runs. -->
+    <script>
+        try {
+            var wipe = JSON.parse(sessionStorage.getItem('page-wipe'));
+            sessionStorage.removeItem('page-wipe');
+            if (wipe && Date.now() - wipe.at < 10000) {
+                document.documentElement.classList.add('pt-in');
+                document.documentElement.dataset.wipe = wipe.name || '';
+                setTimeout(function () { document.documentElement.classList.remove('pt-in'); }, 4000);
+            }
+        } catch (e) {}
+    </script>
 </head>
 
 <body>
