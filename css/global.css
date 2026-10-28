@@ -391,10 +391,7 @@ body::before {
     height: 1.9rem;
     padding: 0;
     flex-shrink: 0;
-    /* no outline at rest (it was rgba(255, 255, 255, 0.2)); kept transparent
-       so the badge stays the same size and the metal edge on hover still has
-       a border to show in */
-    border: 1.5px solid transparent;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
     border-radius: 0.5rem;
     color: white;
     transition: 0.2s ease-in-out;
